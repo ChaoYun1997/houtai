@@ -1,85 +1,148 @@
 <template>
-  <div :class="[`nav-theme-${navTheme}`, `nav-layout-${navLayout}`]">
-    <a-layout style="min-height: 100vh">
-      <a-layout-sider
-        v-if="navLayout === 'left'"
-        :theme="navTheme"
-        :trigger="null"
-        collapsible
-        v-model="collapsed"
-        width="256px"
-      >
-        <div class="logo">Ant Design Vue Pro</div>
-        <SiderMenu :theme="navTheme" />
-      </a-layout-sider>
-      <a-layout>
-        <a-layout-header style="background: #fff; padding: 0">
-          <a-icon
-            v-auth="['admin']"
-            class="trigger"
-            :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-            @click="collapsed = !collapsed"
-          ></a-icon>
-          <Header />
-        </a-layout-header>
-        <a-layout-content style="margin: 0 16px">
-          <router-view></router-view>
-        </a-layout-content>
-        <a-layout-footer style="text-align: center">
-          <Footer />
-        </a-layout-footer>
-      </a-layout>
-    </a-layout>
-    <Authorized :authority="['admin']">
-      <SettingDrawer />
-    </Authorized>
-  </div>
+  <pro-layout
+    :title="title"
+    :menus="menus"
+    :collapsed="collapsed"
+    :mediaQuery="query"
+    :isMobile="isMobile"
+    :handleMediaQuery="handleMediaQuery"
+    :handleCollapse="handleCollapse"
+    :logo="logoRender"
+    :i18nRender="i18nRender"
+    v-bind="settings"
+  >
+    <setting-drawer :settings="settings" @change="handleSettingChange" />
+    <template v-slot:rightContentRender>
+      <right-content :top-menu="settings.layout === 'topmenu'" :is-mobile="isMobile" :theme="settings.theme" />
+    </template>
+    <template v-slot:footerRender>
+      <global-footer />
+    </template>
+    <router-view />
+  </pro-layout>
 </template>
 
 <script>
-import Header from "./Header";
-import Footer from "./Footer";
-import SiderMenu from "./SiderMenu";
-import SettingDrawer from "../components/SettingDrawer";
+import { SettingDrawer, updateTheme } from '@ant-design-vue/pro-layout'
+import { i18nRender } from '@/locales'
+import { mapState } from 'vuex'
+import { SIDEBAR_TYPE, TOGGLE_MOBILE_TYPE } from '@/store/mutation-types'
+
+import defaultSettings from '@/config/defaultSettings'
+import RightContent from '@/components/GlobalHeader/RightContent'
+import GlobalFooter from '@/components/GlobalFooter'
+import LogoSvg from '../assets/logo.svg?inline'
+
 export default {
-  data() {
-    return {
-      collapsed: false
-    };
+  name: 'BasicLayout',
+  components: {
+    SettingDrawer,
+    RightContent,
+    GlobalFooter
   },
-  computed: {
-    navTheme() {
-      return this.$route.query.navTheme || "dark";
-    },
-    navLayout() {
-      return this.$route.query.navLayout || "left";
+  data () {
+    return {
+      // base
+      menus: [],
+      // 侧栏收起状态
+      collapsed: false,
+      title: defaultSettings.title,
+      settings: {
+        // 布局类型
+        layout: defaultSettings.layout, // 'sidemenu', 'topmenu'
+        // 定宽: true / 流式: false
+        contentWidth: defaultSettings.layout === 'sidemenu' ? false : defaultSettings.contentWidth === 'Fixed',
+        // 主题 'dark' | 'light'
+        theme: defaultSettings.navTheme,
+        // 主色调
+        primaryColor: defaultSettings.primaryColor,
+        fixedHeader: defaultSettings.fixedHeader,
+        fixSiderbar: defaultSettings.fixSiderbar,
+        colorWeak: defaultSettings.colorWeak,
+
+        hideHintAlert: false,
+        hideCopyButton: false
+      },
+      // 媒体查询
+      query: {},
+
+      // 是否手机模式
+      isMobile: false
     }
   },
-  components: {
-    Header,
-    Footer,
-    SiderMenu,
-    SettingDrawer
+  computed: {
+    ...mapState({
+      // 动态主路由
+      mainMenu: state => state.permission.addRouters
+    })
+  },
+  created () {
+    const routes = this.mainMenu.find(item => item.path === '/')
+    this.menus = (routes && routes.children) || []
+    // 处理侧栏收起状态
+    this.$watch('collapsed', () => {
+      this.$store.commit(SIDEBAR_TYPE, this.collapsed)
+    })
+    this.$watch('isMobile', () => {
+      this.$store.commit(TOGGLE_MOBILE_TYPE, this.isMobile)
+    })
+  },
+  mounted () {
+    const userAgent = navigator.userAgent
+    if (userAgent.indexOf('Edge') > -1) {
+      this.$nextTick(() => {
+        this.collapsed = !this.collapsed
+        setTimeout(() => {
+          this.collapsed = !this.collapsed
+        }, 16)
+      })
+    }
+
+    // first update color
+    updateTheme(this.settings.primaryColor)
+  },
+  methods: {
+    i18nRender,
+    handleMediaQuery (val) {
+      this.query = val
+      if (this.isMobile && !val['screen-xs']) {
+        this.isMobile = false
+        return
+      }
+      if (!this.isMobile && val['screen-xs']) {
+        this.isMobile = true
+        this.collapsed = false
+        this.settings.contentWidth = false
+        // this.settings.fixSiderbar = false
+      }
+    },
+    handleCollapse (val) {
+      this.collapsed = val
+    },
+    handleSettingChange ({ type, value }) {
+      console.log('type', type, value)
+      type && (this.settings[type] = value)
+      switch (type) {
+        case 'contentWidth':
+          this.settings[type] = value === 'Fixed'
+          break
+        case 'layout':
+          if (value === 'sidemenu') {
+            this.settings.contentWidth = false
+          } else {
+            this.settings.fixSiderbar = false
+            this.settings.contentWidth = true
+          }
+          break
+      }
+    },
+    logoRender () {
+      return <LogoSvg />
+    }
   }
-};
+}
 </script>
 
-<style scoped>
-.trigger {
-  padding: 0 20px;
-  line-height: 64px;
-  font-size: 20px;
-}
-.trigger:hover {
-  background: #eeeeee;
-}
-.logo {
-  height: 64px;
-  line-height: 64px;
-  text-align: center;
-  overflow: hidden;
-}
-.nav-theme-dark >>> .logo {
-  color: #ffffff;
-}
+<style lang="less">
+@import "./BasicLayout.less";
 </style>

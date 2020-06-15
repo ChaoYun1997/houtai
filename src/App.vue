@@ -1,28 +1,28 @@
 <template>
-  <div id="app">
-    <a-locale-provider :locale="locale">
-      <router-view />
-    </a-locale-provider>
-  </div>
+  <a-config-provider :locale="locale">
+    <div id="app">
+      <router-view/>
+    </div>
+  </a-config-provider>
 </template>
+
 <script>
-import zhCN from "ant-design-vue/lib/locale-provider/zh_CN";
-import enUS from "ant-design-vue/lib/locale-provider/en_US";
-import moment from "moment";
-import "moment/locale/zh-cn";
+import { domTitle, setDocumentTitle } from '@/utils/domUtil'
+import { i18nRender } from '@/locales'
+
 export default {
-  data() {
+  data () {
     return {
-      locale: zhCN
-    };
+    }
   },
-  watch: {
-    "$route.query.locale": function(val) {
-      this.locale = val === "enUS" ? enUS : zhCN;
-      moment.locale(val === "enUS" ? "en" : "zh-cn");
+  computed: {
+    locale () {
+      // 只是为了切换语言时，更新标题
+      const { title } = this.$route.meta
+      title && (setDocumentTitle(`${i18nRender(title)} - ${domTitle}`))
+
+      return this.$i18n.getLocaleMessage(this.$store.getters.lang).antLocale
     }
   }
-};
+}
 </script>
-
-<style lang="less"></style>
