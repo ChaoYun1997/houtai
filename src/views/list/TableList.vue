@@ -209,6 +209,7 @@ export default {
         console.log('loadData request parameters:', requestParameters)
         return getServiceList(requestParameters)
           .then(res => {
+            console.log(res)
             return res.result
           })
       },
@@ -295,6 +296,7 @@ export default {
       form.resetFields() // 清理表单数据（可不做）
     },
     handleSub (record) {
+      console.log(record)
       if (record.status !== 0) {
         this.$message.info(`${record.no} 订阅成功`)
       } else {

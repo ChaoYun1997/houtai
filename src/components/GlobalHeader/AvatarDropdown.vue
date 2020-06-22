@@ -1,20 +1,24 @@
 <template>
   <a-dropdown v-if="currentUser && currentUser.name" placement="bottomRight">
     <span class="ant-pro-account-avatar">
-      <a-avatar size="small" src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png" class="antd-pro-global-header-index-avatar" />
+      <a-avatar
+        size="small"
+        src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
+        class="antd-pro-global-header-index-avatar"
+      />
       <span>{{ currentUser.name }}</span>
     </span>
     <template v-slot:overlay>
       <a-menu class="ant-pro-drop-down menu" :selected-keys="[]">
-        <a-menu-item v-if="menu" key="center" @click="handleToCenter">
-          <a-icon type="user" />
-          个人中心
-        </a-menu-item>
-        <a-menu-item v-if="menu" key="settings" @click="handleToSettings">
-          <a-icon type="setting" />
-          个人设置
-        </a-menu-item>
-        <a-menu-divider v-if="menu" />
+        <!--        <a-menu-item v-if="menu" key="center" @click="handleToCenter">-->
+        <!--          <a-icon type="user" />-->
+        <!--          个人中心-->
+        <!--        </a-menu-item>-->
+        <!--        <a-menu-item v-if="menu" key="settings" @click="handleToSettings">-->
+        <!--          <a-icon type="setting" />-->
+        <!--          个人设置-->
+        <!--        </a-menu-item>-->
+        <!--        <a-menu-divider v-if="menu" />-->
         <a-menu-item key="logout" @click="handleLogout">
           <a-icon type="logout" />
           退出登录
@@ -43,13 +47,13 @@ export default {
     }
   },
   methods: {
-    handleToCenter () {
+    handleToCenter() {
       this.$router.push({ path: '/account/center' })
     },
-    handleToSettings () {
+    handleToSettings() {
       this.$router.push({ path: '/account/settings' })
     },
-    handleLogout (e) {
+    handleLogout(e) {
       Modal.confirm({
         title: this.$t('layouts.usermenu.dialog.title'),
         content: this.$t('layouts.usermenu.dialog.content'),
@@ -61,7 +65,7 @@ export default {
             this.$router.push({ name: 'login' })
           })
         },
-        onCancel () {}
+        onCancel() {}
       })
     }
   }

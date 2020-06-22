@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import { UserLayout, BasicLayout, BlankLayout } from '@/layouts'
-import { bxAnaalyse } from '@/core/icons'
+import { bxAnaalyse, appStore, comment } from '@/core/icons'
 
 const RouteView = {
   name: 'RouteView',
@@ -14,33 +14,184 @@ export const asyncRouterMap = [
     name: 'index',
     component: BasicLayout,
     meta: { title: 'menu.home' },
-    redirect: '/dashboard/workplace',
+    redirect: '/dashboard/home',
     children: [
       // dashboard
       {
         path: '/dashboard',
         name: 'dashboard',
-        redirect: '/dashboard/workplace',
+        redirect: '/dashboard/home',
         component: RouteView,
-        meta: { title: 'menu.dashboard', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
+        meta: { title: '首页', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
         children: [
           {
-            path: '/dashboard/analysis/:pageNo([1-9]\\d*)?',
-            name: 'Analysis',
-            component: () => import('@/views/dashboard/Analysis'),
-            meta: { title: 'menu.dashboard.analysis', keepAlive: false, permission: [ 'dashboard' ] }
-          },
-          // 外部链接
+            path: '/dashboard/home',
+            name: 'Home',
+            component: () => import('@/views/home/Home'),
+            meta: { title: '网站信息', keepAlive: true, permission: [ 'dashboard' ] }
+          }
+          // {
+          //   path: '/dashboard/analysis/:pageNo([1-9]\\d*)?',
+          //   name: 'Analysis',
+          //   component: () => import('@/views/dashboard/Analysis'),
+          //   meta: { title: 'menu.dashboard.analysis', keepAlive: false, permission: [ 'dashboard' ] }
+          // },
+          // // 外部链接
+          // {
+          //   path: 'https://www.baidu.com/',
+          //   name: 'Monitor',
+          //   meta: { title: 'menu.dashboard.monitor', target: '_blank' }
+          // },
+          // {
+          //   path: '/dashboard/workplace',
+          //   name: 'Workplace',
+          //   component: () => import('@/views/dashboard/Workplace'),
+          //   meta: { title: 'menu.dashboard.workplace', keepAlive: true, permission: [ 'dashboard' ] }
+          // }
+        ]
+      },
+      // 产品
+      {
+        path: '/products',
+        name: 'products',
+        component: RouteView,
+        redirect: '/products/product-list',
+        meta: { title: '产品', icon: appStore, permission: [ 'table' ] },
+        children: [
           {
-            path: 'https://www.baidu.com/',
-            name: 'Monitor',
-            meta: { title: 'menu.dashboard.monitor', target: '_blank' }
+            path: '/products/product-list/:pageNo([1-9]\\d*)?',
+            name: 'TableListWrapper',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/products/List'),
+            meta: { title: '产品管理', keepAlive: true, permission: [ 'table' ] }
           },
           {
-            path: '/dashboard/workplace',
-            name: 'Workplace',
-            component: () => import('@/views/dashboard/Workplace'),
-            meta: { title: 'menu.dashboard.workplace', keepAlive: true, permission: [ 'dashboard' ] }
+            path: '/products/add-product/:id?',
+            name: 'BasicList',
+            component: () => import('@/views/products/Detail'),
+            meta: { title: '添加产品', keepAlive: true, permission: [ 'table' ] }
+          },
+          {
+            path: '/products/category-manage',
+            name: 'CardList',
+            component: () => import('@/views/list/CardList'),
+            meta: { title: '管理产品分类', keepAlive: true, permission: [ 'table' ] }
+          },
+          {
+            path: '/products/add-category',
+            name: 'addProductCategory',
+            component: () => import('@/views/list/search/SearchLayout'),
+            redirect: '/list/search/article',
+            meta: { title: '添加产品分类', keepAlive: true, permission: [ 'table' ] }
+          },
+          {
+            path: '/products/field-manage',
+            name: 'fieldManage',
+            component: () => import('@/views/list/search/SearchLayout'),
+            redirect: '/list/search/article',
+            meta: { title: '管理自定义字段', keepAlive: true, permission: [ 'table' ] }
+          },
+          {
+            path: '/products/watermark',
+            name: 'watermark',
+            component: () => import('@/views/list/search/SearchLayout'),
+            redirect: '/list/search/article',
+            meta: { title: '设置水印', keepAlive: true, permission: [ 'table' ] }
+          },
+          {
+            path: '/products/recycle-bin',
+            name: 'productsRecycleBin',
+            component: () => import('@/views/list/search/SearchLayout'),
+            redirect: '/list/search/article',
+            meta: { title: '产品回收站', keepAlive: true, permission: [ 'table' ] }
+          }
+        ]
+      },
+      // 文章
+      {
+        path: '/articles',
+        name: 'articles',
+        component: RouteView,
+        redirect: '/articles/table-list',
+        meta: { title: '文章', icon: 'profile', permission: [ 'table' ] },
+        children: [
+          {
+            path: '/articles/table-list/:pageNo([1-9]\\d*)?',
+            name: 'articleManage',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/list/TableList'),
+            meta: { title: '文章管理', keepAlive: true, permission: [ 'table' ] }
+          },
+          {
+            path: '/articles/basic-list',
+            name: 'addArticle',
+            component: () => import('@/views/list/BasicList'),
+            meta: { title: '添加文章', keepAlive: true, permission: [ 'table' ] }
+          },
+          {
+            path: '/articles/article-category',
+            name: 'articleCategory',
+            component: () => import('@/views/list/CardList'),
+            meta: { title: '管理文章分类', keepAlive: true, permission: [ 'table' ] }
+          },
+          {
+            path: '/articles/add-category',
+            name: 'addAriticleCategory',
+            component: () => import('@/views/list/search/SearchLayout'),
+            redirect: '/list/search/article',
+            meta: { title: '添加文章分类', keepAlive: true, permission: [ 'table' ] }
+          }
+        ]
+      },
+      // 关键词
+      {
+        path: '/keyword',
+        name: 'keyword',
+        component: RouteView,
+        redirect: '/keyword/table-list',
+        meta: { title: '关键词', icon: 'form', permission: [ 'table' ] },
+        children: [
+          {
+            path: '/keyword/table-list/:pageNo([1-9]\\d*)?',
+            name: 'keywordManage',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/list/TableList'),
+            meta: { title: '关键词管理', keepAlive: true, permission: [ 'table' ] }
+          },
+          {
+            path: '/keyword/setting',
+            name: 'keywordSetting',
+            component: () => import('@/views/list/BasicList'),
+            meta: { title: '关键词设置', keepAlive: true, permission: [ 'table' ] }
+          }
+        ]
+      },
+      // 询盘
+      {
+        path: '/inquiry',
+        name: 'inquiry',
+        component: RouteView,
+        redirect: '/inquiry/table-list',
+        meta: { title: '询盘', icon: comment, permission: [ 'table' ] },
+        children: [
+          {
+            path: '/inquiry/table-list/:pageNo([1-9]\\d*)?',
+            name: 'inquiryManage',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/list/TableList'),
+            meta: { title: '询盘管理', keepAlive: true, permission: [ 'table' ] }
+          },
+          {
+            path: '/inquiry/inquiry-rules',
+            name: 'inquiryRules',
+            component: () => import('@/views/list/BasicList'),
+            meta: { title: '询盘规则', keepAlive: true, permission: [ 'table' ] }
+          },
+          {
+            path: '/inquiry/recycle-bin',
+            name: 'inquiryRecycleBin',
+            component: () => import('@/views/list/BasicList'),
+            meta: { title: '询盘回收站', keepAlive: true, permission: [ 'table' ] }
           }
         ]
       },
@@ -74,61 +225,61 @@ export const asyncRouterMap = [
       },
 
       // list
-      {
-        path: '/list',
-        name: 'list',
-        component: RouteView,
-        redirect: '/list/table-list',
-        meta: { title: '列表页', icon: 'table', permission: [ 'table' ] },
-        children: [
-          {
-            path: '/list/table-list/:pageNo([1-9]\\d*)?',
-            name: 'TableListWrapper',
-            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
-            component: () => import('@/views/list/TableList'),
-            meta: { title: '查询表格', keepAlive: true, permission: [ 'table' ] }
-          },
-          {
-            path: '/list/basic-list',
-            name: 'BasicList',
-            component: () => import('@/views/list/BasicList'),
-            meta: { title: '标准列表', keepAlive: true, permission: [ 'table' ] }
-          },
-          {
-            path: '/list/card',
-            name: 'CardList',
-            component: () => import('@/views/list/CardList'),
-            meta: { title: '卡片列表', keepAlive: true, permission: [ 'table' ] }
-          },
-          {
-            path: '/list/search',
-            name: 'SearchList',
-            component: () => import('@/views/list/search/SearchLayout'),
-            redirect: '/list/search/article',
-            meta: { title: '搜索列表', keepAlive: true, permission: [ 'table' ] },
-            children: [
-              {
-                path: '/list/search/article',
-                name: 'SearchArticles',
-                component: () => import('../views/list/search/Article'),
-                meta: { title: '搜索列表（文章）', permission: [ 'table' ] }
-              },
-              {
-                path: '/list/search/project',
-                name: 'SearchProjects',
-                component: () => import('../views/list/search/Projects'),
-                meta: { title: '搜索列表（项目）', permission: [ 'table' ] }
-              },
-              {
-                path: '/list/search/application',
-                name: 'SearchApplications',
-                component: () => import('../views/list/search/Applications'),
-                meta: { title: '搜索列表（应用）', permission: [ 'table' ] }
-              }
-            ]
-          }
-        ]
-      },
+      // {
+      //   path: '/list',
+      //   name: 'list',
+      //   component: RouteView,
+      //   redirect: '/list/table-list',
+      //   meta: { title: '列表页', icon: 'table', permission: [ 'table' ] },
+      //   children: [
+      //     {
+      //       path: '/list/table-list/:pageNo([1-9]\\d*)?',
+      //       name: 'TableListWrapper',
+      //       hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+      //       component: () => import('@/views/list/TableList'),
+      //       meta: { title: '查询表格', keepAlive: true, permission: [ 'table' ] }
+      //     },
+      //     {
+      //       path: '/list/basic-list',
+      //       name: 'BasicList',
+      //       component: () => import('@/views/list/BasicList'),
+      //       meta: { title: '标准列表', keepAlive: true, permission: [ 'table' ] }
+      //     },
+      //     {
+      //       path: '/list/card',
+      //       name: 'CardList',
+      //       component: () => import('@/views/list/CardList'),
+      //       meta: { title: '卡片列表', keepAlive: true, permission: [ 'table' ] }
+      //     },
+      //     {
+      //       path: '/list/search',
+      //       name: 'SearchList',
+      //       component: () => import('@/views/list/search/SearchLayout'),
+      //       redirect: '/list/search/article',
+      //       meta: { title: '搜索列表', keepAlive: true, permission: [ 'table' ] },
+      //       children: [
+      //         {
+      //           path: '/list/search/article',
+      //           name: 'SearchArticles',
+      //           component: () => import('../views/list/search/Article'),
+      //           meta: { title: '搜索列表（文章）', permission: [ 'table' ] }
+      //         },
+      //         {
+      //           path: '/list/search/project',
+      //           name: 'SearchProjects',
+      //           component: () => import('../views/list/search/Projects'),
+      //           meta: { title: '搜索列表（项目）', permission: [ 'table' ] }
+      //         },
+      //         {
+      //           path: '/list/search/application',
+      //           name: 'SearchApplications',
+      //           component: () => import('../views/list/search/Applications'),
+      //           meta: { title: '搜索列表（应用）', permission: [ 'table' ] }
+      //         }
+      //       ]
+      //     }
+      //   ]
+      // },
 
       // profile
       {
