@@ -13,11 +13,14 @@ import {
   Select,
   Card,
   Form,
+  FormModel,
   Row,
   Col,
   Modal,
   Table,
   Tabs,
+  Transfer,
+  Tree,
   Icon,
   Badge,
   Popover,
@@ -67,11 +70,14 @@ Vue.use(Checkbox)
 Vue.use(Select)
 Vue.use(Card)
 Vue.use(Form)
+Vue.use(FormModel)
 Vue.use(Row)
 Vue.use(Col)
 Vue.use(Modal)
 Vue.use(Table)
 Vue.use(Tabs)
+Vue.use(Transfer)
+Vue.use(Tree)
 Vue.use(Icon)
 Vue.use(Badge)
 Vue.use(Popover)

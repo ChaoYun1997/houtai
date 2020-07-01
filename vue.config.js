@@ -5,7 +5,7 @@ const GitRevision = new GitRevisionPlugin()
 const buildDate = JSON.stringify(new Date().toLocaleString())
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
 
-function resolve (dir) {
+function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
@@ -31,6 +31,34 @@ const assetsCDN = {
 
 // vue.config.js
 const vueConfig = {
+  pluginOptions: {
+    dll: {
+      entry: [
+        'axios',
+        'ant-design-vue',
+        'core-js',
+        'file-saver',
+        'less',
+        'jszip',
+        'moment',
+        'mockjs2',
+        'nprogress',
+        'qrcode',
+        'vue',
+        'vue-router',
+        'vuex',
+        'vue-clipboard2',
+        'vue-cropper',
+        'vue-i18n',
+        'store',
+        'xlsx',
+        'wangeditor'
+      ],
+      cacheFilePath: path.resolve(__dirname, './public'),
+      open: process.env.NODE_ENV === 'production',
+      inject: true
+    }
+  },
   configureWebpack: {
     // webpack plugins
     plugins: [
@@ -46,9 +74,8 @@ const vueConfig = {
     externals: isProd ? assetsCDN.externals : {}
   },
 
-  chainWebpack: (config) => {
-    config.resolve.alias
-      .set('@$', resolve('src'))
+  chainWebpack: config => {
+    config.resolve.alias.set('@$', resolve('src'))
 
     const svgRule = config.module.rule('svg')
     svgRule.uses.clear()

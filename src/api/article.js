@@ -14,8 +14,8 @@ const articlesApi = {
 export function getArticles(param) {
   return request({
     url: articlesApi.articles,
-    method: 'post',
-    data: param
+    method: 'get',
+    params: param
   })
 }
 
@@ -47,11 +47,10 @@ export function updateArticleCategory(param) {
 }
 
 // 获取文章类型列表
-export function articleCategory(param) {
+export function articleCategory() {
   return request({
     url: articlesApi.articleCategory,
-    method: 'post',
-    data: param
+    method: 'get'
   })
 }
 
@@ -72,4 +71,3 @@ export function delArticleCategory(param) {
     data: param
   })
 }
-

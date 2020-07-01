@@ -1,11 +1,14 @@
 import request from '@/utils/request'
 
 const productsApi = {
-  list: '/products',
-  addProduct: '/addProduct',
+  list: '/shop/shops', // 产品列表
+  addProduct: '/shop/push', // 发布产品
+  updateProduct: '/shop/updateShop', // 更新产品
+  detail: '/shop/shop', // 产品详情
+  updateProperty: '/shop/updateProp', // 更新产品字段
+  updateSort: '/shop/updateSort', // 更新产品排序
   batchAddProduct: '/batchAddProduct',
   delProduct: '/delProduct',
-  updateProduct: '/updateProduct',
   sellAction: '/sellAction',
   productCategory: '/productCategory',
   setCategory: '/setCategory',
@@ -18,7 +21,17 @@ const productsApi = {
   setWatermark: '/setWatermark',
   updateWatermark: '/updateWatermark',
   unremoveProducts: '/unremoveProducts',
-  removeProducts: '/removeProducts'
+  removeProducts: '/shop/delShop', // 彻底删除产品
+  skuList: '/skuList'
+}
+
+// 获取产品SKU列表
+export function getSku(param) {
+  return request({
+    url: productsApi.skuList,
+    method: 'get',
+    params: param
+  })
 }
 
 // 获取产品列表

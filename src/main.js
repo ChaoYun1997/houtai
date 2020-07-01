@@ -30,6 +30,12 @@ Vue.component('page-header-wrapper', PageHeaderWrapper)
 
 window.umi_plugin_ant_themeVar = themePluginConfig.theme
 
+Vue.directive('loaded-callback', {
+  inserted: function (el, binding, vnode) {
+    binding.value(el, binding, vnode)
+  }
+})
+
 new Vue({
   router,
   store,

@@ -14,6 +14,7 @@ export const TOGGLE_MULTI_TAB = 'multi_tab'
 export const APP_LANGUAGE = 'app_language'
 
 export const PRODUCT_DETAILS = 'product_details'
+export const PRODUCTS = 'products'
 
 export const CONTENT_WIDTH_TYPE = {
   Fluid: 'Fluid',

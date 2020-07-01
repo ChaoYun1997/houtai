@@ -14,12 +14,12 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="搜索" :lable-col="{ span: 24, offset: 12 }">
-                <a-input v-model="queryParam.keyword"></a-input>
+                <a-input v-model="queryParam.keyWords"></a-input>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="上架状态">
-                <a-select v-model="queryParam.status" placeholder="请选择" default-value="0">
+                <a-select @change="handleStatusSelect" placeholder="请选择" default-value="0">
                   <a-select-option value="0">全部</a-select-option>
                   <a-select-option value="1">上架</a-select-option>
                   <a-select-option value="2">下架</a-select-option>
@@ -28,7 +28,7 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="产品分类">
-                <a-select v-model="queryParam.type" placeholder="请选择" default-value="0">
+                <a-select v-model="queryParam.catId" placeholder="请选择" default-value="0">
                   <a-select-option value="0">全部</a-select-option>
                   <a-select-option value="1">abc</a-select-option>
                   <a-select-option value="2">efg</a-select-option>
@@ -39,12 +39,12 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="标签">
-                <a-checkbox-group v-model="queryParam.tag" :options="tagOptions"> </a-checkbox-group>
+                <a-checkbox-group v-model="queryParam.shopTags" :options="tagOptions"> </a-checkbox-group>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="更新日期">
-                <a-date-picker v-model="queryParam.date" style="width: 100%" placeholder="请输入更新日期" />
+                <a-date-picker v-model="queryParam.updateDate" style="width: 100%" placeholder="请输入更新日期" />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
@@ -124,16 +124,16 @@
         :rowSelection="rowSelection"
         showPagination="auto"
       >
-        <div class="cover" slot="cover" slot-scope="img">
-          <img :src="img" alt="" />
+        <div class="cover" slot="shopImg" slot-scope="shopImg">
+          <img :src="shopImg" alt="" />
         </div>
-        <div slot="status" slot-scope="status">
-          <a-switch :checked="status === 0" :loading="switchLoading" @change="onSwitchChange" />
+        <div slot="isShelve" slot-scope="isShelve">
+          <a-switch :checked="isShelve" @change="onSwitchChange" />
         </div>
 
-        <span slot="tags" slot-scope="tags">
+        <span slot="shopTags" slot-scope="shopTags">
           <a-tag
-            v-for="tag in tags"
+            v-for="tag in shopTags"
             :key="tag"
             :color="tag === '热点产品' ? 'pink' : tag === '新产品' ? 'green' : 'orange'"
           >
@@ -145,7 +145,7 @@
           <a-button type="primary" icon="copy" size="small" @click="copy(id)" />
           <a-button type="danger" icon="delete" size="small" :loading="delLoading" @click="del(id)" />
           <a-button icon="share-alt" size="small" @click="share(id)" />
-          <a-button icon="eye" size="small" @click="preview(record.link)" />
+          <a-button icon="eye" size="small" @click="preview(record.shopUrl)" />
         </div>
       </s-table>
     </a-card>
@@ -208,42 +208,46 @@ const columns = [
   },
   {
     title: '产品图片',
-    dataIndex: 'img',
+    dataIndex: 'shopImg',
     scopedSlots: {
-      customRender: 'cover'
+      customRender: 'shopImg'
     }
   },
   {
     title: '产品名称',
-    dataIndex: 'name',
+    dataIndex: 'shopTitle',
     sorter: true
   },
   {
     title: '型号',
-    dataIndex: 'type'
+    dataIndex: 'shopModel'
   },
   {
     title: '产品分类',
-    dataIndex: 'category'
+    dataIndex: 'catId'
   },
   {
     title: '更新时间',
-    dataIndex: 'update',
+    dataIndex: 'updateDate',
     sorter: true
   },
   {
     title: '上架',
-    dataIndex: 'status',
+    dataIndex: 'isShelve',
     sorter: true,
     scopedSlots: {
-      customRender: 'status'
+      customRender: 'isShelve'
     }
   },
   {
+    title: '产品链接',
+    dataIndex: 'shopUrl'
+  },
+  {
     title: '标签',
-    dataIndex: 'tags',
+    dataIndex: 'shopTags',
     scopedSlots: {
-      customRender: 'tags'
+      customRender: 'shopTags'
     }
   },
   {
@@ -268,7 +272,9 @@ export default {
       queryParam: {},
       loadData: param => {
         param = Object.assign(param, this.queryParam)
+        console.log(`params is : ${param}`)
         return getProducts(param).then(res => {
+          console.log(`data is : ${res.result}`)
           return res.result
         })
       },
@@ -353,7 +359,7 @@ export default {
               descContent4: item['产品描述4 - 页签内容'],
               descTitle5: item['产品描述5 - 页签标题'],
               descContent5: item['产品描述5 - 页签内容'],
-              status: item['产品状态（1表示上架，0表示下架）']
+              isShelve: item['产品状态（1表示上架，0表示下架）'] !== 0
             }
           })
           // TODO 批量上传接入
@@ -387,22 +393,21 @@ export default {
       })
     },
     // 编辑文章
-    edit(result) {
-      console.log(result)
-      this.$router.push('/products/add-product/' + result)
+    edit(id) {
+      this.$router.push('/products/add-product/' + id)
     },
     // 添加相似文章
     copy(result) {
       console.log(result)
     },
     // 删除文章
-    del(result) {
-      console.log(result)
+    del(id) {
+      console.log(id)
       this.$confirm({
         content: '你确定要删除该产品吗？',
         onOk: () => {
           this.delLoading = true
-          delProduct(result).then(res => {
+          delProduct(id).then(res => {
             if (res.result.data === 'success') this.$message.success('操作成功')
             this.delLoading = false
             this.$refs.table.refresh()
@@ -431,6 +436,10 @@ export default {
           this.handelSellAction(ids)
           break
       }
+    },
+    // 切换产品查询状态
+    handleStatusSelect(value) {
+      this.queryParam.isShelve = value === 1
     },
     // 查询
     handleQuery() {

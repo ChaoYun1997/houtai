@@ -22,9 +22,9 @@ const name = [
   'DC Motor 63ZYT100'
 ]
 
-const type = ['78ZYT110', 'BL4805F', '80BL', '180BL', '63ZYT100']
+const shopModel = ['78ZYT110', 'BL4805F', '80BL', '180BL', '63ZYT100']
 
-const category = ['Brushless Motor Driver', 'Brushless DC Motor', 'PMDC Motor ', 'Brushless DC Motor', 'PMDC Motor ']
+// const category = ['Brushless Motor Driver', 'Brushless DC Motor', 'PMDC Motor ', 'Brushless DC Motor', 'PMDC Motor ']
 
 const date = [
   '2020-06-11 16:31:06',
@@ -42,6 +42,8 @@ const links = [
 ]
 
 const totalCount = 10
+
+const skus = ['color', 'size', 'material', 'power', 'type', 'diameter', 'voltage', 'speed']
 
 function getTags() {
   const tagNum = parseInt(Math.random() * (2 + 1), 10)
@@ -65,17 +67,18 @@ const productList = options => {
 
   for (let i = 0; i < 10; i++) {
     const randNum = parseInt(Math.random() * (4 + 1), 10)
+    const booleanNum = parseInt(Math.random() * (1 + 1), 10)
     // const tmpKey = key + i
     result.push({
       id: i,
-      img: imgs[i],
-      name: name[randNum],
-      type: type[randNum],
-      category: category[randNum],
-      update: date[randNum],
-      status: parseInt(Math.random() * (1 + 1), 10),
-      tags: getTags(),
-      link: links[randNum]
+      shopImg: imgs[i],
+      shopTitle: name[randNum],
+      shopModel: shopModel[randNum],
+      catId: randNum,
+      updateDate: date[randNum],
+      isShelve: booleanNum !== 0,
+      shopTags: getTags(),
+      shopUrl: links[randNum]
     })
   }
   return builder({
@@ -87,10 +90,23 @@ const productList = options => {
   })
 }
 
+const category = ['PMDC Motor', 'DC Hydraulic Pump Motor', 'Brushless DC Motor', 'Brushless Motor Driver']
+
 const productCategory = () => {
-  const result = ['PMDC Motor', 'DC Hydraulic Pump Motor', 'Brushless DC Motor', 'Brushless Motor Driver']
+  const data = []
+  category.forEach((item, index) => {
+    const num = parseInt(Math.random() * (20 + 1), 10)
+    data.push({
+      id: index,
+      catName: item,
+      shops: num,
+      catUrl: '',
+      catPage: '',
+      catDetailPage: ''
+    })
+  })
   return builder({
-    data: result
+    data: data
   })
 }
 
@@ -112,8 +128,15 @@ const sellAction = options => {
   })
 }
 
-Mock.mock(/\/api\/products/, 'get', productList)
-Mock.mock(/\/api\/productCategory/, 'get', productCategory)
-Mock.mock(/\/api\/setCategory/, 'post', setCategory)
-Mock.mock(/\/api\/delProduct/, 'post', delProduct)
-Mock.mock(/\/api\/sellAction/, 'post', sellAction)
+const skuList = () => {
+  return builder({
+    data: skus
+  })
+}
+
+Mock.mock(/\/sys\/shop\/shops/, 'get', productList)
+Mock.mock(/\/sys\/productCategory/, 'get', productCategory)
+Mock.mock(/\/sys\/setCategory/, 'post', setCategory)
+Mock.mock(/\/sys\/delProduct/, 'post', delProduct)
+Mock.mock(/\/sys\/sellAction/, 'post', sellAction)
+Mock.mock(/\/sys\/skuList/, 'get', skuList)

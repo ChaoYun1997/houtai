@@ -9,11 +9,10 @@ const keywordApi = {
 }
 
 // 获取关键词列表
-export function getKeyword(param) {
+export function getKeyword() {
   return request({
     url: keywordApi.keyword,
-    method: 'post',
-    data: param
+    method: 'get'
   })
 }
 
