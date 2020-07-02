@@ -9,7 +9,7 @@ const api = {
   orgTree: '/org/tree'
 }
 
-export default api
+// export default api
 
 export function getUserList (parameter) {
   return request({

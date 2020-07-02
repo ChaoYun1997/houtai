@@ -69,6 +69,12 @@ const permission = {
         commit('SET_ROUTERS', accessedRouters)
         resolve()
       })
+    },
+    GenerateRoutesWithoutRoles ({ commit }) {
+      return new Promise(resolve => {
+        commit('SET_ROUTERS', asyncRouterMap)
+        resolve()
+      })
     }
   }
 }
