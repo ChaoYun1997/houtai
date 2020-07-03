@@ -172,28 +172,28 @@ export const asyncRouterMap = [
       },
       // 询盘
       {
-        path: '/inquiry',
-        name: 'inquiry',
+        path: '/enquiry',
+        name: 'enquiry',
         component: RouteView,
-        redirect: '/inquiry/table-list',
+        redirect: '/enquiry/table-list',
         meta: { title: '询盘', icon: comment, permission: ['table'] },
         children: [
           {
-            path: '/inquiry/table-list/:pageNo([1-9]\\d*)?',
-            name: 'inquiryManage',
+            path: '/enquiry/table-list/:pageNo([1-9]\\d*)?',
+            name: 'enquiryManage',
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
             component: () => import('@/views/list/TableList'),
             meta: { title: '询盘管理', keepAlive: true, permission: ['table'] }
           },
           {
-            path: '/inquiry/inquiry-rules',
-            name: 'inquiryRules',
+            path: '/enquiry/enquiry-rules',
+            name: 'enquiryRules',
             component: () => import('@/views/list/BasicList'),
             meta: { title: '询盘规则', keepAlive: true, permission: ['table'] }
           },
           {
-            path: '/inquiry/recycle-bin',
-            name: 'inquiryRecycleBin',
+            path: '/enquiry/recycle-bin',
+            name: 'enquiryRecycleBin',
             component: () => import('@/views/list/BasicList'),
             meta: { title: '询盘回收站', keepAlive: true, permission: ['table'] }
           }

@@ -1,4 +1,5 @@
 import axios from 'axios'
+// eslint-disable-next-line no-unused-vars
 import store from '@/store'
 import storage from 'store'
 import notification from 'ant-design-vue/es/notification'
@@ -17,6 +18,7 @@ const errorHandler = (error) => {
   if (error.response) {
     const data = error.response.data
     // 从 localstorage 获取 token
+    // eslint-disable-next-line no-unused-vars
     const token = storage.get(ACCESS_TOKEN)
     if (error.response.status === 403) {
       notification.error({
@@ -47,7 +49,7 @@ request.interceptors.request.use(config => {
   // 如果 token 存在
   // 让每个请求携带自定义 token 请根据实际情况自行修改
   if (token) {
-    config.headers['Authorization'] = token
+    config.headers['Authorization'] = `Bearer ${token}`
   }
   return config
 }, errorHandler)

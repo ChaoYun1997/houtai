@@ -6,17 +6,17 @@
         type="error"
         showIcon
         style="margin-bottom: 24px;"
-        message="账户或密码错误（admin/ant.design )"
+        message="账户或密码或验证码错误"
       />
       <a-form-item>
         <a-input
           size="large"
           type="text"
-          placeholder="账户: admin"
+          placeholder="请输入帐户名"
           v-decorator="[
             'username',
             {
-              rules: [{ required: true, message: '请输入帐户名或邮箱地址' }, { validator: handleUsernameOrEmail }],
+              rules: [{ required: true, message: '请输入帐户名' }, { validator: handleUsernameOrEmail }],
               validateTrigger: 'change'
             }
           ]"
@@ -28,11 +28,33 @@
       <a-form-item>
         <a-input-password
           size="large"
-          placeholder="密码: admin or ant.design"
+          placeholder="请输入密码"
           v-decorator="['password', { rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur' }]"
         >
           <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }" />
         </a-input-password>
+      </a-form-item>
+      <a-form-item>
+        <a-row class="verify-code">
+          <a-col :span="12">
+            验证码
+          </a-col>
+          <a-col :span="12" class="img-box">
+            <img :src="authCode" alt="" @click="updateVerifyCode" />
+          </a-col>
+        </a-row>
+        <a-input
+          size="large"
+          type="text"
+          v-decorator="[
+            'code',
+            {
+              rules: [{ required: true, message: '请输入图片验证码' }],
+              validateTrigger: 'blur'
+            }
+          ]"
+          placeholder="请输入图片验证码"
+        />
       </a-form-item>
       <!--      <a-tabs-->
       <!--        :activeKey="customActiveKey"-->
@@ -90,8 +112,13 @@
 
       <a-form-item>
         <a-checkbox v-decorator="['rememberMe', { valuePropName: 'checked' }]">自动登录</a-checkbox>
-        <router-link :to="{ name: 'recover', params: { user: 'aaa' } }" class="forge-password" style="float: right;">忘记密码
-        </router-link>
+        <!--        <router-link-->
+        <!--          :to="{ name: 'recover' }"-->
+        <!--          class="forge-password"-->
+        <!--          style="float: right;"-->
+        <!--        >忘记密码-->
+        <!--        </router-link>-->
+        <a-button class="forge-password" type="link" @click="showFogPwd = true">忘记密码</a-button>
       </a-form-item>
 
       <a-form-item style="margin-top:24px">
@@ -101,7 +128,9 @@
           htmlType="submit"
           class="login-button"
           :loading="state.loginBtn"
-          :disabled="state.loginBtn">确定
+          :disabled="state.loginBtn"
+        >
+          确定
         </a-button>
       </a-form-item>
       <!--      <div class="user-login-other">-->
@@ -118,29 +147,69 @@
       <!--        <router-link class="register" :to="{ name: 'register' }">注册账户</router-link>-->
       <!--      </div>-->
     </a-form>
-
-    <two-step-captcha
-      v-if="requiredTwoStepCaptcha"
-      :visible="stepCaptchaVisible"
-      @success="stepCaptchaSuccess"
-      @cancel="stepCaptchaCancel"
-    ></two-step-captcha>
+    <a-modal title="忘记密码" v-model="showFogPwd">
+      <a-form ref="formPwd" :form="formPwd" @submit="submitPwd">
+        <a-form-item>
+          <a-input
+            type="text"
+            placeholder="请输入帐户名"
+            v-decorator="[
+              'userName',
+              {
+                rules: [{ required: true, message: '请输入帐户名' }],
+                validateTrigger: 'blur'
+              }
+            ]"
+          >
+            <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }" />
+          </a-input>
+        </a-form-item>
+        <a-form-item>
+          <a-input
+            placeholder="请输入密码"
+            v-decorator="['oldPwd', { rules: [{ required: true, message: '请输入旧密码' }], validateTrigger: 'blur' }]"
+          >
+            <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }" />
+          </a-input>
+        </a-form-item>
+        <a-form-item>
+          <a-input
+            placeholder="请输入新密码"
+            v-decorator="['newPwd', { rules: [{ required: true, message: '请输入新密码' }], validateTrigger: 'blur' }]"
+          >
+            <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }" />
+          </a-input>
+        </a-form-item>
+        <a-form-item>
+          <a-button
+            type="primary"
+            htmlType="submit"
+            class="login-button"
+          >
+            确定
+          </a-button>
+        </a-form-item>
+      </a-form>
+      <div slot="footer">
+      </div>
+    </a-modal>
+    <a-button @click="Logout">登出</a-button>
   </div>
 </template>
 
 <script>
-import md5 from 'md5'
-import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
+// import md5 from 'md5'
 import { mapActions } from 'vuex'
-import { timeFix } from '@/utils/util'
-import { getSmsCaptcha, get2step } from '@/api/login'
+import { timeFix, sha1 } from '@/utils/util'
+import { getCode } from '@/api/user'
 
 export default {
-  components: {
-    TwoStepCaptcha
-  },
   data() {
     return {
+      showFogPwd: false,
+      verifyCode: '',
+      authCode: '',
+      codeSession: '',
       customActiveKey: 'tab1',
       loginBtn: false,
       // login type: 0 email, 1 username, 2 telephone
@@ -149,6 +218,7 @@ export default {
       requiredTwoStepCaptcha: false,
       stepCaptchaVisible: false,
       form: this.$form.createForm(this),
+      formPwd: this.$form.createForm(this),
       state: {
         time: 60,
         loginBtn: false,
@@ -159,17 +229,28 @@ export default {
     }
   },
   created() {
-    get2step({})
-      .then(res => {
-        this.requiredTwoStepCaptcha = res.result.stepCode
-      })
-      .catch(() => {
-        this.requiredTwoStepCaptcha = false
-      })
-    // this.requiredTwoStepCaptcha = true
+    this.loadVerifyCode()
   },
   methods: {
-    ...mapActions(['Login', 'Logout']),
+    ...mapActions(['Login', 'Logout', 'UpdatePwd']),
+    loadVerifyCode() {
+      getCode().then(res => {
+        this.authCode = res.data.imgData
+        this.codeSession = res.data.session
+      })
+    },
+    submitPwd() {
+      console.log('忘记密码')
+      const {
+        form: { validateFields }
+      } = this
+      validateFields((err, values) => {
+        console.log(err, values)
+      })
+    },
+    updateVerifyCode() {
+      this.loadVerifyCode()
+    },
     // handler
     handleUsernameOrEmail(rule, value, callback) {
       const { state } = this
@@ -193,20 +274,27 @@ export default {
         customActiveKey,
         Login
       } = this
-
       state.loginBtn = true
 
-      const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password'] : ['mobile', 'captcha']
+      const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password', 'code'] : ['mobile', 'captcha']
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
-          console.log('login form', values)
-          const loginParams = { ...values }
-          delete loginParams.username
-          loginParams[!state.loginType ? 'email' : 'username'] = values.username
-          loginParams.password = md5(values.password)
+          const loginParams = {
+            userName: values.username,
+            userPwd: sha1(values.password),
+            // userPwd: values.password,
+            code: values.code,
+            codeSession: this.codeSession
+          }
+          // delete loginParams.username
+          // loginParams[!state.loginType ? 'email' : 'username'] = values.username
+          // loginParams.password = md5(values.password)
           Login(loginParams)
-            .then(res => this.loginSuccess(res))
+            .then(res => {
+              console.log(res)
+              this.loginSuccess(res)
+            })
             .catch(err => this.requestFailed(err))
             .finally(() => {
               state.loginBtn = false
@@ -215,45 +303,6 @@ export default {
           setTimeout(() => {
             state.loginBtn = false
           }, 600)
-        }
-      })
-    },
-    getCaptcha(e) {
-      e.preventDefault()
-      const {
-        form: { validateFields },
-        state
-      } = this
-
-      validateFields(['mobile'], { force: true }, (err, values) => {
-        if (!err) {
-          state.smsSendBtn = true
-
-          const interval = window.setInterval(() => {
-            if (state.time-- <= 0) {
-              state.time = 60
-              state.smsSendBtn = false
-              window.clearInterval(interval)
-            }
-          }, 1000)
-
-          const hide = this.$message.loading('验证码发送中..', 0)
-          getSmsCaptcha({ mobile: values.mobile })
-            .then(res => {
-              setTimeout(hide, 2500)
-              this.$notification['success']({
-                message: '提示',
-                description: '验证码获取成功，您的验证码为：' + res.result.captcha,
-                duration: 8
-              })
-            })
-            .catch(err => {
-              setTimeout(hide, 1)
-              clearInterval(interval)
-              state.time = 60
-              state.smsSendBtn = false
-              this.requestFailed(err)
-            })
         }
       })
     },
@@ -293,7 +342,7 @@ export default {
       this.isLoginError = true
       this.$notification['error']({
         message: '错误',
-        description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
+        description: (err.response || {}).data || err.msg || '请求出现错误，请稍后再试',
         duration: 4
       })
     }
@@ -344,6 +393,16 @@ export default {
 
     .register {
       float: right;
+    }
+  }
+}
+.verify-code {
+  margin-bottom: 10px;
+  .img-box {
+    display: flex;
+    justify-content: flex-end;
+    img {
+      cursor: pointer;
     }
   }
 }

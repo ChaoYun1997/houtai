@@ -351,7 +351,7 @@
 </template>
 
 <script>
-import { getSku, getProducts, getProductCategory } from '@/api/products'
+import { getProducts, getProductCategory } from '@/api/products'
 import { getKeyword } from '@/api/keyword'
 import { getArticles, articleCategory } from '@/api/article'
 import sortableJS from 'sortablejs'
@@ -628,11 +628,11 @@ export default {
         })
       }
     },
-    loadSku() {
-      getSku().then(res => {
-        this.skuList = res.result.data
-      })
-    },
+    // loadSku() {
+    //   getSku().then(res => {
+    //     this.skuList = res.result.data
+    //   })
+    // },
     categoryLabel(id) {
       const cate = this.categoryOptions.find(item => {
         return item.id === id

@@ -28,12 +28,13 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="产品分类">
-                <a-select v-model="queryParam.catId" placeholder="请选择" default-value="0">
+                <a-select placeholder="请选择" default-value="0" @change="handleCateSelected">
                   <a-select-option value="0">全部</a-select-option>
-                  <a-select-option value="1">abc</a-select-option>
-                  <a-select-option value="2">efg</a-select-option>
-                  <a-select-option value="3">hjk</a-select-option>
-                  <a-select-option value="4">zxv</a-select-option>
+                  <template v-for="(item, index) in category">
+                    <a-select-option :value="item.id" :key="index">
+                      {{ item.catName }}
+                    </a-select-option>
+                  </template>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -44,7 +45,7 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="更新日期">
-                <a-date-picker v-model="queryParam.updateDate" style="width: 100%" placeholder="请输入更新日期" />
+                <a-date-picker @change="handleDate" style="width: 100%" placeholder="请输入更新日期" />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
@@ -114,21 +115,12 @@
       </a-card>
     </div>
     <a-card :bordered="false">
-      <s-table
-        ref="table"
-        size="default"
-        rowKey="id"
-        :columns="columns"
-        :data="loadData"
-        :alert="true"
-        :rowSelection="rowSelection"
-        showPagination="auto"
-      >
+      <a-table :row-key="record => record.id" :columns="columns" :data-source="productList" :loading="listLoading">
         <div class="cover" slot="shopImg" slot-scope="shopImg">
           <img :src="shopImg" alt="" />
         </div>
-        <div slot="isShelve" slot-scope="isShelve">
-          <a-switch :checked="isShelve" @change="onSwitchChange" />
+        <div slot="shelve" slot-scope="text, record">
+          <a-switch :checked="checkIsShelve(record.isShelve)" @change="checked => onSwitchChange(checked, record.id)" />
         </div>
 
         <span slot="shopTags" slot-scope="shopTags">
@@ -147,7 +139,7 @@
           <a-button icon="share-alt" size="small" @click="share(id)" />
           <a-button icon="eye" size="small" @click="preview(record.shopUrl)" />
         </div>
-      </s-table>
+      </a-table>
     </a-card>
     <a-modal v-model="visibleUploadXls" title="导入产品">
       <p>
@@ -193,8 +185,11 @@
 </template>
 
 <script>
+// eslint-disable-next-line no-unused-vars
+import moment from 'moment'
 import STable from '@/components/Table'
-import { getProducts, getProductCategory, setCategory, delProduct, sellAction } from '@/api/products'
+import { getProducts, delProduct, updateProp } from '@/api/products'
+import { getProductCate } from '@/api/category'
 import * as XLSX from 'xlsx'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
@@ -236,7 +231,7 @@ const columns = [
     dataIndex: 'isShelve',
     sorter: true,
     scopedSlots: {
-      customRender: 'isShelve'
+      customRender: 'shelve'
     }
   },
   {
@@ -269,15 +264,12 @@ export default {
       category: [],
       categoryCheckList: [],
       showCategory: false,
-      queryParam: {},
-      loadData: param => {
-        param = Object.assign(param, this.queryParam)
-        console.log(`params is : ${param}`)
-        return getProducts(param).then(res => {
-          console.log(`data is : ${res.result}`)
-          return res.result
-        })
+      queryParam: {
+        pageIndex: 1,
+        pageSize: 10
       },
+      productList: [],
+      listLoading: true,
       selectedRowKeys: [],
       selectedRows: [],
       tagOptions,
@@ -290,9 +282,8 @@ export default {
     }
   },
   created() {
-    getProductCategory().then(res => {
-      this.category = res.result.data
-    })
+    this.loadCateData()
+    this.loadProductData()
   },
   computed: {
     rowSelection() {
@@ -303,6 +294,30 @@ export default {
     }
   },
   methods: {
+    moment,
+    checkIsShelve(shelve) {
+      return shelve
+    },
+    loadCateData() {
+      const params = {
+        pageIndex: 1,
+        pageSize: 50
+      }
+      getProductCate(params).then(res => {
+        console.log(res)
+        this.category = res.data.datas
+      })
+    },
+    loadProductData() {
+      this.listLoading = true
+      getProducts(this.queryParam)
+        .then(res => {
+          this.productList = res.data.datas
+        })
+        .finally(() => {
+          this.listLoading = false
+        })
+    },
     downloadXls() {
       const host = window.location.host
       window.open(host + '/files/productTemplate.xls')
@@ -378,18 +393,27 @@ export default {
       this.selectedRows = selectedRows
     },
     // 上下架操作
-    onSwitchChange(result, id) {
+    onSwitchChange(checked, id) {
       this.$confirm({
-        content: result ? '你确定要上架该产品吗？' : '你确定要下架该产品吗？',
+        content: checked ? '你确定要上架该产品吗？' : '你确定要下架该产品吗？',
         onOk: () => {
-          this.handelSellAction()
+          this.handleBatchAction('IsShelve', checked, [id])
         }
       })
     },
-    handelSellAction(id) {
-      sellAction({ id }).then(res => {
-        if (res.result.data === 'success') this.$message.success('操作成功')
-        this.$refs.table.refresh()
+    /**
+     * 批量操作
+     * @param prop
+     * @param bool
+     * @param id
+     */
+    handleBatchAction(prop, bool, id) {
+      const params = {
+        propName: prop,
+        value: bool
+      }
+      updateProp(params, id).then(res => {
+        console.log(res)
       })
     },
     // 编辑文章
@@ -427,29 +451,48 @@ export default {
     handleMenuClick(value) {
       if (!this.checkSelected()) return
       console.log(this.batchValue, value)
-      const ids = this.selectedRows.map(item => {
+      const IDs = this.selectedRows.map(item => {
         return item.id
       })
-      // TODO 接入批量操作
-      switch (value.key) {
-        case '上架':
-          this.handelSellAction(ids)
-          break
+      const actions = {
+        上架: ['IsShelve', true],
+        下架: ['IsShelve', false],
+        设为最新: ['IsNew', true],
+        取消最新: ['IsNew', false],
+        设为推荐: ['IsRecommend', true],
+        取消推荐: ['IsRecommend', false],
+        设为热销: ['IsHot', true],
+        取消热销: ['IsHot', false]
       }
+      this.handleBatchAction(actions[value.key][0], actions[value.key][1], IDs)
+    },
+    // 选择分类
+    handleCateSelected(value) {
+      console.log(value)
+      this.queryParam.catId = value
     },
     // 切换产品查询状态
     handleStatusSelect(value) {
-      this.queryParam.isShelve = value === 1
+      this.queryParam.isShelve = parseInt(value) === 1
+    },
+    handleDate(value) {
+      if (value) {
+        this.queryParam.updateDate = value.format()
+      }
     },
     // 查询
     handleQuery() {
       console.log(this.queryParam)
-      this.$refs.table.refresh(true)
+      this.loadProductData()
+      // this.$refs.table.refresh(true)
     },
     // 重置查询
     handleReset() {
-      this.queryParam = {}
-      this.$refs.table.refresh(true)
+      this.queryParam = {
+        pageIndex: 1,
+        pageSize: 10
+      }
+      this.loadProductData()
     },
     checkSelected() {
       if (this.selectedRowKeys.length === 0) {
@@ -466,14 +509,18 @@ export default {
     // 批量设置分类
     handleSetCategory() {
       // TODO 接入设置分类接口
-      setCategory().then(res => {
-        const result = res.result
-        if (result.data === 'success') {
-          this.$message.success('操作成功')
-          this.showCategory = false
-          this.category = []
-        }
+      const IDs = this.selectedRows.map(item => {
+        return item.id
       })
+      this.handleBatchAction('ItemCatId', this.categoryCheckList, IDs)
+      // setCategory().then(res => {
+      //   const result = res.result
+      //   if (result.data === 'success') {
+      //     this.$message.success('操作成功')
+      //     this.showCategory = false
+      //     this.category = []
+      //   }
+      // })
     },
     // 批量删除
     handleDel() {

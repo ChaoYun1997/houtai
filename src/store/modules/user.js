@@ -60,7 +60,8 @@ const user = {
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        if (!state.info.userName) {
+        console.log(state.name)
+        if (!state.name) {
           commit('SET_NAME', { name: state.info.userName, welcome: welcome() })
           commit('SET_UID', state.info.uid)
           resolve()
@@ -133,6 +134,9 @@ const user = {
           })
           .finally(() => {
             commit('SET_TOKEN', '')
+            commit('SET_INFO', {})
+            commit('SET_NAME', '')
+            commit('SET_UID', '')
             // commit('SET_ROLES', [])
             storage.remove(ACCESS_TOKEN)
           })

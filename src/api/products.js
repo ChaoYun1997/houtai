@@ -1,194 +1,98 @@
 import request from '@/utils/request'
 
 const productsApi = {
-  list: '/shop/shops', // 产品列表
-  addProduct: '/shop/push', // 发布产品
-  updateProduct: '/shop/updateShop', // 更新产品
-  detail: '/shop/shop', // 产品详情
-  updateProperty: '/shop/updateProp', // 更新产品字段
-  updateSort: '/shop/updateSort', // 更新产品排序
-  batchAddProduct: '/batchAddProduct',
-  delProduct: '/delProduct',
-  sellAction: '/sellAction',
-  productCategory: '/productCategory',
-  setCategory: '/setCategory',
-  addProductCategory: '/addProductCategory',
-  delProductCategory: '/delProductCategory',
-  batchCategory: '/batchCategory',
-  fieldManage: '/fieldManage',
-  addFieldManage: '/addFieldManage',
-  delFieldManage: '/delFieldManage',
-  setWatermark: '/setWatermark',
-  updateWatermark: '/updateWatermark',
-  unremoveProducts: '/unremoveProducts',
-  removeProducts: '/shop/delShop', // 彻底删除产品
-  skuList: '/skuList'
-}
-
-// 获取产品SKU列表
-export function getSku(param) {
-  return request({
-    url: productsApi.skuList,
-    method: 'get',
-    params: param
-  })
+  List: '/shop/shops', // 产品列表
+  AddProduct: '/shop/push', // 发布产品
+  AppendToCate: '/shop/AppendToCat', // 添加到分类
+  UpdateProduct: '/shop/updateShop', // 更新产品
+  Detail: '/shop/shop', // 产品详情
+  UpdateProperty: '/shop/updateProp', // 更新产品字段
+  UpdateSort: '/shop/updateSort', // 更新产品排序
+  DelProduct: '/shop/delShop', // 彻底删除产品
+  UpdateCate: '/shop/updateCatid', // 更新、移动分类
+  GetUploadSign: '/shop/getUploadSign', // 获取七牛上传凭证
+  GetProductCate: '/shop/getNames' // 获取产品分类列表
 }
 
 // 获取产品列表
 export function getProducts(param) {
   return request({
-    url: productsApi.list,
-    method: 'get',
-    params: param
+    url: productsApi.List,
+    method: 'post',
+    data: param
   })
 }
 
 // 新增产品
 export function addProduct(param) {
   return request({
-    url: productsApi.addProduct,
+    url: productsApi.AddProduct,
     method: 'post',
     data: param
   })
 }
 
-// 批量新增产品
-export function batchAddProduct(param) {
+// 添加到分类
+export function appendToCate(param) {
   return request({
-    url: productsApi.batchAddProduct,
+    url: productsApi.AppendToCate,
     method: 'post',
-    data: param
-  })
-}
-
-// 删除产品
-export function delProduct(param) {
-  return request({
-    url: productsApi.delProduct,
-    method: 'post',
-    data: param
+    params: param
   })
 }
 
 // 更新产品
 export function updateProduct(param) {
   return request({
-    url: productsApi.updateProduct,
+    url: productsApi.UpdateProduct,
     method: 'post',
     data: param
   })
 }
 
-// 上下架操作
-export function sellAction(param) {
+// 产品详情
+export function getProductDetail(param) {
   return request({
-    url: productsApi.sellAction,
+    url: productsApi.Detail,
+    method: 'get',
+    params: param
+  })
+}
+
+// 更新产品字段,IsHot:是否热销,IsNew:是否最新,IsDel:是否放入回收站,IsShelve:是否上架,ItemCatId:类目ID,IsRecommend:是否推荐
+export function updateProp(param, id) {
+  return request({
+    url: productsApi.UpdateProperty,
+    method: 'post',
+    params: param,
+    data: id
+  })
+}
+
+// 更新产品排序
+export function updateSort(param) {
+  return request({
+    url: productsApi.UpdateSort,
     method: 'post',
     data: param
   })
 }
 
-// 设置产品分类
-export function setCategory(params) {
+/** 删除产品 IsDel:是否放入回收站
+ * propName: IsDel
+ * value: true
+ * Data:[
+ * id
+ * ]
+ * */
+export function delProduct(param) {
   return request({
-    url: productsApi.setCategory,
+    url: productsApi.UpdateProperty,
     method: 'post',
-    data: params
-  })
-}
-
-// 获取产品分类
-export function getProductCategory() {
-  return request({
-    url: productsApi.productCategory,
-    method: 'get'
-  })
-}
-
-// 添加产品分类
-export function addProductCategory(param) {
-  return request({
-    url: productsApi.addProductCategory,
-    method: 'post',
-    data: param
-  })
-}
-
-// 删除产品分类
-export function delProductCategory(param) {
-  return request({
-    url: productsApi.delProductCategory,
-    method: 'post',
-    data: param
-  })
-}
-
-// 批量编辑产品分类
-export function batchEditProductCategory(param) {
-  return request({
-    url: productsApi.batchCategory,
-    method: 'post',
-    data: param
-  })
-}
-
-// 获取自定义字段
-export function fieldManage() {
-  return request({
-    url: productsApi.fieldManage,
-    method: 'get'
-  })
-}
-
-// 新增自定义字段
-export function addFieldManage(param) {
-  return request({
-    url: productsApi.addFieldManage,
-    method: 'post',
-    data: param
-  })
-}
-
-// 删除自定义字段
-export function delFieldManage(param) {
-  return request({
-    url: productsApi.delFieldManage,
-    method: 'post',
-    data: param
-  })
-}
-
-// 水印开关
-export function setWatermark(param) {
-  return request({
-    url: productsApi.setWatermark,
-    method: 'post',
-    data: param
-  })
-}
-
-// 添加水印
-export function updateWatermark(param) {
-  return request({
-    url: productsApi.updateWatermark,
-    method: 'post',
-    data: param
-  })
-}
-
-// 获取产品回收站
-export function getProductRecycleBin() {
-  return request({
-    url: productsApi.updateWatermark,
-    method: 'get'
-  })
-}
-
-// 恢复产品
-export function unremoveProducts(param) {
-  return request({
-    url: productsApi.unremoveProducts,
-    method: 'post',
+    params: {
+      propName: 'IsDel',
+      value: true
+    },
     data: param
   })
 }
@@ -196,8 +100,44 @@ export function unremoveProducts(param) {
 // 彻底删除产品
 export function removeProducts(param) {
   return request({
-    url: productsApi.removeProducts,
-    method: 'post',
-    data: param
+    url: productsApi.DelProduct,
+    method: 'get',
+    params: param
   })
+}
+
+// 更新、移动分类
+export function updateCate(param) {
+  return request({
+    url: productsApi.UpdateCate,
+    method: 'post',
+    params: param
+  })
+}
+
+// 获取七牛上传凭证
+export function getUploadSign(param) {
+  return request({
+    url: productsApi.GetUploadSign,
+    method: 'get',
+    params: param
+  })
+}
+
+// 批量新增产品
+export function batchAddProduct() {
+}
+
+// 获取产品分类
+export function getProductCategory(param) {
+  return request({
+    url: productsApi.GetProductCate,
+    method: 'get',
+    params: param
+  })
+}
+
+// 批量设置分类
+export function setCategory() {
+
 }
