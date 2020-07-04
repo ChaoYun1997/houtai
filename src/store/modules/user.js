@@ -60,7 +60,6 @@ const user = {
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        console.log(state.name)
         if (!state.name) {
           commit('SET_NAME', { name: state.info.userName, welcome: welcome() })
           commit('SET_UID', state.info.uid)

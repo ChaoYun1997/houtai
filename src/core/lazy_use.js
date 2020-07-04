@@ -30,6 +30,7 @@ import {
   Breadcrumb,
   Steps,
   Spin,
+  Slider,
   Menu,
   Drawer,
   Tooltip,
@@ -103,6 +104,7 @@ Vue.use(PageHeader)
 Vue.use(Result)
 Vue.use(Statistic)
 Vue.use(Descriptions)
+Vue.use(Slider)
 
 Vue.prototype.$confirm = Modal.confirm
 Vue.prototype.$message = message

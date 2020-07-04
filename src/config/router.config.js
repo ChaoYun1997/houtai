@@ -58,12 +58,6 @@ export const asyncRouterMap = [
         meta: { title: '产品', icon: appStore },
         children: [
           {
-            path: '/products/test',
-            name: 'test',
-            component: () => import('@/views/products/Test'),
-            meta: { title: 'test', keepAlive: true }
-          },
-          {
             path: '/products/product-list/:pageNo([1-9]\\d*)?',
             name: 'TableListWrapper',
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
@@ -88,25 +82,23 @@ export const asyncRouterMap = [
             component: () => import('@/views/products/CatetoryDetail'),
             meta: { title: '添加产品分类', keepAlive: true, permission: ['table'] }
           },
-          {
-            path: '/products/field-manage',
-            name: 'fieldManage',
-            component: () => import('@/views/list/search/SearchLayout'),
-            redirect: '/list/search/article',
-            meta: { title: '管理自定义字段', keepAlive: true, permission: ['table'] }
-          },
+          // {
+          //   path: '/products/field-manage',
+          //   name: 'fieldManage',
+          //   component: () => import('@/views/list/search/SearchLayout'),
+          //   redirect: '/list/search/article',
+          //   meta: { title: '管理自定义字段', keepAlive: true, permission: ['table'] }
+          // },
           {
             path: '/products/watermark',
             name: 'watermark',
-            component: () => import('@/views/list/search/SearchLayout'),
-            redirect: '/list/search/article',
+            component: () => import('@/views/products/Watermark'),
             meta: { title: '设置水印', keepAlive: true, permission: ['table'] }
           },
           {
             path: '/products/recycle-bin',
             name: 'productsRecycleBin',
-            component: () => import('@/views/list/search/SearchLayout'),
-            redirect: '/list/search/article',
+            component: () => import('@/views/products/RecycleBin'),
             meta: { title: '产品回收站', keepAlive: true, permission: ['table'] }
           }
         ]

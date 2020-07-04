@@ -62,7 +62,7 @@
             - 频繁修改详情URL直接影响SEO效果，请仔细斟酌后再提交。
           </p>
         </a-form-model-item>
-        <a-form-model-item label="选择文章分类位置" prop="articlePosition">
+        <a-form-model-item label="选择分类位置" prop="productPosition">
           <a-tree @select="onSelect" default-expand-all :selectedKeys="selectedK">
             <a-icon slot="switcherIcon" type="down" />
             <a-tree-node key="0-0" title="所有分类">
@@ -72,6 +72,62 @@
             </a-tree-node>
           </a-tree>
         </a-form-model-item>
+        <a-form-model-item label="产品分类图片">
+          <div class="img-box">
+            <a-upload class="btn" :file-list="fileList" :remove="handleRemove" :before-upload="beforeUpload">
+              <a-button> <a-icon type="upload" /> 选择文件 </a-button>
+            </a-upload>
+            <a-button
+              class="btn"
+              type="primary"
+              :disabled="fileList.length === 0"
+              :loading="uploading"
+              @click="handleUpload"
+            >
+              {{ uploading ? '上传中' : '开始上传' }}
+            </a-button>
+          </div>
+        </a-form-model-item>
+        <a-form-model-item label="产品描述">
+          <kind-editor ref="kindeditor" @input="getContent"></kind-editor>
+        </a-form-model-item>
+        <h5>指向页面</h5>
+        <b>设置分类指向页面</b>
+        <p>
+
+          <a-select default-value="lucy" style="width: 120px" @change="handleChange">
+            <a-select-option value="jack">
+              Jack
+            </a-select-option>
+            <a-select-option value="lucy">
+              Lucy
+            </a-select-option>
+            <a-select-option value="disabled" disabled>
+              Disabled
+            </a-select-option>
+            <a-select-option value="Yiminghe">
+              yiminghe
+            </a-select-option>
+          </a-select>
+        </p>
+        <b>设置详情指向页面</b>
+        <p>
+
+          <a-select default-value="lucy" style="width: 120px" @change="handleChange">
+            <a-select-option value="jack">
+              Jack
+            </a-select-option>
+            <a-select-option value="lucy">
+              Lucy
+            </a-select-option>
+            <a-select-option value="disabled" disabled>
+              Disabled
+            </a-select-option>
+            <a-select-option value="Yiminghe">
+              yiminghe
+            </a-select-option>
+          </a-select>
+        </p>
         <a-form-model-item>
           <a-button type="primary" @click="handleSubmit">提交</a-button>
         </a-form-model-item>
@@ -83,17 +139,25 @@
 <script>
 import sortableJS from 'sortablejs'
 import { getProductCategory } from '@/api/products'
+import KindEditor from '@/components/Kindeditor'
 
 export default {
   name: 'CatetoryDetail',
+  components: {
+    KindEditor
+  },
   data() {
     return {
+      fileList: [],
+      uploading: false,
+
       selectedK: [],
       labelCol: { span: 4 },
       wrapperCol: { span: 18 },
       showSeo: false,
       customUrl: '',
       category: [],
+      content: '',
       form: {
         name: '',
         urlValue: 'a',
@@ -143,18 +207,46 @@ export default {
   methods: {
     loadProductCate() {
       getProductCategory().then(res => {
-        this.category = res.result.data.map(item => {
+        this.category = res.data.datas.map(item => {
           return {
-            name: item.catName,
-            id: item.id
+            name: item.name,
+            id: item.value
           }
         })
-        console.log(this.category)
       })
     },
     onSelect(selectedKeys, info) {
       console.log(selectedKeys, info)
       this.selectedK = selectedKeys
+    },
+    handleRemove(file) {
+      const index = this.fileList.indexOf(file)
+      const newFileList = this.fileList.slice()
+      newFileList.splice(index, 1)
+      this.fileList = newFileList
+    },
+    beforeUpload(file) {
+      this.fileList = [...this.fileList, file]
+      return false
+    },
+    handleUpload() {
+      const { fileList } = this
+      const formData = new FormData()
+      fileList.forEach(file => {
+        formData.append('files[]', file)
+      })
+      this.uploading = true
+
+      // You can use any AJAX library you like
+      // TODO 上传图片
+    },
+    // 获取编辑器内容
+    getContent(content) {
+      console.log('content', content)
+      this.content = content
+    },
+    handleChange(value) {
+      console.log(`selected ${value}`)
     },
     // 提交产品表单
     handleSubmit() {

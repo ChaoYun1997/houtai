@@ -2,7 +2,7 @@
   <page-header-wrapper>
     <a-card :bordered="false">
       <div slot="title">
-        <a-button type="primary" icon="plus" @click="$router.push('/products/add-product')">
+        <a-button type="primary" icon="plus" @click="$router.push('/products/add-category')">
           新增产品分类
         </a-button>
         <a-button :style="{ marginLeft: '8px' }" icon="plus" @click="visibleUploadXls = true">
@@ -14,20 +14,37 @@
       </div>
     </a-card>
     <a-card>
-      <a-table
-        bordered
-        :data-source="category"
+      <s-table
+        ref="table"
+        size="default"
+        :rowKey="record => record.id"
         :columns="cateColumns"
-        row-key="id"
-        :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+        :data="loadCateData"
+        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
         <a slot="catname" slot-scope="text">{{ text }}</a>
         <div class="action" slot="action" slot-scope="text, record">
           <a-button type="primary" icon="edit" size="small" @click="edit(record.id)" />
           <a-button type="danger" icon="delete" size="small" @click="del(id)" />
-          <a-button icon="eye" size="small" @click="preview(record.shopUrl)" />
+          <a-button icon="eye" size="small" @click="preview(record.catUrl)" />
         </div>
-      </a-table>
+      </s-table>
+
+      <!--      <a-table-->
+      <!--        bordered-->
+      <!--        :data-source="category"-->
+      <!--        :columns="cateColumns"-->
+      <!--        :row-key="record => record.id"-->
+      <!--        :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"-->
+      <!--        :pagination="pagination"-->
+      <!--      >-->
+      <!--        <a slot="catname" slot-scope="text">{{ text }}</a>-->
+      <!--        <div class="action" slot="action" slot-scope="text, record">-->
+      <!--          <a-button type="primary" icon="edit" size="small" @click="edit(record.id)" />-->
+      <!--          <a-button type="danger" icon="delete" size="small" @click="del(id)" />-->
+      <!--          <a-button icon="eye" size="small" @click="preview(record.shopUrl)" />-->
+      <!--        </div>-->
+      <!--      </a-table>-->
     </a-card>
     <a-modal v-model="visibleUploadXls" title="导入产品">
       <p>
@@ -66,7 +83,10 @@
 </template>
 
 <script>
-import { getProductCategory } from '@/api/products'
+import STable from '@/components/Table'
+
+// import { getProductCategory } from '@/api/products'
+import { getProductCate } from '@/api/category'
 import * as XLSX from 'xlsx'
 const cateColumns = [
   {
@@ -78,7 +98,7 @@ const cateColumns = [
   },
   {
     title: '产品数',
-    dataIndex: 'shops'
+    dataIndex: 'itemCount'
   },
   {
     title: '分类URL',
@@ -86,11 +106,11 @@ const cateColumns = [
   },
   {
     title: '分类指向页面',
-    dataIndex: 'catPage'
+    dataIndex: 'catWebUrl'
   },
   {
     title: '详情指向页面',
-    dataIndex: 'catDetailPage'
+    dataIndex: 'catDescUrl'
   },
   {
     title: '操作',
@@ -102,13 +122,27 @@ const cateColumns = [
 ]
 export default {
   name: 'Category',
+  components: {
+    STable
+  },
+
   data() {
     this.cateColumns = cateColumns
     return {
       visibleUploadXls: false,
       fileList: [],
       selectedRowKeys: [],
-      category: []
+      category: [],
+      loadCateData: parameter => {
+        return getProductCate(Object.assign(parameter, this.queryParam))
+      },
+      queryParam: {
+        pageIndex: 1,
+        pageSize: 10
+      },
+      pagination: {
+        size: 'small'
+      }
     }
   },
   created() {
@@ -116,9 +150,8 @@ export default {
   },
   methods: {
     loadCategory() {
-      getProductCategory().then(res => {
-        console.log(res.result)
-        this.category = res.result.data
+      getProductCate(this.queryParam).then(res => {
+        this.category = res.data.datas
       })
     },
     downloadXls() {
@@ -183,14 +216,16 @@ export default {
     onSelectChange() {},
     edit() {},
     del() {},
-    preview() {}
+    preview(url) {
+      window.open(url)
+    }
   }
 }
 </script>
 
 <style scoped lang="less">
-.action{
-  button{
+.action {
+  button {
     margin-right: 5px;
   }
 }

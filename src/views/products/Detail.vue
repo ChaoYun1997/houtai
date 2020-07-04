@@ -224,7 +224,7 @@
         <!--        </a-form-model-item>-->
         <h3>产品描述</h3>
         <a-form-model-item label="产品描述">
-          <Kind-editor ref="kindeditor" @input="getContent"></Kind-editor>
+          <kind-editor ref="kindeditor" @input="getContent"></kind-editor>
         </a-form-model-item>
         <h3>产品状态</h3>
         <a-form-model-item label="产品状态">

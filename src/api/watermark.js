@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
 const watermarkApi = {
-  SaveWatermark: '/watermark/saveWatermark', // 关键词列表
-  Watermark: '/watermark/watermark', // 关键词分类
-  SetStatus: '/watermark/setState' // 新增关键词
+  SaveWatermark: '/watermark/saveWatermark', // 保存水印信息
+  Watermark: '/watermark/watermark', // 获取水印对象
+  SetStatus: '/watermark/setState' // 设置水印开关
 }
 
 // 保存水印
