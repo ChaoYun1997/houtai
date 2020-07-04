@@ -108,33 +108,38 @@ export const asyncRouterMap = [
         path: '/articles',
         name: 'articles',
         component: RouteView,
-        redirect: '/articles/table-list',
+        redirect: '/articles/article-list',
         meta: { title: '文章', icon: 'profile', permission: ['table'] },
         children: [
           {
-            path: '/articles/table-list/:pageNo([1-9]\\d*)?',
+            path: '/articles/article-list',
             name: 'articleManage',
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
-            component: () => import('@/views/list/TableList'),
+            component: () => import('@/views/article/List'),
             meta: { title: '文章管理', keepAlive: true, permission: ['table'] }
+          },
+          {
+            path: '/articles/sort',
+            name: 'addAriticleCategory',
+            component: () => import('@/views/article/Sort'),
+            meta: { title: '文章排序', keepAlive: true, permission: ['table'] }
           },
           {
             path: '/articles/basic-list',
             name: 'addArticle',
-            component: () => import('@/views/list/BasicList'),
+            component: () => import('@/views/article/Detail'),
             meta: { title: '添加文章', keepAlive: true, permission: ['table'] }
           },
           {
             path: '/articles/article-category',
             name: 'articleCategory',
-            component: () => import('@/views/list/CardList'),
+            component: () => import('@/views/article/Category'),
             meta: { title: '管理文章分类', keepAlive: true, permission: ['table'] }
           },
           {
-            path: '/articles/add-category',
+            path: '/articles/add-category/:id?',
             name: 'addAriticleCategory',
-            component: () => import('@/views/list/search/SearchLayout'),
-            redirect: '/list/search/article',
+            component: () => import('@/views/article/CategoryDetail'),
             meta: { title: '添加文章分类', keepAlive: true, permission: ['table'] }
           }
         ]

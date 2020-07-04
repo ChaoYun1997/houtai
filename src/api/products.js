@@ -23,6 +23,23 @@ export function getProducts(param) {
   })
 }
 
+// 获取产品列表
+export function getRecycleBin(param) {
+  return request({
+    url: productsApi.List,
+    method: 'post',
+    data: {
+      pageIndex: param.pageIndex,
+      pageSize: param.pageSize,
+      catId: param.catId,
+      isShelve: param.isShelve,
+      updateDate: param.updateDate,
+      keyWords: param.keyWords,
+      isDel: false
+    }
+  })
+}
+
 // 新增产品
 export function addProduct(param) {
   return request({
@@ -97,6 +114,19 @@ export function delProduct(param) {
   })
 }
 
+// 恢复产品
+export function restoreProduct(param) {
+  return request({
+    url: productsApi.UpdateProperty,
+    method: 'post',
+    params: {
+      propName: 'IsDel',
+      value: false
+    },
+    data: param
+  })
+}
+
 // 彻底删除产品
 export function removeProducts(param) {
   return request({
@@ -125,8 +155,7 @@ export function getUploadSign(param) {
 }
 
 // 批量新增产品
-export function batchAddProduct() {
-}
+export function batchAddProduct() {}
 
 // 获取产品分类
 export function getProductCategory(param) {
@@ -138,6 +167,4 @@ export function getProductCategory(param) {
 }
 
 // 批量设置分类
-export function setCategory() {
-
-}
+export function setCategory() {}
