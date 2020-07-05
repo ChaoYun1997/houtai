@@ -125,7 +125,6 @@ export default {
   components: {
     STable
   },
-
   data() {
     this.cateColumns = cateColumns
     return {

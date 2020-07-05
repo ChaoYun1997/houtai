@@ -94,49 +94,58 @@
         <h5>指向页面</h5>
         <b>设置分类指向页面</b>
         <p>
-
-          <a-select default-value="lucy" style="width: 120px" @change="handleChange">
-            <a-select-option value="jack">
-              Jack
-            </a-select-option>
-            <a-select-option value="lucy">
-              Lucy
-            </a-select-option>
-            <a-select-option value="disabled" disabled>
-              Disabled
-            </a-select-option>
-            <a-select-option value="Yiminghe">
-              yiminghe
-            </a-select-option>
+          <a-select style="width: 120px" :default-value="form.catWebUrl" @change="handleCatePageChange">
+            <template v-for="item in page">
+              <a-select-option :value="item.path" :key="item.name">
+                {{ item.name }}
+              </a-select-option>
+            </template>
           </a-select>
+          <a-button style="margin-left: 10px;" @click="showAddNewPage = true">新建页面</a-button>
         </p>
         <b>设置详情指向页面</b>
         <p>
-
-          <a-select default-value="lucy" style="width: 120px" @change="handleChange">
-            <a-select-option value="jack">
-              Jack
-            </a-select-option>
-            <a-select-option value="lucy">
-              Lucy
-            </a-select-option>
-            <a-select-option value="disabled" disabled>
-              Disabled
-            </a-select-option>
-            <a-select-option value="Yiminghe">
-              yiminghe
-            </a-select-option>
+          <a-select style="width: 120px" :default-value="form.catDescUrl" @change="handleDetailPageChange">
+            <template v-for="item in page">
+              <a-select-option :value="item.path" :key="item.name">
+                {{ item.name }}
+              </a-select-option>
+            </template>
           </a-select>
         </p>
         <a-form-model-item>
           <a-button type="primary" @click="handleSubmit">提交</a-button>
         </a-form-model-item>
       </a-form-model>
+      <a-modal v-model="showAddNewPage" title="添加新页面">
+        <a-row :gutter="[16, 24]">
+          <a-col :span="4">页面名称</a-col>
+          <a-col :span="20">
+            <a-input v-model="newPageName" placeholder="请输入页面名称"></a-input>
+          </a-col>
+          <a-col :span="4">路径URL</a-col>
+          <a-col :span="20">
+            <a-input v-model="newPagePath" placeholder="请输入路径URL，例如'/abc'"></a-input>
+          </a-col>
+        </a-row>
+        <div slot="footer">
+          <a-button @click="showAddNewPage = false">取消</a-button>
+          <a-button
+            type="primary"
+            style="margin-left: 10px;"
+            @click="handleAddNewPage"
+            :disabled="newPageName === '' || newPagePath === ''"
+          >
+            确定
+          </a-button>
+        </div>
+      </a-modal>
     </a-card>
   </page-header-wrapper>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
 import sortableJS from 'sortablejs'
 import { getProductCategory } from '@/api/products'
 import KindEditor from '@/components/Kindeditor'
@@ -148,6 +157,9 @@ export default {
   },
   data() {
     return {
+      showAddNewPage: false,
+      newPageName: '',
+      newPagePath: '',
       fileList: [],
       uploading: false,
 
@@ -175,7 +187,9 @@ export default {
           pageTitle: '',
           pageKeyword: '',
           pageDesc: ''
-        }
+        },
+        catWebUrl: '',
+        catDescUrl: ''
       },
       rules: {
         cate: [{ required: true, message: '请输入产品分类名称', trigger: 'blur' }],
@@ -183,8 +197,14 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState({
+      page: state => state.pages.page
+    })
+  },
   created() {
     this.loadProductCate()
+    console.log(`page: ${this.page}`)
   },
   mounted() {
     const that = this
@@ -205,6 +225,14 @@ export default {
     })
   },
   methods: {
+    ...mapMutations(['SET_PAGE']),
+    handleAddNewPage() {
+      this.SET_PAGE({
+        name: this.newPageName,
+        path: this.newPagePath
+      })
+      this.showAddNewPage = false
+    },
     loadProductCate() {
       getProductCategory().then(res => {
         this.category = res.data.datas.map(item => {
@@ -245,8 +273,13 @@ export default {
       console.log('content', content)
       this.content = content
     },
-    handleChange(value) {
+    handleCatePageChange(value) {
       console.log(`selected ${value}`)
+      this.form.catWebUrl = value
+    },
+    handleDetailPageChange(value) {
+      console.log(`selected ${value}`)
+      this.form.catDescUrl = value
     },
     // 提交产品表单
     handleSubmit() {
