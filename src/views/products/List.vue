@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <div class="table-page-search-wrapper">
-      <a-card :bordered="false">
+  <page-header-wrapper>
+    <a-card :bordered="false">
+      <div class="table-operator">
         <div slot="title">
           <a-button type="primary" icon="plus" @click="$router.push('/products/add-product')">
             新增产品
@@ -10,6 +10,8 @@
             批量导入
           </a-button>
         </div>
+      </div>
+      <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
@@ -112,10 +114,16 @@
             下载产品链接二维码
           </a-button>
         </div>
-      </a-card>
-    </div>
-    <a-card :bordered="false">
-      <a-table :row-key="record => record.id" :columns="columns" :data-source="productList" :loading="listLoading">
+      </div>
+      <s-table
+        ref="table"
+        size="default"
+        :rowKey="record => record.id"
+        :columns="columns"
+        :data="loadData"
+        :alert="true"
+        :rowSelection="rowSelection"
+      >
         <div class="cover" slot="shopImg" slot-scope="shopImg">
           <img :src="shopImg" alt="" />
         </div>
@@ -139,7 +147,37 @@
           <a-button icon="share-alt" size="small" @click="share(record.id)" />
           <a-button icon="eye" size="small" @click="preview(record.shopUrl)" />
         </div>
-      </a-table>
+      </s-table>
+      <!--      <a-table -->
+      <!--        :row-key="record => record.id" -->
+      <!--        :columns="columns" -->
+      <!--        :data-source="productList" -->
+      <!--        :loading="listLoading"-->
+      <!--      >-->
+      <!--        <div class="cover" slot="shopImg" slot-scope="shopImg">-->
+      <!--          <img :src="shopImg" alt="" />-->
+      <!--        </div>-->
+      <!--        <div slot="shelve" slot-scope="text, record">-->
+      <!--          <a-switch :checked="checkIsShelve(record.isShelve)" @change="checked => onSwitchChange(checked, record.id)" />-->
+      <!--        </div>-->
+
+      <!--        <span slot="shopTags" slot-scope="shopTags">-->
+      <!--          <a-tag-->
+      <!--            v-for="tag in shopTags"-->
+      <!--            :key="tag"-->
+      <!--            :color="tag === '热点产品' ? 'pink' : tag === '新产品' ? 'green' : 'orange'"-->
+      <!--          >-->
+      <!--            {{ tag }}-->
+      <!--          </a-tag>-->
+      <!--        </span>-->
+      <!--        <div class="action" slot="action" slot-scope="text, record">-->
+      <!--          <a-button type="primary" icon="edit" size="small" @click="edit(record.id)" />-->
+      <!--          <a-button type="primary" icon="copy" size="small" @click="copy(record.id)" />-->
+      <!--          <a-button type="danger" icon="delete" size="small" :loading="delLoading" @click="del(record.id)" />-->
+      <!--          <a-button icon="share-alt" size="small" @click="share(record.id)" />-->
+      <!--          <a-button icon="eye" size="small" @click="preview(record.shopUrl)" />-->
+      <!--        </div>-->
+      <!--      </a-table>-->
     </a-card>
     <a-modal v-model="visibleUploadXls" title="导入产品">
       <p>
@@ -181,7 +219,7 @@
         <a-button @click="showCategory = false">取 消</a-button>
       </div>
     </a-modal>
-  </div>
+  </page-header-wrapper>
 </template>
 
 <script>
@@ -268,6 +306,10 @@ export default {
         pageIndex: 1,
         pageSize: 10
       },
+      loadData: parameter => {
+        parameter = Object.assign(parameter, this.queryParam)
+        return getProducts(parameter)
+      },
       productList: [],
       listLoading: true,
       selectedRowKeys: [],
@@ -283,7 +325,7 @@ export default {
   },
   created() {
     this.loadCateData()
-    this.loadProductData()
+    // this.loadProductData()
   },
   computed: {
     rowSelection() {

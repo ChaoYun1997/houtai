@@ -1,66 +1,75 @@
 <template>
   <page-header-wrapper>
-    <div class="table-page-search-wrapper">
-      <a-form layout="inline">
-        <a-row :gutter="48">
-          <a-col :md="8" :sm="24">
-            <a-form-item label="询盘来源">
-              <a-select @change="handleSourceSelect" placeholder="请选择" default-value="0">
-                <a-select-option value="0">Contact Us</a-select-option>
-                <a-select-option value="1">Product Enquiry</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="来源终端">
-              <a-select @change="handleDeviceSelect" placeholder="请选择" default-value="0">
-                <a-select-option value="0">Android</a-select-option>
-                <a-select-option value="1">Iphone/Ipad</a-select-option>
-                <a-select-option value="2">PC</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="跟进状态">
-              <a-select @change="handleStatusSelect" placeholder="请选择" default-value="0">
-                <a-select-option value="0">待沟通</a-select-option>
-                <a-select-option value="1">沟通中</a-select-option>
-                <a-select-option value="2">放弃</a-select-option>
-                <a-select-option value="3">成单</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="国家地区">
-              <a-select placeholder="请选择" default-value="0" @change="handleCountrySelected">
-                <a-select-option value="0">全部</a-select-option>
-                <template v-for="(item, index) in country">
-                  <a-select-option :value="item" :key="index">
-                    {{ item }}
-                  </a-select-option>
-                </template>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="更新日期">
-              <a-range-picker @change="onChange" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-button type="primary" @click="handleQuery">查询</a-button>
-            <a-button style="margin-left: 8px" @click="handleReset">重置</a-button>
-          </a-col>
-        </a-row>
-      </a-form>
-    </div>
-    <a-card>
+    <a-card :bordered="false">
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="询盘来源">
+                <a-select @change="handleSourceSelect" placeholder="请选择" default-value="0">
+                  <a-select-option value="0">请选择询盘来源</a-select-option>
+                  <a-select-option value="1">Contact Us</a-select-option>
+                  <a-select-option value="3">Product Enquiry</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <a-form-item label="来源终端">
+                <a-select @change="handleDeviceSelect" placeholder="请选择" default-value="0">
+                  <a-select-option value="0">请选择来源终端</a-select-option>
+                  <a-select-option value="1">Android</a-select-option>
+                  <a-select-option value="2">Iphone/Ipad</a-select-option>
+                  <a-select-option value="3">PC</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <a-form-item label="跟进状态">
+                <a-select @change="handleStatusSelect" placeholder="请选择" default-value="0">
+                  <a-select-option value="0">请选择询盘状态</a-select-option>
+                  <a-select-option value="1">待沟通</a-select-option>
+                  <a-select-option value="2">沟通中</a-select-option>
+                  <a-select-option value="3">放弃</a-select-option>
+                  <a-select-option value="4">成单</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <a-form-item label="国家地区">
+                <a-select placeholder="请选择" default-value="0" @change="handleCountrySelected">
+                  <a-select-option value="0">全部</a-select-option>
+                  <template v-for="(item, index) in country">
+                    <a-select-option :value="item" :key="index">
+                      {{ item }}
+                    </a-select-option>
+                  </template>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <a-form-item label="更新日期">
+                <a-range-picker @change="onChange" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <a-button type="primary" @click="handleQuery">查询</a-button>
+              <a-button style="margin-left: 8px" @click="handleReset">重置</a-button>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
+
+      <div class="table-operator">
+        <a-button @click="handleRestore">恢复询盘</a-button>
+        <a-button @click="handleRemove">彻底删除</a-button>
+      </div>
       <s-table
         ref="table"
         size="default"
         :rowKey="record => record.id"
         :columns="columns"
         :data="loadData"
+        :alert="true"
         :rowSelection="rowSelection"
       >
         <template slot="content" slot-scope="text, record">
@@ -70,7 +79,7 @@
           <img class="country-flag" :src="flags[text]" alt="" />
         </template>
         <template slot="action" slot-scope="text, record">
-          <a-button type="link" size="small">查看</a-button>
+          <a-button type="link" size="small" @click="restore(record.enquiryId)">恢复</a-button>
           <a-popconfirm title="确定要删除该数据吗?" @confirm="del(record.enquiryId)">
             <a-button type="link" size="small">删除</a-button>
           </a-popconfirm>
@@ -140,6 +149,7 @@ export default {
     return {
       queryParam: {},
       selectedRowKeys: [],
+      listLoading: true,
       loadData: parameter => {
         parameter = Object.assign(parameter, this.queryParam)
         return getEnquiryRecycleBin(parameter)
@@ -155,7 +165,52 @@ export default {
     }
   },
   methods: {
-    del(id) {},
+    operateSuccess() {
+      this.$message.success(
+        '操作成功'
+      )
+    },
+    operateFail(err) {
+      this.$message.error(
+        `操作失败:${err.msg}`
+      )
+    },
+    handleRemove() {
+      console.log(this.selectedRowKeys)
+      this.$refs.table.refresh()
+    },
+    handleRestore() {
+      console.log(this.selectedRowKeys)
+      this.$refs.table.refresh()
+    },
+    del(id) {
+      const param = {
+        id
+      }
+      delEnquiry(param).then(res => {
+        console.log(res)
+        this.operateSuccess()
+        this.$refs.table.refresh()
+      })
+    },
+    remove(id) {
+      const param = {
+        id
+      }
+      removeEnquiry(param).then(res => {
+        console.log(res)
+        this.operateSuccess()
+        this.$refs.table.refresh()
+      }).catch(err => {
+        this.operateFail(err)
+      })
+    },
+    restore(id) {
+      const param = {
+        id
+      }
+      restoreEnquiry(param)
+    },
     handleQuery() {},
     handleReset() {},
     handleSourceSelect() {},

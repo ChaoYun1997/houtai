@@ -174,8 +174,8 @@ export const asyncRouterMap = [
           {
             path: '/enquiry/recycle-bin',
             name: 'enquiryRecycleBin',
-            component: () => import('@/views/list/BasicList'),
-            meta: { title: '询盘回收站', keepAlive: true, permission: ['table'] }
+            component: () => import('@/views/enquiry/EnquiryRecycleBin'),
+            meta: { title: '询盘回收站', keepAlive: true }
           }
         ]
       }

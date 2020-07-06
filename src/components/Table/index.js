@@ -6,6 +6,8 @@ export default {
     return {
       needTotalList: [],
 
+      totalCount: 0,
+
       selectedRows: [],
       selectedRowKeys: [],
 
@@ -259,9 +261,16 @@ export default {
       return (
         <a-alert showIcon={true} style="margin-bottom: 16px">
           <template slot="message">
-            <span style="margin-right: 12px">已选择: <a style="font-weight: 600">{this.selectedRows.length}</a></span>
-            {needTotalItems}
-            {clearItem}
+            <a-row type="flex" justify="space-between">
+              <a-col span={12}>
+                <span style="margin-right: 12px">已选择: <a style="font-weight: 600">{this.selectedRows.length}</a></span>
+                {needTotalItems}
+                {clearItem}
+              </a-col>
+              <a-col span={12} style="display:flex;justify-content:flex-end;align-items:center;">
+                {`共${this.localPagination.total}条记录`}
+              </a-col>
+            </a-row>
           </template>
         </a-alert>
       )
