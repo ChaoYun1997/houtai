@@ -31,11 +31,30 @@ export function getEnquiryLog(param) {
 }
 
 // 获取询盘列表
-export function enquiry(param) {
+export function getEnquiry(param) {
   return request({
     url: enquiryApi.Enquiries,
     method: 'post',
     data: param
+  })
+}
+
+// 获取已删除询盘列表
+export function getEnquiryRecycleBin(param) {
+  return request({
+    url: enquiryApi.Enquiries,
+    method: 'post',
+    data: {
+      contactRegion: param.contactRegion,
+      state: param.state,
+      isDel: true,
+      enquirySource: param.enquirySource,
+      equipment: param.equipment,
+      startDate: param.startDate,
+      endDate: param.endDate,
+      pageIndex: param.pageIndex,
+      pageSize: param.pageSize
+    }
   })
 }
 
@@ -49,11 +68,25 @@ export function enquiryDetail(param) {
 }
 
 // 删除询盘 id=1&isRemove=false  Remove true彻底删除 false回收站？
-export function delInquiry(param) {
+export function delEnquiry(param) {
   return request({
     url: enquiryApi.DelEnquiry,
     method: 'post',
-    params: param
+    params: {
+      id: param.id,
+      isRemove: false
+    }
+  })
+}
+// 彻底删除询盘 id=1&isRemove=false  Remove true彻底删除 false回收站？
+export function removeEnquiry(param) {
+  return request({
+    url: enquiryApi.DelEnquiry,
+    method: 'post',
+    params: {
+      id: param.id,
+      isRemove: true
+    }
   })
 }
 

@@ -134,9 +134,9 @@
         </span>
         <div class="action" slot="action" slot-scope="text, record">
           <a-button type="primary" icon="edit" size="small" @click="edit(record.id)" />
-          <a-button type="primary" icon="copy" size="small" @click="copy(id)" />
-          <a-button type="danger" icon="delete" size="small" :loading="delLoading" @click="del(id)" />
-          <a-button icon="share-alt" size="small" @click="share(id)" />
+          <a-button type="primary" icon="copy" size="small" @click="copy(record.id)" />
+          <a-button type="danger" icon="delete" size="small" :loading="delLoading" @click="del(record.id)" />
+          <a-button icon="share-alt" size="small" @click="share(record.id)" />
           <a-button icon="eye" size="small" @click="preview(record.shopUrl)" />
         </div>
       </a-table>

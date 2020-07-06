@@ -29,24 +29,6 @@ export const asyncRouterMap = [
             component: () => import('@/views/home/Home'),
             meta: { title: '网站信息', keepAlive: true }
           }
-          // {
-          //   path: '/dashboard/analysis/:pageNo([1-9]\\d*)?',
-          //   name: 'Analysis',
-          //   component: () => import('@/views/dashboard/Analysis'),
-          //   meta: { title: 'menu.dashboard.analysis', keepAlive: false, permission: [ 'dashboard' ] }
-          // },
-          // // 外部链接
-          // {
-          //   path: 'https://www.baidu.com/',
-          //   name: 'Monitor',
-          //   meta: { title: 'menu.dashboard.monitor', target: '_blank' }
-          // },
-          // {
-          //   path: '/dashboard/workplace',
-          //   name: 'Workplace',
-          //   component: () => import('@/views/dashboard/Workplace'),
-          //   meta: { title: 'menu.dashboard.workplace', keepAlive: true, permission: [ 'dashboard' ] }
-          // }
         ]
       },
       // 产品
@@ -153,18 +135,19 @@ export const asyncRouterMap = [
         meta: { title: '关键词', icon: 'form', permission: ['table'] },
         children: [
           {
-            path: '/keyword/table-list/:pageNo([1-9]\\d*)?',
+            path: '/keyword/keyword-list/:pageNo([1-9]\\d*)?',
             name: 'keywordManage',
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
-            component: () => import('@/views/list/TableList'),
-            meta: { title: '关键词管理', keepAlive: true, permission: ['table'] }
-          },
-          {
-            path: '/keyword/setting',
-            name: 'keywordSetting',
-            component: () => import('@/views/list/BasicList'),
-            meta: { title: '关键词设置', keepAlive: true, permission: ['table'] }
+            component: () => import('@/views/keyword/KeywordList'),
+            meta: { title: '我的关键词', keepAlive: true, permission: ['table'] }
           }
+          // ,
+          // {
+          //   path: '/keyword/setting',
+          //   name: 'keywordSetting',
+          //   component: () => import('@/views/list/BasicList'),
+          //   meta: { title: '关键词设置', keepAlive: true, permission: ['table'] }
+          // }
         ]
       },
       // 询盘
@@ -172,14 +155,14 @@ export const asyncRouterMap = [
         path: '/enquiry',
         name: 'enquiry',
         component: RouteView,
-        redirect: '/enquiry/table-list',
+        redirect: '/enquiry/enquiry-list',
         meta: { title: '询盘', icon: comment, permission: ['table'] },
         children: [
           {
-            path: '/enquiry/table-list/:pageNo([1-9]\\d*)?',
+            path: '/enquiry/enquiry-list/:pageNo([1-9]\\d*)?',
             name: 'enquiryManage',
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
-            component: () => import('@/views/list/TableList'),
+            component: () => import('@/views/enquiry/EnquiryList'),
             meta: { title: '询盘管理', keepAlive: true, permission: ['table'] }
           },
           {
