@@ -49,7 +49,7 @@ export const asyncRouterMap = [
           {
             path: '/products/add-product/:id?',
             name: 'BasicList',
-            component: () => import('@/views/products/Detail'),
+            component: () => import('@/views/products/ProductDetail'),
             meta: { title: '添加产品', keepAlive: true, permission: ['table'] }
           },
           {

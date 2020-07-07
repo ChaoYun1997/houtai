@@ -232,7 +232,7 @@ export default {
     this.loadVerifyCode()
   },
   methods: {
-    ...mapActions(['Login', 'Logout', 'UpdatePwd']),
+    ...mapActions(['Login', 'Logout', 'UpdatePwd', 'GetPicUploadSign', 'GetVideoUploadSign']),
     loadVerifyCode() {
       getCode().then(res => {
         this.authCode = res.data.imgData

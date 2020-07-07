@@ -9,7 +9,7 @@
       />
     </div>
     <a-card>
-      <a-menu theme="dark" mode="horizontal">
+      <a-menu class="keyword-menu" theme="dark" mode="horizontal">
         <a-menu-item @click="showAddKeyword = true"> <a-icon type="plus" />添加关键词</a-menu-item>
         <a-sub-menu @click="handleSubMenuClick">
           <span slot="title" class="submenu-title-wrapper">关联产品数 {{ productMenu }}<a-icon type="down"/></span>
@@ -132,12 +132,12 @@
         </div>
       </s-table>
     </a-card>
-    <a-modal v-model="showAddKeyword" title="新增关键词">
+    <a-modal v-model="showAddKeyword" centered title="新增关键词">
       <p class="info">添加关键词多个关键词用回车、换行分隔，不要输入标点符号</p>
       <a-textarea v-model="keywords" :auto-size="{ minRows: 6 }" />
       <div slot="footer" class="model-footer">
         <a-button type="primary" @click="handleAddKeyword" :disabled="!keywords">确 定</a-button>
-        <a-button @click="showCategoryModal = false">取 消</a-button>
+        <a-button @click="showAddKeyword = false">取 消</a-button>
       </div>
     </a-modal>
   </page-header-wrapper>
@@ -145,7 +145,7 @@
 
 <script>
 import STable from '@/components/Table'
-import { getKeyword } from '@/api/keyword'
+import { getKeyword, addKeywords } from '@/api/keyword'
 import EditableCell from '@/components/EditableCell'
 
 const columns = [
@@ -233,7 +233,37 @@ export default {
       console.log('查询排序结果')
     },
     // 新增关键词
-    handleAddKeyword() {},
+    handleAddKeyword() {
+      const keywords = this.keywords
+        .split(/\n/)
+        .filter(item => {
+          if (item.trim()) {
+            return item
+          }
+        })
+        .map(item => {
+          return item.trim()
+        })
+      // const params = {}
+      // TODO
+      addKeywords(keywords)
+        .then(res => {
+          if (res.code === 200) {
+            this.success()
+          } else {
+            throw res
+          }
+        })
+        .catch(err => {
+          this.fail(err)
+        })
+    },
+    success() {
+      this.$message.success('操作成功')
+    },
+    fail(err) {
+      this.$message.error(err.msg)
+    },
     onSearch(value) {
       console.log(value)
     },
@@ -254,6 +284,11 @@ export default {
 </script>
 
 <style scoped>
+.keyword-menu {
+  .ant-menu.ant-menu-dark .ant-menu-item-selected {
+    background: none;
+  }
+}
 .table-page-search-wrapper {
   background: white;
   padding: 10px 0;

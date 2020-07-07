@@ -1,6 +1,7 @@
 import storage from 'store'
 // import { login, getInfo, logout } from '@/api/login'
 import { login, logout, updatePwd } from '@/api/user'
+import { getUploadSign } from '@/api/products'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 
@@ -11,11 +12,30 @@ const user = {
     welcome: '',
     avatar: '',
     roles: [],
-    info: {},
-    uid: ''
+    info: {
+      uid: '',
+      username: ''
+    },
+    uid: '',
+    qiniuPic: {
+      token: '',
+      filename: ''
+    },
+    qiniuVideo: {
+      token: '',
+      filename: ''
+    }
   },
 
   mutations: {
+    SET_QINIUPIC: (state, qiniuPic) => {
+      state.qiniuPic.token = qiniuPic.token
+      state.qiniuPic.filename = qiniuPic.fileName
+    },
+    SET_QINIUV: (state, qiniuVideo) => {
+      state.qiniuVideo.token = qiniuVideo.token
+      state.qiniuVideo.filename = qiniuVideo.fileName
+    },
     SET_TOKEN: (state, token) => {
       state.token = token
     },
@@ -30,7 +50,8 @@ const user = {
       state.roles = roles
     },
     SET_INFO: (state, info) => {
-      state.info = info
+      state.info.uid = info.uid
+      state.info.username = info.userName
     },
     SET_UID: (state, uid) => {
       state.uid = uid
@@ -38,6 +59,37 @@ const user = {
   },
 
   actions: {
+    // 获取七牛图片上传凭证
+    GetPicUploadSign({ commit }) {
+      return new Promise((resolve, reject) => {
+        const param = {
+          type: 1
+        }
+        getUploadSign(param).then(res => {
+          console.log(res)
+          commit('SET_QINIUPIC', res.data)
+          resolve(res)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    // 获取七牛视频上传凭证
+    GetVideoUploadSign({ commit }) {
+      return new Promise((resolve, reject) => {
+        const param = {
+          type: 2
+        }
+        getUploadSign(param)
+          .then(res => {
+            commit('SET_QINIUV', res.data)
+            resolve()
+          })
+          .catch(err => {
+            reject(err)
+          })
+      })
+    },
     // 登录
     Login({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
@@ -50,7 +102,7 @@ const user = {
             storage.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
             commit('SET_TOKEN', result.token)
             commit('SET_INFO', result)
-            resolve()
+            resolve(response)
           })
           .catch(error => {
             reject(error)

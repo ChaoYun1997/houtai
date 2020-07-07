@@ -55,12 +55,19 @@
           </a-row>
         </a-form>
       </div>
+
+      <div class="table-operator">
+        <a-button @click="handleDel">删除</a-button>
+        <a-button @click="handleReaded">设为已读</a-button>
+        <a-button @click="handleUnread">设为未读</a-button>
+      </div>
       <s-table
         ref="table"
         size="default"
         :rowKey="record => record.id"
         :columns="columns"
         :data="loadData"
+        :alert="true"
         :rowSelection="rowSelection"
       >
         <template slot="content" slot-scope="text, record">
@@ -155,6 +162,15 @@ export default {
     }
   },
   methods: {
+    handleDel() {
+      console.log(this.selectedRowKeys)
+    },
+    handleReaded() {
+      console.log(this.selectedRowKeys)
+    },
+    handleUnread() {
+      console.log(this.selectedRowKeys)
+    },
     del(id) {},
     handleQuery() {},
     handleReset() {},

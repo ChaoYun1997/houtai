@@ -12,7 +12,9 @@ const getters = {
   addRouters: state => state.permission.addRouters,
   multiTab: state => state.app.multiTab,
   details: state => state.products.details,
-  page: state => state.pages.page
+  page: state => state.pages.page,
+  picToken: state => state.user.qiniuPic.token,
+  videoToken: state => state.user.qiniuVideo.token
 }
 
 export default getters

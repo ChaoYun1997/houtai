@@ -65,12 +65,12 @@
                     slot="renderItem"
                     key="item.id"
                     slot-scope="item"
-                    @click="handleKeywordList(item.keyword)"
+                    @click="handleKeywordList(item.keyWord)"
                   >
                     <a-list-item-meta>
-                      <span slot="title">{{ item.keyword }}</span>
+                      <span slot="title">{{ item.keyWord }}</span>
                     </a-list-item-meta>
-                    <span slot="extra">{{ `(${item.count})` }}</span>
+                    <span slot="extra">{{ `(${item.associatedItemCount})` }}</span>
                   </a-list-item>
                 </a-list>
                 <span slot="actions">
@@ -114,13 +114,29 @@
           <a-button @click="showCategoryModal = true">选择</a-button>
         </a-form-model-item>
         <a-form-model-item ref="cover" label="产品主图" prop="cover">
-          <a-upload :file-list="coverImg" :before-upload="beforeCoverChange" v-show="!previewCover">
-            <div class="cover-button"><a-icon type="upload"></a-icon></div>
+          <a-upload
+            name="cover"
+            list-type="picture-card"
+            class="avatar-uploader"
+            accept="image/*"
+            :customRequest="uploadCover"
+            :show-upload-list="false"
+          >
+            <img v-if="showImage" class="cover-preview" :src="imageUrl" alt="cover" />
+            <div v-else>
+              <a-icon :type="coverLoading ? 'loading' : 'plus'" />
+              <div class="ant-upload-text">
+                Upload
+              </div>
+            </div>
           </a-upload>
-          <div class="cover-preview" v-show="previewCover">
-            <img :src="previewCover" alt="" />
-            <a-icon type="delete" class="del-btn" @click="handleCoverRemove"></a-icon>
-          </div>
+          <!--          <a-upload :action="uploadUrl" :file-list="coverImg" :before-upload="beforeCoverChange" v-show="!previewCover">-->
+          <!--            <div class="cover-button"><a-icon type="upload"></a-icon></div>-->
+          <!--          </a-upload>-->
+          <!--          <div class="cover-preview" v-show="previewCover">-->
+          <!--            <img :src="previewCover" alt="" />-->
+          <!--            <a-icon type="delete" class="del-btn" @click="handleCoverRemove"></a-icon>-->
+          <!--          </div>-->
         </a-form-model-item>
         <a-form-model-item ref="img" label="产品图片" prop="cover" class="img-list">
           <a-upload list-type="picture-card" :file-list="imgList" @change="handleChange">
@@ -251,17 +267,17 @@
                 style="width:220px;margin-left: 10px;"
                 @search="onArticleSearch"
               />
-              <a-table
+              <s-table
                 class="article-table"
                 size="small"
-                row-key="id"
+                ref="table"
+                :rowKey="record => record.id"
                 :scroll="{ y: 380 }"
-                :row-selection="{ selectedRowKeys: selectedArticleRowKeys, onChange: onArticleSelectChange }"
                 :columns="articleColumns"
-                :pagination="pagination"
-                :data-source="articleData"
+                :data="loadArticleData"
+                :rowSelection="articleRowSelection"
               >
-              </a-table>
+              </s-table>
             </a-col>
             <a-col :span="12" class="article-list">
               <h5>已选择的相关文章</h5>
@@ -295,16 +311,27 @@
                 style="width:220px;margin-left: 10px;"
                 @search="onProductSearch"
               />
-              <a-table
+              <!--              <a-table-->
+              <!--                class="article-table"-->
+              <!--                size="small"-->
+              <!--                row-key="id"-->
+              <!--                :scroll="{ y: 380 }"-->
+              <!--                :row-selection="{ selectedRowKeys: selectedProductRowKeys, onChange: onProductSelectChange }"-->
+              <!--                :columns="productColumns"-->
+              <!--                :data-source="productData"-->
+              <!--              >-->
+              <!--              </a-table>-->
+              <s-table
                 class="article-table"
                 size="small"
-                row-key="id"
+                ref="table"
+                :rowKey="record => record.id"
                 :scroll="{ y: 380 }"
-                :row-selection="{ selectedRowKeys: selectedProductRowKeys, onChange: onProductSelectChange }"
                 :columns="productColumns"
-                :data-source="productData"
+                :data="loadProductData"
+                :rowSelection="productRowSelection"
               >
-              </a-table>
+              </s-table>
             </a-col>
             <a-col :span="12" class="article-list">
               <h5>已选择的相关产品</h5>
@@ -351,11 +378,12 @@
 </template>
 
 <script>
-import { getProducts, getProductCategory } from '@/api/products'
+import { getProducts, getProductCategory, getUploadSign } from '@/api/products'
 import { getKeyword } from '@/api/keyword'
 import { getArticles, articleCategory } from '@/api/article'
 import sortableJS from 'sortablejs'
 import KindEditor from '@/components/Kindeditor'
+import STable from '@/components/Table'
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
@@ -383,16 +411,27 @@ const productColumns = [
 export default {
   name: 'Detail',
   components: {
-    KindEditor,
-    VNodes: {
-      functional: true,
-      render: (h, ctx) => ctx.props.vnodes
-    }
+    STable,
+    KindEditor
+    // VNodes: {
+    //   functional: true,
+    //   render: (h, ctx) => ctx.props.vnodes
+    // }
   },
   data() {
     this.articleColumns = articleColumns
     this.productColumns = productColumns
     return {
+      queryArticle: {},
+      loadArticleData: parameter => {
+        parameter = Object.assign(parameter, this.queryArticle)
+        return getArticles(parameter)
+      },
+      queryProduct: {},
+      loadProductData: parameter => {
+        parameter = Object.assign(parameter, this.queryProduct)
+        return getProducts(parameter)
+      },
       articleData: [], // 文章数据
       productData: [], // 产品数据
       pagination: {
@@ -406,7 +445,13 @@ export default {
 
       content: '',
 
+      uploadUrl: 'http://up-z0.qiniup.com',
+      picToken: '',
+      fileName: '',
       coverImg: [],
+      imageUrl: '',
+      showImage: false,
+      coverLoading: false,
       previewCover: '',
       imgList: [],
       previewImage: [],
@@ -450,6 +495,7 @@ export default {
           pageDesc: ''
         },
         category: [],
+        shopImg: '', // 产品主图
         pics: [],
         videoUrl: '',
         intro: '',
@@ -469,16 +515,6 @@ export default {
             }
           ]
         },
-        // sku: [
-        //   {
-        //     name: 'color',
-        //     vals: [
-        //       { value: 'yellow', stock: 10, pic: '' },
-        //       { value: 'white', stock: 10, pic: '' }
-        //     ],
-        //     pic: ''
-        //   }
-        // ],
         desc: [{ 'Product Description': '' }],
         status: {
           val: 1, // 默认1 上架状态
@@ -498,11 +534,25 @@ export default {
       }
     }
   },
+  computed: {
+    productRowSelection() {
+      return {
+        selectedRowKeys: this.selectedProductRowKeys,
+        onChange: this.onProductSelectChange
+      }
+    },
+    articleRowSelection() {
+      return {
+        selectedRowKeys: this.selectedArticleRowKeys,
+        onChange: this.onArticleSelectChange
+      }
+    }
+  },
   created() {
     this.loadKeyword()
-    this.loadSku()
-    this.loadArticles()
-    this.loadProducts()
+    // this.loadSku()
+    // this.loadArticles()
+    // this.loadProducts()
   },
   mounted() {
     this.loadCategory()
@@ -568,17 +618,16 @@ export default {
       this.selectedProductRowKeys = selectedRowKeys
       this.selectedProducts = selectedRows
     },
-    loadArticles() {
-      getArticles().then(res => {
-        this.articleData = res.result.data
-      })
+    loadArticleCate() {
       articleCategory().then(res => {
-        const result = res.result.data
+        const result = res.data.datas
+        console.log(`article cate: ${result}`)
         if (result.length > 0) {
           result.forEach(item => {
             this.articleCate.push({
-              value: item.name,
-              label: item.name
+              value: item.value,
+              label: item.name,
+              id: item.value
             })
           })
         }
@@ -643,20 +692,21 @@ export default {
     loadKeyword() {
       getKeyword().then(res => {
         this.keywordListLoading = false
-        this.keywordList = res.result.data
+        this.keywordList = res.data.datas
       })
     },
     // 加载分类数据
     loadCategory() {
       getProductCategory().then(res => {
-        res.result.data.forEach(item => {
+        res.data.datas.forEach(item => {
           this.categoryOptions.push({
-            label: item.catName,
-            value: item.catName,
-            id: item.id
+            label: item.name,
+            value: item.value,
+            id: item.value
           })
         })
       })
+      this.loadArticleCate()
     },
     add() {},
     replace() {},
@@ -704,6 +754,52 @@ export default {
       }
     },
     // 产品主图
+    uploadCover(info) {
+      this.coverLoading = true
+      const param = {
+        type: 1
+      }
+      this.imageUrl = this.getObjectURL(info.file)
+      // 获取图片上传凭证
+      getUploadSign(param)
+        .then(res => {
+          if (res.code === 200) {
+            const picToken = res.data.token
+            const fileName = res.data.fileName
+
+            const fd = new FormData()
+            fd.append('key', fileName)
+            fd.append('token', picToken)
+            fd.append('file', info.file)
+            this.$http.post(this.uploadUrl, fd).then(res => {
+              this.form.shopImg = res.name
+              this.showImage = true
+              this.coverLoading = false
+              console.log(res.name)
+            })
+          } else {
+            throw res.msg
+          }
+        })
+        .catch(err => {
+          this.$message.error(err)
+        })
+    },
+    getObjectURL(file) {
+      var url = null
+      // 下面函数执行的效果是一样的，只是需要针对不同的浏览器执行不同的 js 函数而已
+      if (window.createObjectURL !== undefined) {
+        // basic
+        url = window.createObjectURL(file)
+      } else if (window.URL !== undefined) {
+        // mozilla(firefox)
+        url = window.URL.createObjectURL(file)
+      } else if (window.webkitURL !== undefined) {
+        // webkit or chrome
+        url = window.webkitURL.createObjectURL(file)
+      }
+      return url
+    },
     beforeCoverChange(file, fileList) {
       this.coverImg = fileList
       return false

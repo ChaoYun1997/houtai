@@ -32,7 +32,7 @@ export function addKeywords(param) {
   return request({
     url: keywordApi.AddKeyword,
     method: 'post',
-    data: param
+    params: param
   })
 }
 
