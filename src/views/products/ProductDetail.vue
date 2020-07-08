@@ -115,57 +115,6 @@
           </template>
           <a-button @click="showCategoryModal = true">选择</a-button>
         </a-form-model-item>
-        <!--        <a-form-model-item ref="cover" label="产品主图" prop="cover">-->
-        <!--          &lt;!&ndash; class="avatar-uploader" &ndash;&gt;-->
-        <!--          &lt;!&ndash;            :customRequest="uploadCover"&ndash;&gt;-->
-        <!--          &lt;!&ndash;            :show-upload-list="false"&ndash;&gt;-->
-        <!--          <a-upload-->
-        <!--            name="cover"-->
-        <!--            list-type="picture-card"-->
-        <!--            :file-list="coverList"-->
-        <!--            accept="image/*"-->
-        <!--            :action="uploadUrl"-->
-        <!--            :data="getUploadData"-->
-        <!--            @preview="handleCoverPreview"-->
-        <!--            @change="handleCoverUploadChange"-->
-        <!--          >-->
-        <!--            &lt;!&ndash;            <img v-if="showImage" class="cover-preview" :src="imageUrl" alt="cover" />&ndash;&gt;-->
-        <!--            <div v-if="coverList.length < 1">-->
-        <!--              <a-icon type="plus" />-->
-        <!--              <div class="ant-upload-text">-->
-        <!--                上传-->
-        <!--              </div>-->
-        <!--            </div>-->
-        <!--          </a-upload>-->
-        <!--          <a-modal :visible="coverVisible" :footer="null" @cancel="coverVisible = false">-->
-        <!--            <img alt="example" style="width: 100%" :src="imageUrl" />-->
-        <!--          </a-modal>-->
-        <!--          &lt;!&ndash;          <a-upload :action="uploadUrl" :file-list="coverImg" :before-upload="beforeCoverChange" v-show="!previewCover">&ndash;&gt;-->
-        <!--          &lt;!&ndash;            <div class="cover-button"><a-icon type="upload"></a-icon></div>&ndash;&gt;-->
-        <!--          &lt;!&ndash;          </a-upload>&ndash;&gt;-->
-        <!--          &lt;!&ndash;          <div class="cover-preview" v-show="previewCover">&ndash;&gt;-->
-        <!--          &lt;!&ndash;            <img :src="previewCover" alt="" />&ndash;&gt;-->
-        <!--          &lt;!&ndash;            <a-icon type="delete" class="del-btn" @click="handleCoverRemove"></a-icon>&ndash;&gt;-->
-        <!--          &lt;!&ndash;          </div>&ndash;&gt;-->
-        <!--        </a-form-model-item>-->
-        <!--        <a-form-model-item ref="img" label="产品图片" prop="cover" class="img-list">-->
-        <!--          <a-upload-->
-        <!--            list-type="picture-card"-->
-        <!--            :file-list="imgList"-->
-        <!--            accept="image/*"-->
-        <!--            :action="uploadUrl"-->
-        <!--            :data="getUploadData"-->
-        <!--            @preview="handlePreview"-->
-        <!--            @change="handleListUploadChange"-->
-        <!--          >-->
-        <!--            <div v-if="imgList.length < 8">-->
-        <!--              <a-icon type="plus" />-->
-        <!--              <div class="ant-upload-text">-->
-        <!--                上传-->
-        <!--              </div>-->
-        <!--            </div>-->
-        <!--          </a-upload>-->
-        <!--        </a-form-model-item>-->
         <a-form-model-item ref="img" label="产品图片" prop="cover" class="img-list">
           <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
             <img alt="example" style="width: 100%" :src="previewImage" />
@@ -186,6 +135,7 @@
               accept="image/*"
               :show-upload-list="false"
               :data="getUploadData"
+              :before-upload="getUploadToken"
               @change="handleListUploadChange"
             >
               <div v-if="imgList.length < 8">
@@ -219,81 +169,13 @@
             <a-col :span="19"><a-input v-model="form.attribute.code" placeholder="请输入产品编码"/></a-col>
           </a-row>
         </a-form-model-item>
-        <a-form-model-item label="产品自定义字段">
-          <a-row class="panel-box">
-            <template v-for="(item, index) in form.customFields">
-              <div :key="index">
-                <a-col :span="4" :push="1">{{ Object.keys(item)[0] }}</a-col>
-                <a-col :span="19">
-                  <a-input placeholder="请输入内容" v-model="item.field"></a-input>
-                </a-col>
-              </div>
-            </template>
-          </a-row>
-        </a-form-model-item>
-        <!--        <a-form-model-item label="产品SKU">-->
-        <!--          <div class="panel-box">-->
-        <!--            <div class="sku-box" ref="skuBox" v-for="(sku, index) in form.sku.attr" :key="index">-->
-        <!--              <a-row>-->
-        <!--                <a-col :span="4" :push="1">规格名：</a-col>-->
-        <!--                <a-col :span="14">-->
-        <!--                  <a-select :value="sku.name" style="width: 120px" @change="value => handleSkuChange(value, index)">-->
-        <!--                    <div slot="dropdownRender" slot-scope="menu">-->
-        <!--                      <v-nodes :vnodes="menu" />-->
-        <!--                      <a-divider style="margin: 4px 0;" />-->
-        <!--                      <div-->
-        <!--                        style="padding: 4px 8px; cursor: pointer;"-->
-        <!--                        @mousedown="e => e.preventDefault()"-->
-        <!--                        @click="showAddSku = true"-->
-        <!--                      >-->
-        <!--                        <a-button>添加SKU</a-button>-->
-        <!--                      </div>-->
-        <!--                    </div>-->
-        <!--                    <a-select-option v-for="item in skuList" :key="item" :value="item">-->
-        <!--                      {{ item }}-->
-        <!--                    </a-select-option>-->
-        <!--                  </a-select>-->
-        <!--                  &lt;!&ndash;                  <a-upload class="sku-img" @change="handleSkuFileChange(i)">&ndash;&gt;-->
-        <!--                  &lt;!&ndash;                    <a-button><a-icon type="upload" /> 添加规格图片 </a-button>&ndash;&gt;-->
-        <!--                  &lt;!&ndash;                  </a-upload>&ndash;&gt;-->
-        <!--                </a-col>-->
-        <!--              </a-row>-->
-        <!--              <a-row>-->
-        <!--                <a-col :span="4" :push="1">规格值：</a-col>-->
-        <!--                <a-col :span="20">-->
-        <!--                  <template v-for="(val, i) in sku.vals">-->
-        <!--                    <div class="input-box" :key="i">-->
-        <!--                      <a-input-->
-        <!--                        class="inline-input"-->
-        <!--                        v-model="val.value"-->
-        <!--                        @blur="handleSkuInputBlur(sku, val.value, i)"-->
-        <!--                      ></a-input>-->
-        <!--                      <a-icon type="close" class="del-sku-val" shape="circle" @click="handleDelSkuVal(sku, i)"></a-icon>-->
-        <!--                    </div>-->
-        <!--                  </template>-->
-        <!--                  <a-button type="link" icon="plus" @click="handleAddSkuValue(sku.vals)">-->
-        <!--                    添加规格值-->
-        <!--                  </a-button>-->
-        <!--                </a-col>-->
-        <!--              </a-row>-->
-        <!--              <a-button class="del-sku" type="primary" shape="circle" icon="delete" @click="handleDelSku(index)" />-->
-        <!--            </div>-->
-        <!--            <div class="sku-box-footer">-->
-        <!--              <a-button icon="plus" @click="handleAddSkuBox">添加规格项目</a-button>-->
-        <!--            </div>-->
-        <!--          </div>-->
-        <!--        </a-form-model-item>-->
-        <!--        <a-form-model-item label="SKU详细信息" v-show="skuDatas.length !== 0">-->
-        <!--          <p class="info">在标题栏中输入内容可以批量填充</p>-->
-        <!--          <a-table :columns="skuColumns" :data-source="skuDatas" bordered></a-table>-->
-        <!--        </a-form-model-item>-->
         <h3>产品描述</h3>
         <a-form-model-item label="产品描述">
           <kind-editor ref="kindeditor" @input="getContent"></kind-editor>
         </a-form-model-item>
         <h3>产品状态</h3>
         <a-form-model-item label="产品状态">
-          <a-radio-group :default-value="1">
+          <a-radio-group v-model="form.shelved">
             <a-radio :value="1">上架</a-radio>
             <a-radio :value="0">下架(访客不可见)</a-radio>
           </a-radio-group>
@@ -427,12 +309,13 @@
 </template>
 
 <script>
-import { getProducts, getProductCategory, getUploadSign } from '@/api/products'
+import { getProducts, getProductCategory, getUploadSign, addProduct } from '@/api/products'
 import { getKeyword } from '@/api/keyword'
 import { getArticles, articleCategory } from '@/api/article'
 import sortableJS from 'sortablejs'
 import KindEditor from '@/components/Kindeditor'
 import STable from '@/components/Table'
+import moment from 'moment'
 
 // function getBase64(file) {
 //   return new Promise((resolve, reject) => {
@@ -581,6 +464,7 @@ export default {
         },
         articles: [],
         linkProducts: [],
+        shelved: 1,
         tags: []
       },
       rules: {
@@ -686,7 +570,7 @@ export default {
       this.selectedArticles = selectedRows
     },
     onProductSelectChange(selectedRowKeys, selectedRows) {
-      console.log('selectedRowKeys changed: ', selectedRows)
+      console.log('selectedRowKeys changed: ', selectedRowKeys, selectedRows)
       this.selectedProductRowKeys = selectedRowKeys
       this.selectedProducts = selectedRows
     },
@@ -729,7 +613,7 @@ export default {
     // 获取编辑器内容
     getContent(content) {
       console.log('content', content)
-      this.content = content
+      this.form.desc = content
     },
     afterChange() {},
     initSkuData() {
@@ -779,11 +663,6 @@ export default {
         })
       })
       this.loadArticleCate()
-    },
-    add() {},
-    replace() {},
-    checkMove(e) {
-      window.console.log('Future index: ' + e.draggedContext.futureIndex)
     },
     handleDelKeyword(index) {
       this.form.keyword.words.splice(index, 1)
@@ -840,12 +719,12 @@ export default {
         console.log(res.name)
       })
     },
-    getUploadToken() {
+    async getUploadToken() {
       // 获取图片上传凭证
       const param = {
         type: 1
       }
-      getUploadSign(param)
+      await getUploadSign(param)
         .then(res => {
           if (res.code === 200) {
             this.picToken = res.data.token
@@ -918,7 +797,8 @@ export default {
     handleListUploadChange(info) {
       this.imgList = info.fileList
       if (info.file.status === 'done') {
-        console.log(info.file.response)
+        console.log(info.file.response.name)
+        console.log(this.picList)
         this.picList.push({
           name: info.file.response.name,
           path: this.getObjectURL(info.file.originFileObj)
@@ -1019,19 +899,30 @@ export default {
         shopNumber: form.attribute.code, // 产品编码
         shopModel: form.attribute.model, // 产品型号
         shopDescribe: form.desc, // 产品描述
-        relatedAids: [0], // 关联文章ID
-        relatedShopIds: [0], // 关联产品ID
+        relatedAids: this.selectedArticleRowKeys, // 关联文章ID
+        relatedShopIds: this.selectedProductRowKeys, // 关联产品ID
         shopImg: piclist[0], // 产品主图
         shopTitle: form.name, // 产品标题
         catId: form.category, // 分类ID
-        updateDate: '2020-07-08T03:49:56.559Z', // 更新时间
-        isShelve: true, // 是否上架
+        updateDate: moment(new Date()).format(), // 更新时间
+        isShelve: form.shelved === 1, // 是否上架
         shopTags: form.tags // 产品标签
       }
       console.log(params)
       this.$refs.form.validate(valid => {
         if (valid) {
           console.log(this.form)
+          addProduct(params)
+            .then(res => {
+              if (res.code === 200) {
+                console.log(res)
+              } else {
+                throw res
+              }
+            })
+            .catch(err => {
+              this.$message.error(err.msg)
+            })
         } else {
           console.log('error submit!!')
           return false
