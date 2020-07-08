@@ -74,7 +74,9 @@
                   </a-list-item>
                 </a-list>
                 <span slot="actions">
-                  <a-button type="link">管理关键词</a-button>
+                  <a-button type="link" @click="$router.push('/keyword/keyword-list')" size="small">
+                    管理关键词
+                  </a-button>
                 </span>
               </a-card>
             </a-col>
@@ -113,40 +115,87 @@
           </template>
           <a-button @click="showCategoryModal = true">选择</a-button>
         </a-form-model-item>
-        <a-form-model-item ref="cover" label="产品主图" prop="cover">
-          <a-upload
-            name="cover"
-            list-type="picture-card"
-            class="avatar-uploader"
-            accept="image/*"
-            :customRequest="uploadCover"
-            :show-upload-list="false"
-          >
-            <img v-if="showImage" class="cover-preview" :src="imageUrl" alt="cover" />
-            <div v-else>
-              <a-icon :type="coverLoading ? 'loading' : 'plus'" />
-              <div class="ant-upload-text">
-                Upload
-              </div>
-            </div>
-          </a-upload>
-          <!--          <a-upload :action="uploadUrl" :file-list="coverImg" :before-upload="beforeCoverChange" v-show="!previewCover">-->
-          <!--            <div class="cover-button"><a-icon type="upload"></a-icon></div>-->
-          <!--          </a-upload>-->
-          <!--          <div class="cover-preview" v-show="previewCover">-->
-          <!--            <img :src="previewCover" alt="" />-->
-          <!--            <a-icon type="delete" class="del-btn" @click="handleCoverRemove"></a-icon>-->
-          <!--          </div>-->
-        </a-form-model-item>
+        <!--        <a-form-model-item ref="cover" label="产品主图" prop="cover">-->
+        <!--          &lt;!&ndash; class="avatar-uploader" &ndash;&gt;-->
+        <!--          &lt;!&ndash;            :customRequest="uploadCover"&ndash;&gt;-->
+        <!--          &lt;!&ndash;            :show-upload-list="false"&ndash;&gt;-->
+        <!--          <a-upload-->
+        <!--            name="cover"-->
+        <!--            list-type="picture-card"-->
+        <!--            :file-list="coverList"-->
+        <!--            accept="image/*"-->
+        <!--            :action="uploadUrl"-->
+        <!--            :data="getUploadData"-->
+        <!--            @preview="handleCoverPreview"-->
+        <!--            @change="handleCoverUploadChange"-->
+        <!--          >-->
+        <!--            &lt;!&ndash;            <img v-if="showImage" class="cover-preview" :src="imageUrl" alt="cover" />&ndash;&gt;-->
+        <!--            <div v-if="coverList.length < 1">-->
+        <!--              <a-icon type="plus" />-->
+        <!--              <div class="ant-upload-text">-->
+        <!--                上传-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--          </a-upload>-->
+        <!--          <a-modal :visible="coverVisible" :footer="null" @cancel="coverVisible = false">-->
+        <!--            <img alt="example" style="width: 100%" :src="imageUrl" />-->
+        <!--          </a-modal>-->
+        <!--          &lt;!&ndash;          <a-upload :action="uploadUrl" :file-list="coverImg" :before-upload="beforeCoverChange" v-show="!previewCover">&ndash;&gt;-->
+        <!--          &lt;!&ndash;            <div class="cover-button"><a-icon type="upload"></a-icon></div>&ndash;&gt;-->
+        <!--          &lt;!&ndash;          </a-upload>&ndash;&gt;-->
+        <!--          &lt;!&ndash;          <div class="cover-preview" v-show="previewCover">&ndash;&gt;-->
+        <!--          &lt;!&ndash;            <img :src="previewCover" alt="" />&ndash;&gt;-->
+        <!--          &lt;!&ndash;            <a-icon type="delete" class="del-btn" @click="handleCoverRemove"></a-icon>&ndash;&gt;-->
+        <!--          &lt;!&ndash;          </div>&ndash;&gt;-->
+        <!--        </a-form-model-item>-->
+        <!--        <a-form-model-item ref="img" label="产品图片" prop="cover" class="img-list">-->
+        <!--          <a-upload-->
+        <!--            list-type="picture-card"-->
+        <!--            :file-list="imgList"-->
+        <!--            accept="image/*"-->
+        <!--            :action="uploadUrl"-->
+        <!--            :data="getUploadData"-->
+        <!--            @preview="handlePreview"-->
+        <!--            @change="handleListUploadChange"-->
+        <!--          >-->
+        <!--            <div v-if="imgList.length < 8">-->
+        <!--              <a-icon type="plus" />-->
+        <!--              <div class="ant-upload-text">-->
+        <!--                上传-->
+        <!--              </div>-->
+        <!--            </div>-->
+        <!--          </a-upload>-->
+        <!--        </a-form-model-item>-->
         <a-form-model-item ref="img" label="产品图片" prop="cover" class="img-list">
-          <a-upload list-type="picture-card" :file-list="imgList" @change="handleChange">
-            <div v-if="imgList.length < 8">
-              <a-icon type="plus" />
-              <div class="ant-upload-text">
-                Upload
+          <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+            <img alt="example" style="width: 100%" :src="previewImage" />
+          </a-modal>
+          <ul ref="piclist" class="pic-list">
+            <li v-for="(item, index) in picList" :key="index">
+              <div class="operate">
+                <a-icon type="eye" @click="handlePicPreview(item.path)"></a-icon>
+                <a-icon type="delete" @click="handleDelPic(index)"></a-icon>
               </div>
-            </div>
-          </a-upload>
+              <img :src="item.path" alt="" />
+            </li>
+            <a-upload
+              list-type="picture-card"
+              class="img-uploader"
+              :action="uploadUrl"
+              :file-list="imgList"
+              accept="image/*"
+              :show-upload-list="false"
+              :data="getUploadData"
+              @change="handleListUploadChange"
+            >
+              <div v-if="imgList.length < 8">
+                <a-icon type="plus" />
+                <div class="ant-upload-text">
+                  上传
+                </div>
+              </div>
+            </a-upload>
+          </ul>
         </a-form-model-item>
         <a-form-model-item ref="video" label="产品视频" prop="videoUrl">
           <a-input v-model="form.videoUrl" placeholder="请输入产品视频连接"></a-input>
@@ -385,14 +434,14 @@ import sortableJS from 'sortablejs'
 import KindEditor from '@/components/Kindeditor'
 import STable from '@/components/Table'
 
-function getBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
-    reader.onload = () => resolve(reader.result)
-    reader.onerror = error => reject(error)
-  })
-}
+// function getBase64(file) {
+//   return new Promise((resolve, reject) => {
+//     const reader = new FileReader()
+//     reader.readAsDataURL(file)
+//     reader.onload = () => resolve(reader.result)
+//     reader.onerror = error => reject(error)
+//   })
+// }
 
 const articleColumns = [
   {
@@ -454,7 +503,11 @@ export default {
       coverLoading: false,
       previewCover: '',
       imgList: [],
+      picList: [],
+      coverList: [],
+      coverVisible: false,
       previewImage: [],
+      previewVisible: false,
 
       enabled: true, // 关键词拖动排序开关
       dragging: false, // 关键词拖动
@@ -496,6 +549,7 @@ export default {
         },
         category: [],
         shopImg: '', // 产品主图
+        shopImgList: [], // 产品图片列表
         pics: [],
         videoUrl: '',
         intro: '',
@@ -515,7 +569,7 @@ export default {
             }
           ]
         },
-        desc: [{ 'Product Description': '' }],
+        desc: '',
         status: {
           val: 1, // 默认1 上架状态
           tmallLink: '',
@@ -526,7 +580,8 @@ export default {
           wechatLink: ''
         },
         articles: [],
-        linkProducts: []
+        linkProducts: [],
+        tags: []
       },
       rules: {
         name: [{ required: true, message: '请输入产品名称', trigger: 'blur' }],
@@ -557,6 +612,7 @@ export default {
   mounted() {
     this.loadCategory()
     this.initSkuData()
+    this.getUploadToken()
 
     const that = this
     // eslint-disable-next-line no-unused-vars
@@ -574,18 +630,34 @@ export default {
         })
       }
     })
+
+    // eslint-disable-next-line no-unused-vars
+    const sortablePic = sortableJS.create(this.$refs.piclist, {
+      sort: true,
+      animation: 300,
+      onEnd: function(evt) {
+        // 拖拽结束发生该事件
+        that.picList.splice(evt.newIndex, 0, that.picList.splice(evt.oldIndex, 1)[0])
+        const newArray = that.picList.slice(0)
+        that.picList = []
+        that.$nextTick(function() {
+          that.picList = newArray
+          console.log(that.picList)
+        })
+      }
+    })
   },
   watch: {
-    async coverImg(val) {
-      if (val.length > 0) {
-        this.previewCover = await getBase64(val[0])
-      }
-    },
-    async imgList(val) {
-      if (val.length > 0) {
-        this.previewImage = await getBase64(val[0])
-      }
-    }
+    // async coverImg(val) {
+    //   if (val.length > 0) {
+    //     this.previewCover = await getBase64(val[0])
+    //   }
+    // },
+    // async imgList(val) {
+    //   if (val.length > 0) {
+    //     this.previewImage = await getBase64(val[0])
+    //   }
+    // }
   },
   methods: {
     handleDelProduct(id) {
@@ -756,36 +828,38 @@ export default {
     // 产品主图
     uploadCover(info) {
       this.coverLoading = true
+      this.imageUrl = this.getObjectURL(info.file)
+      const fd = new FormData()
+      fd.append('key', this.fileName)
+      fd.append('token', this.picToken)
+      fd.append('file', info.file)
+      this.$http.post(this.uploadUrl, fd).then(res => {
+        this.form.shopImg = res.name
+        this.showImage = true
+        this.coverLoading = false
+        console.log(res.name)
+      })
+    },
+    getUploadToken() {
+      // 获取图片上传凭证
       const param = {
         type: 1
       }
-      this.imageUrl = this.getObjectURL(info.file)
-      // 获取图片上传凭证
       getUploadSign(param)
         .then(res => {
           if (res.code === 200) {
-            const picToken = res.data.token
-            const fileName = res.data.fileName
-
-            const fd = new FormData()
-            fd.append('key', fileName)
-            fd.append('token', picToken)
-            fd.append('file', info.file)
-            this.$http.post(this.uploadUrl, fd).then(res => {
-              this.form.shopImg = res.name
-              this.showImage = true
-              this.coverLoading = false
-              console.log(res.name)
-            })
+            this.picToken = res.data.token
+            this.fileName = res.data.fileName
           } else {
-            throw res.msg
+            throw res
           }
         })
         .catch(err => {
-          this.$message.error(err)
+          this.$message.error(err.msg)
         })
     },
     getObjectURL(file) {
+      console.log(file)
       var url = null
       // 下面函数执行的效果是一样的，只是需要针对不同的浏览器执行不同的 js 函数而已
       if (window.createObjectURL !== undefined) {
@@ -807,15 +881,49 @@ export default {
     handleCancel() {
       this.previewVisible = false
     },
-    async handlePreview(file) {
+    handlePicPreview(url) {
+      this.previewImage = url
+      this.previewVisible = true
+    },
+    handleDelPic(index) {
+      this.picList.splice(index, 1)
+    },
+    handleCoverPreview(file) {
       if (!file.url && !file.preview) {
-        file.preview = await getBase64(file.originFileObj)
+        file.preview = this.getObjectURL(file.originFileObj)
+      }
+      this.imageUrl = file.url || file.preview
+      this.coverVisible = true
+    },
+    handlePreview(file) {
+      if (!file.url && !file.preview) {
+        file.preview = this.getObjectURL(file.originFileObj)
       }
       this.previewImage = file.url || file.preview
       this.previewVisible = true
     },
-    handleChange({ fileList }) {
-      this.fileList = fileList
+    getUploadData(file) {
+      return {
+        token: this.picToken,
+        key: this.fileName,
+        file: file
+      }
+    },
+    handleCoverUploadChange(info) {
+      this.coverList = info.fileList
+      if (info.file.status === 'done') {
+        this.form.shopImg = info.file.response.name
+      }
+    },
+    handleListUploadChange(info) {
+      this.imgList = info.fileList
+      if (info.file.status === 'done') {
+        console.log(info.file.response)
+        this.picList.push({
+          name: info.file.response.name,
+          path: this.getObjectURL(info.file.originFileObj)
+        })
+      }
     },
     handleCoverRemove() {
       this.coverImg = []
@@ -894,25 +1002,44 @@ export default {
     },
     // 提交产品表单
     handleSubmit() {
+      const { form, picList } = this
+      const piclist = picList.map(item => item.name)
+      const keyword = form.keyword.words.map(item => item.keyword)
+      let params = {}
+      params = {
+        shopUrl: form.productUrl, // 产品URL
+        shopKeyWords: keyword, // 产品关键词
+        seoTitle: form.keyword.pageTitle, // SEO 标题
+        seoKeyWord: form.keyword.pageKeyword, // SEO 关键词
+        seoDescription: form.keyword.pageDesc, // SEO 描述
+        shopImgList: piclist, // 产品图片
+        shopVideoUrl: form.videoUrl, // 产品视频链接
+        shopDesc: form.intro, // 产品简介
+        shopBrand: form.attribute.brand, // 产品品牌
+        shopNumber: form.attribute.code, // 产品编码
+        shopModel: form.attribute.model, // 产品型号
+        shopDescribe: form.desc, // 产品描述
+        relatedAids: [0], // 关联文章ID
+        relatedShopIds: [0], // 关联产品ID
+        shopImg: piclist[0], // 产品主图
+        shopTitle: form.name, // 产品标题
+        catId: form.category, // 分类ID
+        updateDate: '2020-07-08T03:49:56.559Z', // 更新时间
+        isShelve: true, // 是否上架
+        shopTags: form.tags // 产品标签
+      }
+      console.log(params)
       this.$refs.form.validate(valid => {
         if (valid) {
           console.log(this.form)
-          // 图片 formdata格式
-          const { imgList } = this
-          const formData = new FormData()
-          imgList.forEach(file => {
-            formData.append('imgs[]', file)
-          })
         } else {
           console.log('error submit!!')
           return false
         }
       })
     },
-    onChange(e) {
-      console.log(e)
-    },
     onCategoryChange(value) {
+      console.log(value)
       this.selectedCate = value
       // TODO 更新产品分类数据
     },
@@ -1073,7 +1200,6 @@ div.ant-card-body {
   }
 }
 .img-list {
-  min-height: 200px;
   width: 100%;
   overflow: hidden;
   .img-item {
@@ -1164,5 +1290,60 @@ div.ant-card-body {
       color: @red-8;
     }
   }
+}
+.pic-list {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  padding: 0;
+  .operate {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    display: none;
+    width: 82px;
+    height: 82px;
+    line-height: 84px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    .anticon {
+      margin: 0 4px;
+    }
+  }
+  li {
+    position: relative;
+    display: block;
+    width: 100px;
+    height: 100px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+    padding: 8px;
+    &:first-child {
+      &:before {
+        position: absolute;
+        content: '封面';
+        padding: 2px 5px;
+        height: 24px;
+        line-height: 24px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+      }
+    }
+    &:hover {
+      .operate {
+        display: block;
+      }
+    }
+    img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+.img-uploader {
+  width: 100px;
+  height: 100px;
 }
 </style>

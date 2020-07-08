@@ -21,7 +21,7 @@ export const asyncRouterMap = [
         name: 'dashboard',
         redirect: '/dashboard/home',
         component: RouteView,
-        meta: { title: '首页', keepAlive: true, icon: bxAnaalyse, permission: ['dashboard'] },
+        meta: { title: '首页', keepAlive: true, icon: bxAnaalyse },
         children: [
           {
             path: '/dashboard/home',
@@ -40,48 +40,55 @@ export const asyncRouterMap = [
         meta: { title: '产品', icon: appStore },
         children: [
           {
+            path: '/products/test',
+            name: 'TableListWrapper',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/products/Details'),
+            meta: { title: 'test', keepAlive: true }
+          },
+          {
             path: '/products/product-list/:pageNo([1-9]\\d*)?',
             name: 'TableListWrapper',
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
             component: () => import('@/views/products/List'),
-            meta: { title: '产品管理', keepAlive: true, permission: ['table'] }
+            meta: { title: '产品管理', keepAlive: true }
           },
           {
             path: '/products/add-product/:id?',
             name: 'BasicList',
             component: () => import('@/views/products/ProductDetail'),
-            meta: { title: '添加产品', keepAlive: true, permission: ['table'] }
+            meta: { title: '添加产品', keepAlive: true }
           },
           {
             path: '/products/category-manage',
             name: 'CardList',
             component: () => import('@/views/products/Category'),
-            meta: { title: '管理产品分类', keepAlive: true, permission: ['table'] }
+            meta: { title: '管理产品分类', keepAlive: true }
           },
           {
             path: '/products/add-category/:id?',
             name: 'addProductCategory',
             component: () => import('@/views/products/CatetoryDetail'),
-            meta: { title: '添加产品分类', keepAlive: true, permission: ['table'] }
+            meta: { title: '添加产品分类', keepAlive: true }
           },
           // {
           //   path: '/products/field-manage',
           //   name: 'fieldManage',
           //   component: () => import('@/views/list/search/SearchLayout'),
           //   redirect: '/list/search/article',
-          //   meta: { title: '管理自定义字段', keepAlive: true, permission: ['table'] }
+          //   meta: { title: '管理自定义字段', keepAlive: true }
           // },
           {
             path: '/products/watermark',
             name: 'watermark',
             component: () => import('@/views/products/Watermark'),
-            meta: { title: '设置水印', keepAlive: true, permission: ['table'] }
+            meta: { title: '设置水印', keepAlive: true }
           },
           {
             path: '/products/recycle-bin',
             name: 'productsRecycleBin',
             component: () => import('@/views/products/RecycleBin'),
-            meta: { title: '产品回收站', keepAlive: true, permission: ['table'] }
+            meta: { title: '产品回收站', keepAlive: true }
           }
         ]
       },
@@ -91,38 +98,38 @@ export const asyncRouterMap = [
         name: 'articles',
         component: RouteView,
         redirect: '/articles/article-list',
-        meta: { title: '文章', icon: 'profile', permission: ['table'] },
+        meta: { title: '文章', icon: 'profile' },
         children: [
           {
             path: '/articles/article-list',
             name: 'articleManage',
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
             component: () => import('@/views/article/List'),
-            meta: { title: '文章管理', keepAlive: true, permission: ['table'] }
+            meta: { title: '文章管理', keepAlive: true }
           },
           {
             path: '/articles/basic-list',
             name: 'addArticle',
             component: () => import('@/views/article/Detail'),
-            meta: { title: '添加文章', keepAlive: true, permission: ['table'] }
+            meta: { title: '添加文章', keepAlive: true }
           },
           {
             path: '/articles/sort',
             name: 'articleSort',
             component: () => import('@/views/article/Sort'),
-            meta: { title: '文章排序', keepAlive: true, permission: ['table'] }
+            meta: { title: '文章排序', keepAlive: true }
           },
           {
             path: '/articles/article-category',
             name: 'articleCategory',
             component: () => import('@/views/article/Category'),
-            meta: { title: '管理文章分类', keepAlive: true, permission: ['table'] }
+            meta: { title: '管理文章分类', keepAlive: true }
           },
           {
             path: '/articles/add-category/:id?',
             name: 'addAriticleCategory',
             component: () => import('@/views/article/CategoryDetail'),
-            meta: { title: '添加文章分类', keepAlive: true, permission: ['table'] }
+            meta: { title: '添加文章分类', keepAlive: true }
           }
         ]
       },
@@ -131,22 +138,22 @@ export const asyncRouterMap = [
         path: '/keyword',
         name: 'keyword',
         component: RouteView,
-        redirect: '/keyword/table-list',
-        meta: { title: '关键词', icon: 'form', permission: ['table'] },
+        redirect: '/keyword/keyword-list',
+        meta: { title: '关键词', icon: 'form' },
         children: [
           {
             path: '/keyword/keyword-list/:pageNo([1-9]\\d*)?',
             name: 'keywordManage',
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
             component: () => import('@/views/keyword/KeywordList'),
-            meta: { title: '我的关键词', keepAlive: true, permission: ['table'] }
+            meta: { title: '我的关键词', keepAlive: true }
           }
           // ,
           // {
           //   path: '/keyword/setting',
           //   name: 'keywordSetting',
           //   component: () => import('@/views/list/BasicList'),
-          //   meta: { title: '关键词设置', keepAlive: true, permission: ['table'] }
+          //   meta: { title: '关键词设置', keepAlive: true }
           // }
         ]
       },
@@ -156,20 +163,20 @@ export const asyncRouterMap = [
         name: 'enquiry',
         component: RouteView,
         redirect: '/enquiry/enquiry-list',
-        meta: { title: '询盘', icon: comment, permission: ['table'] },
+        meta: { title: '询盘', icon: comment },
         children: [
           {
             path: '/enquiry/enquiry-list/:pageNo([1-9]\\d*)?',
             name: 'enquiryManage',
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
             component: () => import('@/views/enquiry/EnquiryList'),
-            meta: { title: '询盘管理', keepAlive: true, permission: ['table'] }
+            meta: { title: '询盘管理', keepAlive: true }
           },
           {
             path: '/enquiry/enquiry-rules',
             name: 'enquiryRules',
             component: () => import('@/views/list/BasicList'),
-            meta: { title: '询盘规则', keepAlive: true, permission: ['table'] }
+            meta: { title: '询盘规则', keepAlive: true }
           },
           {
             path: '/enquiry/recycle-bin',
