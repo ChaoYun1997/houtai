@@ -3,12 +3,8 @@
     <a-card :bordered="false">
       <div class="table-operator">
         <div slot="title">
-          <a-button type="primary" icon="plus" @click="$router.push('/products/add-product')">
-            新增产品
-          </a-button>
-          <a-button :style="{ marginLeft: '8px' }" icon="plus" @click="visibleUploadXls = true">
-            批量导入
-          </a-button>
+          <a-button type="primary" icon="plus" @click="$router.push('/products/add-product')">新增产品</a-button>
+          <a-button :style="{ marginLeft: '8px' }" icon="plus" @click="visibleUploadXls = true">批量导入</a-button>
         </div>
       </div>
       <div class="table-page-search-wrapper">
@@ -33,16 +29,14 @@
                 <a-select placeholder="请选择" default-value="0" @change="handleCateSelected">
                   <a-select-option value="0">全部</a-select-option>
                   <template v-for="(item, index) in category">
-                    <a-select-option :value="item.id" :key="index">
-                      {{ item.catName }}
-                    </a-select-option>
+                    <a-select-option :value="item.id" :key="index">{{ item.catName }}</a-select-option>
                   </template>
                 </a-select>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="标签">
-                <a-checkbox-group v-model="queryParam.shopTags" :options="tagOptions"> </a-checkbox-group>
+                <a-checkbox-group v-model="queryParam.shopTags" :options="tagOptions"></a-checkbox-group>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
@@ -69,7 +63,10 @@
               <a-menu-item key="设为热销">设为热销</a-menu-item>
               <a-menu-item key="取消热销">取消热销</a-menu-item>
             </a-menu>
-            <a-button style="margin-left: 8px"> 批量设置 <a-icon type="down" /> </a-button>
+            <a-button style="margin-left: 8px">
+              批量设置
+              <a-icon type="down" />
+            </a-button>
           </a-dropdown>
           <!--          <a-select-->
           <!--            placeholder="批量操作"-->
@@ -101,18 +98,10 @@
           <!--              取消热销-->
           <!--            </a-select-option>-->
           <!--          </a-select>-->
-          <a-button @click="setCategory">
-            移动到分类
-          </a-button>
-          <a-button @click="setCategory">
-            添加到分类
-          </a-button>
-          <a-button @click="handleDel">
-            删除
-          </a-button>
-          <a-button @click="handleDownload">
-            下载产品链接二维码
-          </a-button>
+          <a-button @click="setCategory">移动到分类</a-button>
+          <a-button @click="setCategory">添加到分类</a-button>
+          <a-button @click="handleDel">删除</a-button>
+          <a-button @click="handleDownload">下载产品链接二维码</a-button>
         </div>
       </div>
       <s-table
@@ -120,15 +109,19 @@
         size="default"
         :rowKey="record => record.id"
         :columns="columns"
-        :data="loadData"
+        :data="loadListData"
         :alert="true"
+        @change="onSorterChange"
         :rowSelection="rowSelection"
       >
         <div class="cover" slot="shopImg" slot-scope="shopImg">
-          <img :src="shopImg" alt="" />
+          <img :src="shopImg" alt />
         </div>
         <div slot="shelve" slot-scope="text, record">
-          <a-switch :checked="checkIsShelve(record.isShelve)" @change="checked => onSwitchChange(checked, record.id)" />
+          <a-switch
+            :checked="checkIsShelve(record.isShelve)"
+            @change="checked => onSwitchChange(checked, record.id)"
+          />
         </div>
 
         <span slot="shopTags" slot-scope="shopTags">
@@ -136,14 +129,18 @@
             v-for="tag in shopTags"
             :key="tag"
             :color="tag === '热点产品' ? 'pink' : tag === '新产品' ? 'green' : 'orange'"
-          >
-            {{ tag }}
-          </a-tag>
+          >{{ tag }}</a-tag>
         </span>
         <div class="action" slot="action" slot-scope="text, record">
           <a-button type="primary" icon="edit" size="small" @click="edit(record.id)" />
           <a-button type="primary" icon="copy" size="small" @click="copy(record.id)" />
-          <a-button type="danger" icon="delete" size="small" :loading="delLoading" @click="del(record.id)" />
+          <a-button
+            type="danger"
+            icon="delete"
+            size="small"
+            :loading="delLoading"
+            @click="del(record.id)"
+          />
           <a-button icon="share-alt" size="small" @click="share(record.id)" />
           <a-button icon="eye" size="small" @click="preview(record.shopUrl)" />
         </div>
@@ -181,31 +178,29 @@
     </a-card>
     <a-modal v-model="visibleUploadXls" title="导入产品">
       <p>
-        <b>产品信息</b><br />
-        1. 下载模板文件，根据模板中的批注，填写产品信息。
+        <b>产品信息</b>
+        <br />1. 下载模板文件，根据模板中的批注，填写产品信息。
         <a @click="downloadXls" target="_blank">下载文件</a>
-        <br />
-        2. 上传填写后的数据文件：
+        <br />2. 上传填写后的数据文件：
         <a-upload
           :file-list="fileList"
           :multiple="false"
-          accept=".xls,.xlsx"
+          accept=".xls, .xlsx"
           :remove="handleRemove"
           :before-upload="beforeUpload"
         >
-          <a-button> <a-icon type="upload" /> 选择文件 </a-button>
+          <a-button>
+            <a-icon type="upload" />选择文件
+          </a-button>
         </a-upload>
       </p>
       <br />
       <p>
-        <b>导入说明</b><br />
-        1. 表格首行为字段名，不能删除、修改。<br />
-
-        2. 表头字段标了“*”的为必填字段，请务必填写。<br />
-
-        3. 一次最多提交1000条产品信息，且文件大小不能超过10M。<br />
-
-        4. 仅支持.xls、.xlsx格式。
+        <b>导入说明</b>
+        <br />1. 表格首行为字段名，不能删除、修改。
+        <br />2. 表头字段标了“*”的为必填字段，请务必填写。
+        <br />3. 一次最多提交1000条产品信息，且文件大小不能超过10M。
+        <br />4. 仅支持.xls、.xlsx格式。
       </p>
       <div slot="footer" class="model-footer">
         <a-button type="primary" @click="handleUpload" :disabled="fileList.length === 0">上 传</a-button>
@@ -215,7 +210,11 @@
     <a-modal v-model="showCategory" title="请选择产品分类">
       <a-checkbox-group v-model="categoryCheckList" :options="category"></a-checkbox-group>
       <div slot="footer" class="model-footer">
-        <a-button type="primary" @click="handleSetCategory" :disabled="categoryCheckList.length === 0">确 定</a-button>
+        <a-button
+          type="primary"
+          @click="handleSetCategory"
+          :disabled="categoryCheckList.length === 0"
+        >确 定</a-button>
         <a-button @click="showCategory = false">取 消</a-button>
       </div>
     </a-modal>
@@ -337,6 +336,17 @@ export default {
   },
   methods: {
     moment,
+    loadListData(parameter) {
+      parameter = Object.assign(parameter, this.queryParam)
+      return getProducts(parameter)
+    },
+    onSorterChange(sorter) {
+      console.log(sorter)
+      // this.loadListData({
+      //   sortField: 1,
+      //   sortType: 0
+      // })
+    },
     checkIsShelve(shelve) {
       return shelve
     },

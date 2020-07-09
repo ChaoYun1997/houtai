@@ -43,6 +43,19 @@ const errorHandler = (error) => {
   return Promise.reject(error)
 }
 
+// 产品排序拦截处理器 排序字段 1产品名称 2型号 3更新时间 4上下架
+const sortHandler = (config) => {
+  const sortObj = {
+    'shopTitle': ['1', 'desc', 'asc'],
+    'shopModel': ['2', 'desc', 'asc'],
+    'updateDate': ['3', 'desc', 'asc'],
+    'isShelve': ['4', 'desc', 'asc']
+  }
+  const data = config.data
+  console.log(sortObj[data.sortField])
+  // return config
+}
+
 // request interceptor
 request.interceptors.request.use(config => {
   const token = storage.get(ACCESS_TOKEN)
@@ -50,6 +63,10 @@ request.interceptors.request.use(config => {
   // 让每个请求携带自定义 token 请根据实际情况自行修改
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`
+  }
+  console.log(config)
+  if (config.url === '/shop/shops') {
+    sortHandler(config)
   }
   return config
 }, errorHandler)
