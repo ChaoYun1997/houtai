@@ -309,22 +309,14 @@
 </template>
 
 <script>
-import { getProducts, getProductCategory, getUploadSign, addProduct } from '@/api/products'
+import { getProducts, getUploadSign, addProduct, getProductDetail } from '@/api/products'
+import { getProductCate, getArticleCate } from '@/api/category'
 import { getKeyword } from '@/api/keyword'
-import { getArticles, articleCategory } from '@/api/article'
+import { getArticles } from '@/api/article'
 import sortableJS from 'sortablejs'
 import KindEditor from '@/components/Kindeditor'
 import STable from '@/components/Table'
 import moment from 'moment'
-
-// function getBase64(file) {
-//   return new Promise((resolve, reject) => {
-//     const reader = new FileReader()
-//     reader.readAsDataURL(file)
-//     reader.onload = () => resolve(reader.result)
-//     reader.onerror = error => reject(error)
-//   })
-// }
 
 const articleColumns = [
   {
@@ -355,11 +347,13 @@ export default {
     this.productColumns = productColumns
     return {
       queryArticle: {},
+      queryArticleCate: {},
       loadArticleData: parameter => {
         parameter = Object.assign(parameter, this.queryArticle)
         return getArticles(parameter)
       },
       queryProduct: {},
+      queryProductCate: {},
       loadProductData: parameter => {
         parameter = Object.assign(parameter, this.queryProduct)
         return getProducts(parameter)
@@ -488,6 +482,11 @@ export default {
     }
   },
   created() {
+    const { id } = this.$route.params
+    if (id) {
+      this.loadProductDetail(id)
+    }
+
     this.loadKeyword()
     // this.loadSku()
     // this.loadArticles()
@@ -531,19 +530,20 @@ export default {
       }
     })
   },
-  watch: {
-    // async coverImg(val) {
-    //   if (val.length > 0) {
-    //     this.previewCover = await getBase64(val[0])
-    //   }
-    // },
-    // async imgList(val) {
-    //   if (val.length > 0) {
-    //     this.previewImage = await getBase64(val[0])
-    //   }
-    // }
-  },
   methods: {
+    loadProductDetail(id) {
+      getProductDetail({ id }).then(res => {
+        console.log(res.data)
+        const { form } = this
+        const { data } = res
+        form.name = data.shopTitle
+        form.productUrl = data.shopUrl
+        form.keyword.words = data.shopKeyWords
+        form.keyword.pageTitle = data.seoTitle
+        form.keyword.pageKeyword = data.seoKeyWord
+        form.keyword.pageDesc = data.seoDescription
+      })
+    },
     handleDelProduct(id) {
       this.selectedProductRowKeys.forEach((item, index) => {
         if (id === item) {
@@ -575,15 +575,15 @@ export default {
       this.selectedProducts = selectedRows
     },
     loadArticleCate() {
-      articleCategory().then(res => {
+      getArticleCate(this.queryArticleCate).then(res => {
         const result = res.data.datas
         console.log(`article cate: ${result}`)
         if (result.length > 0) {
           result.forEach(item => {
             this.articleCate.push({
-              value: item.value,
-              label: item.name,
-              id: item.value
+              value: item.id,
+              label: item.catName,
+              id: item.id
             })
           })
         }
@@ -653,12 +653,12 @@ export default {
     },
     // 加载分类数据
     loadCategory() {
-      getProductCategory().then(res => {
+      getProductCate(this.queryArticleCate).then(res => {
         res.data.datas.forEach(item => {
           this.categoryOptions.push({
-            label: item.name,
-            value: item.value,
-            id: item.value
+            label: item.catName,
+            value: item.id,
+            id: item.id
           })
         })
       })

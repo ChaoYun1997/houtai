@@ -50,7 +50,7 @@ export const asyncRouterMap = [
             path: '/products/product-list/:pageNo([1-9]\\d*)?',
             name: 'TableListWrapper',
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
-            component: () => import('@/views/products/List'),
+            component: () => import('@/views/products/ProductList'),
             meta: { title: '产品管理', keepAlive: true }
           },
           {

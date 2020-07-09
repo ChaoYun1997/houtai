@@ -12,7 +12,7 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="搜索" :lable-col="{ span: 24, offset: 12 }">
-                <a-input v-model="queryParam.keyWords"></a-input>
+                <a-input placeholder="请输入关键词" v-model="queryParam.keyWords"></a-input>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
@@ -50,59 +50,30 @@
             </a-col>
           </a-row>
         </a-form>
-        <div slot="actions" class="batch-action">
-          <a-dropdown>
-            <a-menu slot="overlay" @click="handleMenuClick">
-              <a-menu-item key="上架">上架</a-menu-item>
-              <a-menu-item key="下架">下架</a-menu-item>
-              <a-menu-divider />
-              <a-menu-item key="设为最新">设为最新</a-menu-item>
-              <a-menu-item key="取消最新">取消最新</a-menu-item>
-              <a-menu-item key="设为推荐">设为推荐</a-menu-item>
-              <a-menu-item key="取消推荐">取消推荐</a-menu-item>
-              <a-menu-item key="设为热销">设为热销</a-menu-item>
-              <a-menu-item key="取消热销">取消热销</a-menu-item>
-            </a-menu>
-            <a-button style="margin-left: 8px">
-              批量设置
-              <a-icon type="down" />
-            </a-button>
-          </a-dropdown>
-          <!--          <a-select-->
-          <!--            placeholder="批量操作"-->
-          <!--            style="width: 120px"-->
-          <!--            @change="handleChange"-->
-          <!--          >-->
-          <!--            <a-select-option value="上架">-->
-          <!--              上架-->
-          <!--            </a-select-option>-->
-          <!--            <a-select-option value="下架">-->
-          <!--              下架-->
-          <!--            </a-select-option>-->
-          <!--            <a-select-option value="设为最新">-->
-          <!--              设为最新-->
-          <!--            </a-select-option>-->
-          <!--            <a-select-option value="取消最新">-->
-          <!--              取消最新-->
-          <!--            </a-select-option>-->
-          <!--            <a-select-option value="设为推荐">-->
-          <!--              设为推荐-->
-          <!--            </a-select-option>-->
-          <!--            <a-select-option value="取消推荐">-->
-          <!--              取消推荐-->
-          <!--            </a-select-option>-->
-          <!--            <a-select-option value="设为热销">-->
-          <!--              设为热销-->
-          <!--            </a-select-option>-->
-          <!--            <a-select-option value="取消热销">-->
-          <!--              取消热销-->
-          <!--            </a-select-option>-->
-          <!--          </a-select>-->
-          <a-button @click="setCategory">移动到分类</a-button>
-          <a-button @click="setCategory">添加到分类</a-button>
-          <a-button @click="handleDel">删除</a-button>
-          <a-button @click="handleDownload">下载产品链接二维码</a-button>
-        </div>
+      </div>
+
+      <div class="table-operator batch-action">
+        <a-dropdown>
+          <a-menu slot="overlay" @click="handleMenuClick">
+            <a-menu-item key="上架">上架</a-menu-item>
+            <a-menu-item key="下架">下架</a-menu-item>
+            <a-menu-divider />
+            <a-menu-item key="设为最新">设为最新</a-menu-item>
+            <a-menu-item key="取消最新">取消最新</a-menu-item>
+            <a-menu-item key="设为推荐">设为推荐</a-menu-item>
+            <a-menu-item key="取消推荐">取消推荐</a-menu-item>
+            <a-menu-item key="设为热销">设为热销</a-menu-item>
+            <a-menu-item key="取消热销">取消热销</a-menu-item>
+          </a-menu>
+          <a-button style="margin-left: 8px">
+            批量设置
+            <a-icon type="down" />
+          </a-button>
+        </a-dropdown>
+        <a-button @click="setCategory">移动到分类</a-button>
+        <a-button @click="setCategory">添加到分类</a-button>
+        <a-button @click="handleDel">删除</a-button>
+        <a-button @click="handleDownload">下载产品链接二维码</a-button>
       </div>
       <s-table
         ref="table"
@@ -111,17 +82,14 @@
         :columns="columns"
         :data="loadListData"
         :alert="true"
-        @change="onSorterChange"
+        :getSortField="returnSortFile"
         :rowSelection="rowSelection"
       >
         <div class="cover" slot="shopImg" slot-scope="shopImg">
           <img :src="shopImg" alt />
         </div>
         <div slot="shelve" slot-scope="text, record">
-          <a-switch
-            :checked="checkIsShelve(record.isShelve)"
-            @change="checked => onSwitchChange(checked, record.id)"
-          />
+          <a-switch :checked="checkIsShelve(record.isShelve)" @change="checked => onSwitchChange(checked, record.id)" />
         </div>
 
         <span slot="shopTags" slot-scope="shopTags">
@@ -129,52 +97,20 @@
             v-for="tag in shopTags"
             :key="tag"
             :color="tag === '热点产品' ? 'pink' : tag === '新产品' ? 'green' : 'orange'"
-          >{{ tag }}</a-tag>
+          >
+            {{ tag }}
+          </a-tag>
         </span>
         <div class="action" slot="action" slot-scope="text, record">
           <a-button type="primary" icon="edit" size="small" @click="edit(record.id)" />
           <a-button type="primary" icon="copy" size="small" @click="copy(record.id)" />
-          <a-button
-            type="danger"
-            icon="delete"
-            size="small"
-            :loading="delLoading"
-            @click="del(record.id)"
-          />
+          <a-popconfirm title="你确定要删除该产品吗?" @confirm="del(record.id)">
+            <a-button type="danger" icon="delete" size="small" />
+          </a-popconfirm>
           <a-button icon="share-alt" size="small" @click="share(record.id)" />
           <a-button icon="eye" size="small" @click="preview(record.shopUrl)" />
         </div>
       </s-table>
-      <!--      <a-table -->
-      <!--        :row-key="record => record.id" -->
-      <!--        :columns="columns" -->
-      <!--        :data-source="productList" -->
-      <!--        :loading="listLoading"-->
-      <!--      >-->
-      <!--        <div class="cover" slot="shopImg" slot-scope="shopImg">-->
-      <!--          <img :src="shopImg" alt="" />-->
-      <!--        </div>-->
-      <!--        <div slot="shelve" slot-scope="text, record">-->
-      <!--          <a-switch :checked="checkIsShelve(record.isShelve)" @change="checked => onSwitchChange(checked, record.id)" />-->
-      <!--        </div>-->
-
-      <!--        <span slot="shopTags" slot-scope="shopTags">-->
-      <!--          <a-tag-->
-      <!--            v-for="tag in shopTags"-->
-      <!--            :key="tag"-->
-      <!--            :color="tag === '热点产品' ? 'pink' : tag === '新产品' ? 'green' : 'orange'"-->
-      <!--          >-->
-      <!--            {{ tag }}-->
-      <!--          </a-tag>-->
-      <!--        </span>-->
-      <!--        <div class="action" slot="action" slot-scope="text, record">-->
-      <!--          <a-button type="primary" icon="edit" size="small" @click="edit(record.id)" />-->
-      <!--          <a-button type="primary" icon="copy" size="small" @click="copy(record.id)" />-->
-      <!--          <a-button type="danger" icon="delete" size="small" :loading="delLoading" @click="del(record.id)" />-->
-      <!--          <a-button icon="share-alt" size="small" @click="share(record.id)" />-->
-      <!--          <a-button icon="eye" size="small" @click="preview(record.shopUrl)" />-->
-      <!--        </div>-->
-      <!--      </a-table>-->
     </a-card>
     <a-modal v-model="visibleUploadXls" title="导入产品">
       <p>
@@ -189,18 +125,14 @@
           :remove="handleRemove"
           :before-upload="beforeUpload"
         >
-          <a-button>
-            <a-icon type="upload" />选择文件
-          </a-button>
+          <a-button> <a-icon type="upload" />选择文件 </a-button>
         </a-upload>
       </p>
       <br />
       <p>
         <b>导入说明</b>
-        <br />1. 表格首行为字段名，不能删除、修改。
-        <br />2. 表头字段标了“*”的为必填字段，请务必填写。
-        <br />3. 一次最多提交1000条产品信息，且文件大小不能超过10M。
-        <br />4. 仅支持.xls、.xlsx格式。
+        <br />1. 表格首行为字段名，不能删除、修改。 <br />2. 表头字段标了“*”的为必填字段，请务必填写。 <br />3.
+        一次最多提交1000条产品信息，且文件大小不能超过10M。 <br />4. 仅支持.xls、.xlsx格式。
       </p>
       <div slot="footer" class="model-footer">
         <a-button type="primary" @click="handleUpload" :disabled="fileList.length === 0">上 传</a-button>
@@ -210,11 +142,7 @@
     <a-modal v-model="showCategory" title="请选择产品分类">
       <a-checkbox-group v-model="categoryCheckList" :options="category"></a-checkbox-group>
       <div slot="footer" class="model-footer">
-        <a-button
-          type="primary"
-          @click="handleSetCategory"
-          :disabled="categoryCheckList.length === 0"
-        >确 定</a-button>
+        <a-button type="primary" @click="handleSetCategory" :disabled="categoryCheckList.length === 0">确 定</a-button>
         <a-button @click="showCategory = false">取 消</a-button>
       </div>
     </a-modal>
@@ -336,6 +264,15 @@ export default {
   },
   methods: {
     moment,
+    returnSortFile(columnKey) {
+      const sortObj = {
+        shopTitle: 1,
+        shopModel: 2,
+        updateDate: 3,
+        isShelve: 4
+      }
+      return sortObj[columnKey]
+    },
     loadListData(parameter) {
       parameter = Object.assign(parameter, this.queryParam)
       return getProducts(parameter)
@@ -357,7 +294,14 @@ export default {
       }
       getProductCate(params).then(res => {
         console.log(res)
-        this.category = res.data.datas
+        // this.category = res.data.datas
+        res.data.datas.forEach(item => {
+          this.category.push({
+            label: item.catName,
+            value: item.id,
+            id: item.id
+          })
+        })
       })
     },
     loadProductData() {
@@ -466,6 +410,7 @@ export default {
       }
       updateProp(params, id).then(res => {
         console.log(res)
+        this.$refs.table.refresh()
       })
     },
     // 编辑文章
@@ -479,16 +424,10 @@ export default {
     // 删除文章
     del(id) {
       console.log(id)
-      this.$confirm({
-        content: '你确定要删除该产品吗？',
-        onOk: () => {
-          this.delLoading = true
-          delProduct(id).then(res => {
-            if (res.result.data === 'success') this.$message.success('操作成功')
-            this.delLoading = false
-            this.$refs.table.refresh()
-          })
-        }
+      delProduct(id).then(res => {
+        if (res.result.data === 'success') this.$message.success('操作成功')
+        this.delLoading = false
+        this.$refs.table.refresh()
       })
     },
     // 分享文章
@@ -503,20 +442,25 @@ export default {
     handleMenuClick(value) {
       if (!this.checkSelected()) return
       console.log(this.batchValue, value)
-      const IDs = this.selectedRows.map(item => {
-        return item.id
+      this.$confirm({
+        content: `你确定要${value.key}该产品吗？`,
+        onOk: () => {
+          const IDs = this.selectedRows.map(item => {
+            return item.id
+          })
+          const actions = {
+            上架: ['IsShelve', true],
+            下架: ['IsShelve', false],
+            设为最新: ['IsNew', true],
+            取消最新: ['IsNew', false],
+            设为推荐: ['IsRecommend', true],
+            取消推荐: ['IsRecommend', false],
+            设为热销: ['IsHot', true],
+            取消热销: ['IsHot', false]
+          }
+          this.handleBatchAction(actions[value.key][0], actions[value.key][1], IDs)
+        }
       })
-      const actions = {
-        上架: ['IsShelve', true],
-        下架: ['IsShelve', false],
-        设为最新: ['IsNew', true],
-        取消最新: ['IsNew', false],
-        设为推荐: ['IsRecommend', true],
-        取消推荐: ['IsRecommend', false],
-        设为热销: ['IsHot', true],
-        取消热销: ['IsHot', false]
-      }
-      this.handleBatchAction(actions[value.key][0], actions[value.key][1], IDs)
     },
     // 选择分类
     handleCateSelected(value) {
@@ -535,8 +479,8 @@ export default {
     // 查询
     handleQuery() {
       console.log(this.queryParam)
-      this.loadProductData()
-      // this.$refs.table.refresh(true)
+      // this.loadProductData()
+      this.$refs.table.refresh(true)
     },
     // 重置查询
     handleReset() {
@@ -544,7 +488,8 @@ export default {
         pageIndex: 1,
         pageSize: 10
       }
-      this.loadProductData()
+      // this.loadProductData()
+      this.$refs.table.refresh(true)
     },
     checkSelected() {
       if (this.selectedRowKeys.length === 0) {
@@ -624,7 +569,6 @@ export default {
 }
 .batch-action {
   text-align: left;
-  padding-left: 20px;
   button {
     margin-left: 8px;
   }

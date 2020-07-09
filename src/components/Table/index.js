@@ -17,6 +17,10 @@ export default {
     }
   },
   props: Object.assign({}, T.props, {
+    getSortField: {
+      type: Function,
+      required: false
+    },
     rowKey: {
       type: [String, Function],
       default: 'key'
@@ -159,12 +163,12 @@ export default {
         },
         (sorter &&
           sorter.field && {
-            sortField: sorter.field
+            sortField: this.getSortField(sorter.columnKey)
           }) ||
           {},
         (sorter &&
           sorter.order && {
-            sortOrder: sorter.order
+            sortType: sorter.order === 'descend' ? 0 : 1
           }) ||
           {},
         {
