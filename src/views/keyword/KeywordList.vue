@@ -459,22 +459,46 @@ export default {
       this.currentSelectedRowKeys = value
     },
     handleSubMenuClick(item) {
-      // const sort = new Map([
-      //   ['product:1', ['productMenu', '', '']],
-      //   ['product:2', ['productMenu', 0, 5]],
-      //   ['product:3', ['productMenu', 5, 10]],
-      //   ['product:4', ['productMenu', 11, 20]],
-      //   ['product:5', ['productMenu', 20, '']]
-      // ])
+      const sort = new Map([
+        ['product:1', ['productMenu', 'ShopCount', '', '']],
+        ['product:2', ['productMenu', 'ShopCount', 0, 5]],
+        ['product:3', ['productMenu', 'ShopCount', 5, 10]],
+        ['product:4', ['productMenu', 'ShopCount', 11, 20]],
+        ['product:5', ['productMenu', 'ShopCount', 20, '']],
+        ['article:1', ['articleMenu', 'ArticleCount', '', '']],
+        ['article:2', ['articleMenu', 'ArticleCount', 0, 5]],
+        ['article:3', ['articleMenu', 'ArticleCount', 5, 10]],
+        ['article:4', ['articleMenu', 'ArticleCount', 11, 20]],
+        ['article:5', ['articleMenu', 'ArticleCount', 20, '']],
+        ['cate:1', ['cateMenu', 'CatCount', '', '']],
+        ['cate:2', ['cateMenu', 'CatCount', 0, 5]],
+        ['cate:3', ['cateMenu', 'CatCount', 5, 10]],
+        ['cate:4', ['cateMenu', 'CatCount', 11, 20]],
+        ['cate:5', ['cateMenu', 'CatCount', 20, '']]
+      ])
       const itemName = item.domEvent.target.innerText
-      console.log(item.key, itemName)
-      if (item.key.indexOf('product') !== -1) {
-        this.productMenu = itemName === '所有' ? '' : itemName
-      } else if (item.key.indexOf('article') !== -1) {
-        this.articleMenu = itemName === '所有' ? '' : itemName
-      } else if (item.key.indexOf('cate') !== -1) {
-        this.cateMenu = itemName === '所有' ? '' : itemName
+      // console.log(item.key, itemName)
+      const menuName = sort.get(item.key)
+      this[menuName[0]] = itemName === '所有' ? '' : itemName
+      const min = menuName[2]
+      const max = menuName[3]
+      const countName = menuName[1]
+      if (min !== '') {
+        this.queryParam[`min${countName}`] = min
       }
+      if (max !== '') {
+        this.queryParam[`max${countName}`] = max
+      }
+
+      console.log(this.queryParam)
+      this.$refs.table.refresh(true)
+      // if (item.key.indexOf('product') !== -1) {
+      //   this.productMenu = itemName === '所有' ? '' : itemName
+      // } else if (item.key.indexOf('article') !== -1) {
+      //   this.articleMenu = itemName === '所有' ? '' : itemName
+      // } else if (item.key.indexOf('cate') !== -1) {
+      //   this.cateMenu = itemName === '所有' ? '' : itemName
+      // }
     },
     handleSort() {
       console.log('查询排序结果')

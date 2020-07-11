@@ -14,7 +14,7 @@ export function getKeyword(param) {
   return request({
     url: keywordApi.Keyword,
     method: 'post',
-    params: param
+    data: param
   })
 }
 
