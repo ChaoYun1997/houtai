@@ -173,10 +173,11 @@ export default {
       input.click()
     },
     // 选择好文件
-    async selectedFile($event) {
+    selectedFile($event) {
       const file = $event.target.files[0]
       console.log(file)
 
+      this.$emit('uploadImg', file)
       // 把图片上传到后端服务器 拿到url  uploadImage 是自己后端上传图片的接口
       // 调用appendHtml方法把图片追加到富文本
 

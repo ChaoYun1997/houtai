@@ -19,7 +19,7 @@
           <a-input
             class="url-input"
             v-show="form.urlValue === 'b'"
-            v-model="customUrl"
+            v-model="form.productUrl"
             placeholder="请输入自定义URL"
           ></a-input>
           <p class="info" v-show="form.urlValue === 'b'">
@@ -171,7 +171,7 @@
         </a-form-model-item>
         <h3>产品描述</h3>
         <a-form-model-item label="产品描述">
-          <kind-editor ref="kindeditor" @input="getContent"></kind-editor>
+          <kind-editor @uploadImg="handleEditorUploadPic" :content="form.desc" id="k-editor" ref="kindeditor"></kind-editor>
         </a-form-model-item>
         <h3>产品状态</h3>
         <a-form-model-item label="产品状态">
@@ -201,7 +201,7 @@
               <s-table
                 class="article-table"
                 size="small"
-                ref="table"
+                ref="articleTable"
                 :rowKey="record => record.id"
                 :scroll="{ y: 380 }"
                 :columns="articleColumns"
@@ -255,7 +255,7 @@
               <s-table
                 class="article-table"
                 size="small"
-                ref="table"
+                ref="productTable"
                 :rowKey="record => record.id"
                 :scroll="{ y: 380 }"
                 :columns="productColumns"
@@ -288,7 +288,7 @@
         <a-row>
           <template v-for="item in categoryOptions">
             <a-col :key="item.label">
-              <a-checkbox :value="item.id">{{ item.label }}</a-checkbox>
+              <a-checkbox :value="item.id" :disabled="item.id=== 'all'">{{ item.label }}</a-checkbox>
             </a-col>
           </template>
         </a-row>
@@ -309,7 +309,12 @@
 </template>
 
 <script>
-import { getProducts, getUploadSign, addProduct, getProductDetail } from '@/api/products'
+import {
+  getProducts,
+  getUploadSign,
+  // addProduct,
+  getProductDetail
+} from '@/api/products'
 import { getProductCate, getArticleCate } from '@/api/category'
 import { getKeyword } from '@/api/keyword'
 import { getArticles } from '@/api/article'
@@ -396,7 +401,11 @@ export default {
       showCategoryModal: false, // 显示选择分类
       categoryLoading: true,
       selectedCate: [],
-      categoryOptions: [], // 产品分类
+      categoryOptions: [{
+        label: '全部',
+        value: 'all',
+        id: 'all'
+      }], // 产品分类
 
       showAddSku: false,
       newSku: '',
@@ -407,7 +416,6 @@ export default {
       labelCol: { span: 4 },
       wrapperCol: { span: 18 },
       isUpperCase: false,
-      customUrl: '',
       skuList: [],
       editorOptions: {
         width: '700px',
@@ -495,7 +503,6 @@ export default {
   mounted() {
     this.loadCategory()
     this.initSkuData()
-    this.getUploadToken()
 
     const that = this
     // eslint-disable-next-line no-unused-vars
@@ -533,16 +540,46 @@ export default {
   methods: {
     loadProductDetail(id) {
       getProductDetail({ id }).then(res => {
-        console.log(res.data)
         const { form } = this
         const { data } = res
-        form.name = data.shopTitle
-        form.productUrl = data.shopUrl
-        form.keyword.words = data.shopKeyWords
-        form.keyword.pageTitle = data.seoTitle
-        form.keyword.pageKeyword = data.seoKeyWord
-        form.keyword.pageDesc = data.seoDescription
+        form.name = data.shopTitle // 产品标题
+        console.log(data.shopTitle)
+        form.productUrl = data.shopUrl ? data.shopUrl : '' // 产品url
+        form.keyword.words = data.shopKeyWords.map(item => {
+          // 关键词
+          return { keyword: item }
+        })
+        form.keyword.pageTitle = data.seoTitle // seo标题
+        form.keyword.pageKeyword = data.seoKeyWord // seo关键词
+        form.keyword.pageDesc = data.seoDescription // seo描述
+        this.picList = data.shopImgList.map(item => {
+          // 产品图片
+          const name = item.split('/')
+          return {
+            path: item,
+            name: name[name.length - 1]
+          }
+        })
+        // form.shopImg = data.shopImg
+        form.videoUrl = data.shopVideoUrl
+        form.intro = data.shopDesc
+        form.attribute.brand = data.shopBrand
+        form.attribute.code = data.shopNumber
+        form.attribute.model = data.shopModel
+        form.desc = data.shopDescribe
+        this.selectedArticleRowKeys = data.relatedAids
+        this.selectedProductRowKeys = data.relatedShopIds
+        // 改为数组 TODO
+        // form.category = data.catId
+        form.shelved = data.isShelve ? 1 : 0
+        form.tags = data.shopTags
       })
+    },
+    setDesc(desc) {
+      console.log(this.$refs.kindeditor)
+      // if (desc) {
+      //   this.$refs.kindeditor.html(desc)
+      // }
     },
     handleDelProduct(id) {
       this.selectedProductRowKeys.forEach((item, index) => {
@@ -551,7 +588,6 @@ export default {
           this.selectedProducts.splice(index, 1)
         }
       })
-      // TODO 提交产品关联统一放到提交Submit操作
     },
     // 文章相关
     handleDelArticle(id) {
@@ -562,7 +598,6 @@ export default {
           this.selectedArticles.splice(index, 1)
         }
       })
-      // TODO 提交文章关联统一放到提交Submit操作
     },
     onArticleSelectChange(selectedRowKeys, selectedRows) {
       console.log('selectedRowKeys changed: ', selectedRows)
@@ -595,25 +630,29 @@ export default {
       })
     },
     handleArticleCateChange(value) {
-      console.log(`selected ${value}`)
-      // TODO 刷新数据
+      this.queryArticle.catId = value
+      this.$refs.articleTable.refresh(true)
     },
     handleProductCateChange(value) {
-      console.log(`selected ${value}`)
-      // TODO 刷新数据
+      this.queryProduct.catId = value
+      this.$refs.productTable.refresh(true)
     },
     onArticleSearch(value) {
-      console.log(value)
-      // TODO 刷新数据
+      this.queryArticle.keyWords = value
+      this.$refs.articleTable.refresh(true)
     },
     onProductSearch(value) {
-      console.log(value)
-      // TODO 刷新数据
+      this.queryProduct.keyWords = value
+      this.$refs.productTable.refresh(true)
     },
     // 获取编辑器内容
     getContent(content) {
       console.log('content', content)
       this.form.desc = content
+    },
+    // 编辑器上传图片
+    handleEditorUploadPic(file) {
+      console.log(file)
     },
     afterChange() {},
     initSkuData() {
@@ -662,6 +701,7 @@ export default {
           })
         })
       })
+      console.log(this.categoryOptions)
       this.loadArticleCate()
     },
     handleDelKeyword(index) {
@@ -898,7 +938,7 @@ export default {
         shopBrand: form.attribute.brand, // 产品品牌
         shopNumber: form.attribute.code, // 产品编码
         shopModel: form.attribute.model, // 产品型号
-        shopDescribe: form.desc, // 产品描述
+        shopDescribe: this.$refs.kindeditor.outContent, // 产品描述
         relatedAids: this.selectedArticleRowKeys, // 关联文章ID
         relatedShopIds: this.selectedProductRowKeys, // 关联产品ID
         shopImg: piclist[0], // 产品主图
@@ -911,18 +951,18 @@ export default {
       console.log(params)
       this.$refs.form.validate(valid => {
         if (valid) {
-          console.log(this.form)
-          addProduct(params)
-            .then(res => {
-              if (res.code === 200) {
-                console.log(res)
-              } else {
-                throw res
-              }
-            })
-            .catch(err => {
-              this.$message.error(err.msg)
-            })
+          // console.log(this.form)
+          // addProduct(params)
+          //   .then(res => {
+          //     if (res.code === 200) {
+          //       console.log(res)
+          //     } else {
+          //       throw res
+          //     }
+          //   })
+          //   .catch(err => {
+          //     this.$message.error(err.msg)
+          //   })
         } else {
           console.log('error submit!!')
           return false
@@ -932,7 +972,6 @@ export default {
     onCategoryChange(value) {
       console.log(value)
       this.selectedCate = value
-      // TODO 更新产品分类数据
     },
     // 选择分类
     handleSelectCate() {
