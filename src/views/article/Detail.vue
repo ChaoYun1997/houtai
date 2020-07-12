@@ -56,7 +56,9 @@
                   />
                 </div>
               </div>
-              <a-button icon="plus" @click="handleAddKeyword">新增关键词</a-button>
+              <a-button icon="plus" v-show="form.keyword.words.length < 8" @click="handleAddKeyword">
+                新增关键词
+              </a-button>
             </a-col>
             <a-col :span="8">
               <a-card class="keyword-list" size="small">
@@ -122,7 +124,13 @@
           <a-checkbox v-model="form.isTop"></a-checkbox>
         </a-form-model-item>
         <a-form-model-item label="发布时间">
-          <a-date-picker @change="handleDate" :default-value="moment(new Date(),'YYYY-MM-DD HH:mm:ss')" show-time format="YYYY-MM-DD HH:mm:ss" style="width: 220px" />
+          <a-date-picker
+            @change="handleDate"
+            :default-value="moment(new Date(), 'YYYY-MM-DD HH:mm:ss')"
+            show-time
+            format="YYYY-MM-DD HH:mm:ss"
+            style="width: 220px"
+          />
         </a-form-model-item>
         <a-form-model-item label="文章浏览次数" prop="name">
           基数 <a-input v-model="form.readingBase" style="width: 100px;" /> + 实际浏览次数
@@ -228,7 +236,8 @@
 </template>
 
 <script>
-import { getProducts, getProductCategory } from '@/api/products'
+import { getProducts } from '@/api/products'
+import { getProductCate } from '@/api/category'
 import { getKeyword } from '@/api/keyword'
 import { articleCategory } from '@/api/article'
 import sortableJS from 'sortablejs'
@@ -392,7 +401,7 @@ export default {
     reading() {
       return Number(this.form.realReading) + Number(this.form.readingBase)
     },
-    rowSelection () {
+    rowSelection() {
       return {
         selectedRowKeys: this.selectedProductRowKeys,
         onChange: this.onProductSelectChange
@@ -548,12 +557,12 @@ export default {
     },
     // 加载分类数据
     loadCategory() {
-      getProductCategory().then(res => {
+      getProductCate().then(res => {
         res.data.datas.forEach(item => {
           console.log(item)
           this.categoryOptions.push({
-            label: item.name,
-            value: item.name,
+            label: item.catName,
+            value: item.catName,
             id: item.id
           })
         })
@@ -576,6 +585,7 @@ export default {
     },
     handleKeywordList(keyword) {
       const length = this.form.keyword.words.length
+      if (length >= 8) return false
       if (this.form.keyword.words[length - 1].keyword !== '') {
         this.form.keyword.words.push({ keyword: keyword })
         return

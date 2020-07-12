@@ -158,13 +158,13 @@ export function getUploadSign(param) {
 export function batchAddProduct() {}
 
 // 获取产品分类
-export function getProductCategory(param) {
-  return request({
-    url: productsApi.GetProductCate,
-    method: 'get',
-    params: param
-  })
-}
+// export function getProductCategory(param) {
+//   return request({
+//     url: productsApi.GetProductCate,
+//     method: 'get',
+//     params: param
+//   })
+// }
 
 // 批量设置分类
 export function setCategory() {}

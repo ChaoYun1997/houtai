@@ -147,7 +147,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import sortableJS from 'sortablejs'
-import { getProductCategory } from '@/api/products'
+import { getProductCate } from '@/api/category'
 import KindEditor from '@/components/Kindeditor'
 
 export default {
@@ -234,11 +234,11 @@ export default {
       this.showAddNewPage = false
     },
     loadProductCate() {
-      getProductCategory().then(res => {
+      getProductCate().then(res => {
         this.category = res.data.datas.map(item => {
           return {
-            name: item.name,
-            id: item.value
+            name: item.catName,
+            id: item.id
           }
         })
       })

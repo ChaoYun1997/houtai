@@ -17,8 +17,8 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="上架状态">
-                <a-select @change="handleStatusSelect" placeholder="请选择" default-value="0">
-                  <a-select-option value="0">全部</a-select-option>
+                <a-select v-model="shelved" placeholder="请选择">
+                  <a-select-option value="all">全部</a-select-option>
                   <a-select-option value="1">上架</a-select-option>
                   <a-select-option value="2">下架</a-select-option>
                 </a-select>
@@ -26,10 +26,10 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="产品分类">
-                <a-select placeholder="请选择" default-value="0" @change="handleCateSelected">
-                  <a-select-option value="0">全部</a-select-option>
+                <a-select placeholder="请选择" v-model="cateParam">
+                  <a-select-option value="all">全部</a-select-option>
                   <template v-for="(item, index) in category">
-                    <a-select-option :value="item.id" :key="index">{{ item.catName }}</a-select-option>
+                    <a-select-option :value="item.id" :key="index">{{ item.label }}</a-select-option>
                   </template>
                 </a-select>
               </a-form-item>
@@ -41,7 +41,7 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="更新日期">
-                <a-date-picker @change="handleDate" style="width: 100%" placeholder="请输入更新日期" />
+                <a-date-picker v-model="queryParam.updateDate" style="width: 100%" placeholder="请输入更新日期" />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
@@ -226,13 +226,15 @@ export default {
   data() {
     this.columns = columns
     return {
+      // 筛选
+      updateDate: '',
+
       category: [],
       categoryCheckList: [],
       showCategory: false,
-      queryParam: {
-        pageIndex: 1,
-        pageSize: 10
-      },
+      shelved: 'all',
+      cateParam: 'all',
+      queryParam: {},
       loadData: parameter => {
         parameter = Object.assign(parameter, this.queryParam)
         return getProducts(parameter)
@@ -293,9 +295,8 @@ export default {
         pageSize: 50
       }
       getProductCate(params).then(res => {
-        console.log(res)
-        // this.category = res.data.datas
         res.data.datas.forEach(item => {
+          console.log(item)
           this.category.push({
             label: item.catName,
             value: item.id,
@@ -408,10 +409,19 @@ export default {
         propName: prop,
         value: bool
       }
-      updateProp(params, id).then(res => {
-        console.log(res)
-        this.$refs.table.refresh()
-      })
+      updateProp(params, id)
+        .then(res => {
+          console.log(res)
+          if (res.code === 200) {
+            this.$message.success('操作成功')
+            this.$refs.table.refresh()
+          } else {
+            throw res
+          }
+        })
+        .catch(err => {
+          this.$message.error(err.msg)
+        })
     },
     // 编辑文章
     edit(id) {
@@ -424,10 +434,9 @@ export default {
     // 删除文章
     del(id) {
       console.log(id)
-      delProduct(id).then(res => {
-        if (res.result.data === 'success') this.$message.success('操作成功')
-        this.delLoading = false
-        this.$refs.table.refresh()
+      delProduct([id]).then(res => {
+        if (res.code === 200) this.$message.success('操作成功')
+        this.$refs.table.refresh(true)
       })
     },
     // 分享文章
@@ -478,16 +487,21 @@ export default {
     },
     // 查询
     handleQuery() {
+      if (this.shelved !== 'all') {
+        this.queryParam.isShelve = this.shelved === '1'
+      }
+      if (this.cateParam !== 'all') {
+        this.queryParam.catId = this.cateParam
+      }
       console.log(this.queryParam)
       // this.loadProductData()
       this.$refs.table.refresh(true)
     },
     // 重置查询
     handleReset() {
-      this.queryParam = {
-        pageIndex: 1,
-        pageSize: 10
-      }
+      this.queryParam = {}
+      this.shelved = 'all'
+      this.cateParam = 'all'
       // this.loadProductData()
       this.$refs.table.refresh(true)
     },

@@ -129,7 +129,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { getProductCategory } from '@/api/products'
+import { getProductCate } from '@/api/category'
 
 export default {
   name: 'CatetoryDetail',
@@ -191,11 +191,11 @@ export default {
       this.showAddNewPage = false
     },
     loadProductCate() {
-      getProductCategory().then(res => {
+      getProductCate().then(res => {
         this.category = res.data.datas.map(item => {
           return {
-            name: item.name,
-            id: item.value
+            name: item.catName,
+            id: item.id
           }
         })
       })

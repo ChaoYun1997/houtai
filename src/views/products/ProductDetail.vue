@@ -49,7 +49,9 @@
                   />
                 </div>
               </div>
-              <a-button icon="plus" @click="handleAddKeyword">新增关键词</a-button>
+              <a-button icon="plus" v-show="form.keyword.words.length < 8" @click="handleAddKeyword">
+                新增关键词
+              </a-button>
             </a-col>
             <a-col :span="8">
               <a-card class="keyword-list" size="small">
@@ -171,7 +173,12 @@
         </a-form-model-item>
         <h3>产品描述</h3>
         <a-form-model-item label="产品描述">
-          <kind-editor @uploadImg="handleEditorUploadPic" :content="form.desc" id="k-editor" ref="kindeditor"></kind-editor>
+          <kind-editor
+            @uploadImg="handleEditorUploadPic"
+            :content="form.desc"
+            id="k-editor"
+            ref="kindeditor"
+          ></kind-editor>
         </a-form-model-item>
         <h3>产品状态</h3>
         <a-form-model-item label="产品状态">
@@ -288,7 +295,7 @@
         <a-row>
           <template v-for="item in categoryOptions">
             <a-col :key="item.label">
-              <a-checkbox :value="item.id" :disabled="item.id=== 'all'">{{ item.label }}</a-checkbox>
+              <a-checkbox :value="item.id" :disabled="item.id === 'all'">{{ item.label }}</a-checkbox>
             </a-col>
           </template>
         </a-row>
@@ -309,12 +316,8 @@
 </template>
 
 <script>
-import {
-  getProducts,
-  getUploadSign,
-  // addProduct,
-  getProductDetail
-} from '@/api/products'
+// eslint-disable-next-line no-unused-vars
+import { getProducts, getUploadSign, addProduct, getProductDetail } from '@/api/products'
 import { getProductCate, getArticleCate } from '@/api/category'
 import { getKeyword } from '@/api/keyword'
 import { getArticles } from '@/api/article'
@@ -401,11 +404,13 @@ export default {
       showCategoryModal: false, // 显示选择分类
       categoryLoading: true,
       selectedCate: [],
-      categoryOptions: [{
-        label: '全部',
-        value: 'all',
-        id: 'all'
-      }], // 产品分类
+      categoryOptions: [
+        {
+          label: '全部',
+          value: 'all',
+          id: 'all'
+        }
+      ], // 产品分类
 
       showAddSku: false,
       newSku: '',
@@ -552,11 +557,12 @@ export default {
         form.keyword.pageTitle = data.seoTitle // seo标题
         form.keyword.pageKeyword = data.seoKeyWord // seo关键词
         form.keyword.pageDesc = data.seoDescription // seo描述
+        const host = process.env.VUE_APP_HOST
         this.picList = data.shopImgList.map(item => {
           // 产品图片
           const name = item.split('/')
           return {
-            path: item,
+            path: host + '/' + item,
             name: name[name.length - 1]
           }
         })
@@ -651,8 +657,31 @@ export default {
       this.form.desc = content
     },
     // 编辑器上传图片
-    handleEditorUploadPic(file) {
+    async handleEditorUploadPic(file) {
       console.log(file)
+      const size = file.size / 1024 / 1024
+      if (size > 2) {
+        this.$message.warning('图片不能大于2MB')
+        return
+      }
+      const paramUploadSign = {
+        type: 1
+      }
+      const { data } = await getUploadSign(paramUploadSign)
+      const formData = new FormData()
+      formData.append('token', data.token)
+      formData.append('key', data.fileName)
+      formData.append('file', file)
+      const d = await this.$http.post(this.uploadUrl, formData)
+      let imgUrl = process.env.VUE_APP_HOST
+      if (d.name) {
+        imgUrl = imgUrl + '/' + d.name
+      } else {
+        this.$message.error('上传图片出错')
+      }
+      const img = new Image()
+      img.src = imgUrl
+      this.$refs.kindeditor.editor.appendHtml(`<img style="max-width:100%;" src="${imgUrl}">`)
     },
     afterChange() {},
     initSkuData() {
@@ -716,6 +745,7 @@ export default {
     },
     handleKeywordList(keyword) {
       const length = this.form.keyword.words.length
+      if (length >= 8) return false
       if (this.form.keyword.words[length - 1].keyword !== '') {
         this.form.keyword.words.push({ keyword: keyword })
         return
@@ -925,9 +955,12 @@ export default {
       const { form, picList } = this
       const piclist = picList.map(item => item.name)
       const keyword = form.keyword.words.map(item => item.keyword)
+      const titleArr = form.name.split(' ')
+      const titleId = titleArr.reduce((acc, cur) => `${acc}-${cur}`)
       let params = {}
       params = {
-        shopUrl: form.productUrl, // 产品URL
+        shopTitle: form.name, // 产品标题
+        shopUrl: form.urlValue === 'a' ? `/${titleId}-${new Date().valueOf()}.html` : form.productUrl, // 产品URL
         shopKeyWords: keyword, // 产品关键词
         seoTitle: form.keyword.pageTitle, // SEO 标题
         seoKeyWord: form.keyword.pageKeyword, // SEO 关键词
@@ -942,27 +975,25 @@ export default {
         relatedAids: this.selectedArticleRowKeys, // 关联文章ID
         relatedShopIds: this.selectedProductRowKeys, // 关联产品ID
         shopImg: piclist[0], // 产品主图
-        shopTitle: form.name, // 产品标题
         catId: form.category, // 分类ID
         updateDate: moment(new Date()).format(), // 更新时间
         isShelve: form.shelved === 1, // 是否上架
         shopTags: form.tags // 产品标签
       }
-      console.log(params)
       this.$refs.form.validate(valid => {
         if (valid) {
-          // console.log(this.form)
-          // addProduct(params)
-          //   .then(res => {
-          //     if (res.code === 200) {
-          //       console.log(res)
-          //     } else {
-          //       throw res
-          //     }
-          //   })
-          //   .catch(err => {
-          //     this.$message.error(err.msg)
-          //   })
+          console.log(params)
+          addProduct(params)
+            .then(res => {
+              if (res.code === 200) {
+                console.log(res)
+              } else {
+                throw res
+              }
+            })
+            .catch(err => {
+              this.$message.error(err.msg)
+            })
         } else {
           console.log('error submit!!')
           return false
