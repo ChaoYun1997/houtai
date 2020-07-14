@@ -6,7 +6,7 @@
           新增产品分类
         </a-button>
         <a-button :style="{ marginLeft: '8px' }" icon="plus" @click="visibleUploadXls = true">
-          批量导入
+          批量编辑TKD
         </a-button>
       </div>
       <div slot="action" class="batch-content">
@@ -84,10 +84,10 @@
 
 <script>
 import STable from '@/components/Table'
-
 // import { getProductCategory } from '@/api/products'
 import { getProductCate } from '@/api/category'
 import * as XLSX from 'xlsx'
+
 const cateColumns = [
   {
     title: '产品分类名称',
@@ -154,8 +154,21 @@ export default {
       })
     },
     downloadXls() {
-      const host = window.location.host
-      window.open(host + '/files/productTemplate.xls')
+      if (!this.category.length) {
+        this.$message.error('没有分类信息')
+        return false
+      }
+      var data = this.category
+
+      /* make the worksheet */
+      var ws = XLSX.utils.json_to_sheet(data)
+
+      /* add to workbook */
+      var wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, 'sheet1')
+
+      /* generate an XLSX file */
+      XLSX.writeFile(wb, 'categoryTemplate.xlsx')
     },
     handleRemove(file) {
       const index = this.fileList.indexOf(file)

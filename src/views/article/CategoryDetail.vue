@@ -80,7 +80,7 @@
         <h3 class="title">搜索引擎优化</h3>
         <a-divider style="margin: 4px 0 20px 0;" />
         <div class="seo">
-          <a-row :gutter="[16,20]">
+          <a-row :gutter="[16, 20]">
             <a-col :span="4" :push="1">
               <span class="label">页面标题</span>
             </a-col>
@@ -170,7 +170,8 @@ export default {
       rules: {
         cate: [{ required: true, message: '请输入文章分类名称', trigger: 'blur' }],
         keyword: [{ required: true, message: '请输入分类关键词', trigger: 'blur' }]
-      }
+      },
+      queryCate: {}
     }
   },
   computed: {
@@ -191,7 +192,7 @@ export default {
       this.showAddNewPage = false
     },
     loadProductCate() {
-      getProductCate().then(res => {
+      getProductCate(this.queryCate).then(res => {
         this.category = res.data.datas.map(item => {
           return {
             name: item.catName,

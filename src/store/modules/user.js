@@ -2,7 +2,7 @@ import storage from 'store'
 // import { login, getInfo, logout } from '@/api/login'
 import { login, logout, updatePwd } from '@/api/user'
 import { getUploadSign } from '@/api/products'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { ACCESS_TOKEN, USERNAME, USERID } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 
 const user = {
@@ -50,6 +50,7 @@ const user = {
       state.roles = roles
     },
     SET_INFO: (state, info) => {
+      console.log(info)
       state.info.uid = info.uid
       state.info.username = info.userName
     },
@@ -100,6 +101,8 @@ const user = {
             }
             const result = response.data
             storage.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
+            storage.set(USERNAME, result.userName)
+            storage.set(USERID, result.uid)
             commit('SET_TOKEN', result.token)
             commit('SET_INFO', result)
             resolve(response)
@@ -113,6 +116,7 @@ const user = {
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
         if (!state.name) {
+          console.log(`name: ${state.name}`)
           commit('SET_NAME', { name: state.info.userName, welcome: welcome() })
           commit('SET_UID', state.info.uid)
           resolve()
@@ -190,6 +194,8 @@ const user = {
             commit('SET_UID', '')
             // commit('SET_ROLES', [])
             storage.remove(ACCESS_TOKEN)
+            storage.remove(USERNAME)
+            storage.remove(USERID)
           })
       })
     },

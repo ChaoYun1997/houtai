@@ -20,7 +20,7 @@
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
         <div class="cover" slot="shopImg" slot-scope="shopImg">
-          <img :src="shopImg" alt="" />
+          <img :src="/^http/.test(shopImg) ? shopImg : getImg(shopImg)" alt="" />
         </div>
 
         <span slot="shopTags" slot-scope="shopTags">
@@ -34,7 +34,7 @@
         </span>
         <div class="action" slot="action" slot-scope="text, record">
           <a-button type="link" size="small" @click="restore(record.id)">恢复产品</a-button>
-          <a-button type="link" size="small" @click="remove(id)">彻底删除</a-button>
+          <a-button type="link" size="small" @click="remove(record.id)">彻底删除</a-button>
         </div>
       </s-table>
     </a-card>
@@ -43,7 +43,8 @@
 
 <script>
 import STable from '@/components/Table'
-import { getRecycleBin, restoreProduct, removeProducts } from '@/api/products'
+// eslint-disable-next-line no-unused-vars
+import { getRecycleBin, restoreProduct, removeProduct, removeProducts } from '@/api/products'
 const columns = [
   {
     title: '#',
@@ -137,6 +138,10 @@ export default {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
+    getImg(name) {
+      console.log(name)
+      return process.env.VUE_APP_HOST + '/' + name
+    },
     restore(id) {
       this.$confirm({
         content: '你确定要恢复该产品吗？',
@@ -150,12 +155,20 @@ export default {
     },
     remove(id) {
       this.$confirm({
-        content: '你确定要删除该产品吗？',
+        content: '你确定要彻底删除该产品吗？',
         onOk: () => {
-          removeProducts({ id }).then(res => {
-            if (res.result.data === 'success') this.$message.success('操作成功')
-            this.$refs.table.refresh()
-          })
+          removeProduct({ id: id })
+            .then(res => {
+              if (res.code === 200) {
+                this.$message.success('操作成功')
+                this.$refs.table.refresh(true)
+              } else {
+                throw res
+              }
+            })
+            .catch(err => {
+              this.$message.error(err.msg)
+            })
         }
       })
     },
@@ -168,10 +181,23 @@ export default {
     },
     handleRemove() {
       if (!this.checkSelected()) return
+      console.log(this.selectedRowKeys)
       // TODO 接入批量删除接口
       this.$confirm({
         content: '你确定要删除这些产品吗？',
         onOk: () => {
+          removeProducts(this.selectedRowKeys)
+            .then(res => {
+              console.log(res)
+              if (res.code === 200) {
+                this.$message.success('操作成功')
+              } else {
+                throw res
+              }
+            })
+            .catch(err => {
+              this.$message.error(err.msg)
+            })
         }
       })
     },

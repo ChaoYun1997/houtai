@@ -86,7 +86,7 @@
         :rowSelection="rowSelection"
       >
         <div class="cover" slot="shopImg" slot-scope="shopImg">
-          <img :src="shopImg" alt />
+          <img :src="/^http/.test(shopImg) ? shopImg : getImg(shopImg)" alt />
         </div>
         <div slot="shelve" slot-scope="text, record">
           <a-switch :checked="checkIsShelve(record.isShelve)" @change="checked => onSwitchChange(checked, record.id)" />
@@ -153,7 +153,8 @@
 // eslint-disable-next-line no-unused-vars
 import moment from 'moment'
 import STable from '@/components/Table'
-import { getProducts, delProduct, updateProp } from '@/api/products'
+// eslint-disable-next-line no-unused-vars
+import { getProducts, delProduct, updateProp, importProducts } from '@/api/products'
 import { getProductCate } from '@/api/category'
 import * as XLSX from 'xlsx'
 import JSZip from 'jszip'
@@ -266,6 +267,10 @@ export default {
   },
   methods: {
     moment,
+    getImg(name) {
+      console.log(name)
+      return process.env.VUE_APP_HOST + '/' + name
+    },
     returnSortFile(columnKey) {
       const sortObj = {
         shopTitle: 1,
@@ -355,31 +360,36 @@ export default {
           }
           // 最终获取到并且格式化后的 json 数据
           const uploadData = data.map((item, index) => {
+            const cates = item['产品分类'].toString().split(',').map(item => Number(item))
+            const keywords = item['产品关键词'].toString()
+            console.log()
             return {
-              id: index,
               name: item['* 产品名称'],
-              category: item['* 产品分类'],
-              keyword: item['产品关键词'],
-              type: item['产品型号'],
-              descTitle1: item['产品描述1 - 页签标题'],
-              descContent1: item['产品描述1 - 页签内容'],
-              descTitle2: item['产品描述2 - 页签标题'],
-              descContent2: item['产品描述2 - 页签内容'],
-              descTitle3: item['产品描述3 - 页签标题'],
-              descContent3: item['产品描述3 - 页签内容'],
-              descTitle4: item['产品描述4 - 页签标题'],
-              descContent4: item['产品描述4 - 页签内容'],
-              descTitle5: item['产品描述5 - 页签标题'],
-              descContent5: item['产品描述5 - 页签内容'],
+              catId: cates,
+              shopKeyWords: keywords.split(','),
+              shopModel: item['产品型号'],
+              shopBrand: item['品牌'],
+              shopNumber: item['商品编码'],
+              shopDesc: item['产品简介'],
+              shopDescribe: item['产品描述'],
               isShelve: item['产品状态（1表示上架，0表示下架）'] !== 0
             }
           })
           // TODO 批量上传接入
           console.log(uploadData)
-          this.$message.success('上传成功！')
+          importProducts(uploadData)
+            .then(res => {
+              if (res.code === 200) {
+                this.$message.success('上传成功！')
+              } else throw res
+            })
+            .catch(err => {
+              this.$message.error(err.msg)
+            })
         } catch (e) {
+          console.log(e)
           // 这里可以抛出文件类型错误不正确的相关提示
-          this.$message.error('文件类型不正确！')
+          // this.$message.error('文件类型不正确！')
         }
       }
       // 以二进制方式打开文件
@@ -430,6 +440,7 @@ export default {
     // 添加相似文章
     copy(result) {
       console.log(result)
+      this.$router.push({ path: '/products/add-product', query: { copy: result } })
     },
     // 删除文章
     del(id) {

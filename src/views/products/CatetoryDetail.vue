@@ -163,6 +163,7 @@ export default {
       fileList: [],
       uploading: false,
 
+      queryParam: {},
       selectedK: [],
       labelCol: { span: 4 },
       wrapperCol: { span: 18 },
@@ -234,7 +235,7 @@ export default {
       this.showAddNewPage = false
     },
     loadProductCate() {
-      getProductCate().then(res => {
+      getProductCate(this.queryParam).then(res => {
         this.category = res.data.datas.map(item => {
           return {
             name: item.catName,

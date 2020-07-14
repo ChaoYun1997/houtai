@@ -9,9 +9,11 @@ const productsApi = {
   UpdateProperty: '/shop/updateProp', // 更新产品字段
   UpdateSort: '/shop/updateSort', // 更新产品排序
   DelProduct: '/shop/delShop', // 彻底删除产品
+  DelProducts: '/shop/delShops', // 批量彻底删除产品
   UpdateCate: '/shop/updateCatid', // 更新、移动分类
   GetUploadSign: '/shop/getUploadSign', // 获取七牛上传凭证
-  GetProductCate: '/shop/getNames' // 获取产品分类列表
+  GetProductCate: '/shop/getNames', // 获取产品分类列表
+  ImportProducts: '/shop/ImportShops' // 批量导入产品
 }
 
 // 获取产品列表
@@ -35,7 +37,7 @@ export function getRecycleBin(param) {
       isShelve: param.isShelve,
       updateDate: param.updateDate,
       keyWords: param.keyWords,
-      isDel: false
+      isDel: true
     }
   })
 }
@@ -128,7 +130,7 @@ export function restoreProduct(param) {
 }
 
 // 彻底删除产品
-export function removeProducts(param) {
+export function removeProduct(param) {
   return request({
     url: productsApi.DelProduct,
     method: 'get',
@@ -154,8 +156,14 @@ export function getUploadSign(param) {
   })
 }
 
-// 批量新增产品
-export function batchAddProduct() {}
+// 批量删除产品
+export function removeProducts(param) {
+  return request({
+    url: productsApi.DelProducts,
+    method: 'get',
+    params: param
+  })
+}
 
 // 获取产品分类
 // export function getProductCategory(param) {
@@ -166,5 +174,11 @@ export function batchAddProduct() {}
 //   })
 // }
 
-// 批量设置分类
-export function setCategory() {}
+// 批量导入产品
+export function importProducts(params) {
+  return request({
+    url: productsApi.ImportProducts,
+    method: 'post',
+    data: params
+  })
+}

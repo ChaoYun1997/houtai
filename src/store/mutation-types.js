@@ -13,6 +13,8 @@ export const TOGGLE_WEAK = 'weak'
 export const TOGGLE_MULTI_TAB = 'multi_tab'
 export const APP_LANGUAGE = 'app_language'
 
+export const USERNAME = 'username'
+export const USERID = 'u-id'
 export const PRODUCT_DETAILS = 'product_details'
 export const PRODUCTS = 'products'
 

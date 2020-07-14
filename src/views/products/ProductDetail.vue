@@ -317,7 +317,7 @@
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import { getProducts, getUploadSign, addProduct, getProductDetail } from '@/api/products'
+import { getProducts, getUploadSign, addProduct, getProductDetail, updateProduct } from '@/api/products'
 import { getProductCate, getArticleCate } from '@/api/category'
 import { getKeyword } from '@/api/keyword'
 import { getArticles } from '@/api/article'
@@ -496,8 +496,9 @@ export default {
   },
   created() {
     const { id } = this.$route.params
-    if (id) {
-      this.loadProductDetail(id)
+    const { copy } = this.$route.query
+    if (id || copy) {
+      this.loadProductDetail(id || copy)
     }
 
     this.loadKeyword()
@@ -980,20 +981,24 @@ export default {
         isShelve: form.shelved === 1, // 是否上架
         shopTags: form.tags // 产品标签
       }
-      this.$refs.form.validate(valid => {
+      if (this.$route.params.id) {
+        params.id = this.$route.params.id
+      }
+      this.$refs.form.validate(async valid => {
         if (valid) {
           console.log(params)
-          addProduct(params)
-            .then(res => {
-              if (res.code === 200) {
-                console.log(res)
-              } else {
-                throw res
-              }
-            })
-            .catch(err => {
-              this.$message.error(err.msg)
-            })
+          let res
+          if (params.id) {
+            res = await updateProduct(params)
+          } else {
+            res = await addProduct(params)
+          }
+          if (res.code === 200) {
+            this.$message.success('操作成功')
+            console.log(res)
+          } else {
+            this.$message.error(res.msg)
+          }
         } else {
           console.log('error submit!!')
           return false
