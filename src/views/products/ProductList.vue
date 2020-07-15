@@ -254,6 +254,12 @@ export default {
     }
   },
   created() {
+    const { catId } = this.$route.query
+    if (catId) {
+      this.queryParam.catId = catId
+      this.cateParam = catId
+    }
+    console.log(`catid: ${catId}`)
     this.loadCateData()
     // this.loadProductData()
   },
@@ -268,8 +274,7 @@ export default {
   methods: {
     moment,
     getImg(name) {
-      console.log(name)
-      return process.env.VUE_APP_HOST + '/' + name
+      return name ? process.env.VUE_APP_HOST + '/' + name : ''
     },
     returnSortFile(columnKey) {
       const sortObj = {
@@ -360,7 +365,10 @@ export default {
           }
           // 最终获取到并且格式化后的 json 数据
           const uploadData = data.map((item, index) => {
-            const cates = item['产品分类'].toString().split(',').map(item => Number(item))
+            const cates = item['产品分类']
+              .toString()
+              .split(',')
+              .map(item => Number(item))
             const keywords = item['产品关键词'].toString()
             console.log()
             return {

@@ -2,12 +2,12 @@
   <page-header-wrapper>
     <a-card :body-style="{ padding: '24px 32px' }" :bordered="false">
       <a-form-model ref="form" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <h5>基本信息</h5>
-        <a-form-model-item label="产品分类名称" prop="cate">
+        <h3 class="title">基本信息</h3>
+        <a-form-model-item label="产品分类名称" prop="name">
           <a-input v-model="form.name" />
           <p class="info negativeTop">-频繁修改产品名称直接影响SEO效果，请仔细斟酌后再提交。</p>
         </a-form-model-item>
-        <a-form-model-item label="SEO">
+        <a-form-model-item label="SEO关键词">
           <div class="seo-box">
             <transition name="slideToggle">
               <div class="seo-input" v-show="showSeo">
@@ -54,7 +54,7 @@
           <a-input
             class="url-input"
             v-show="form.urlValue === 'b'"
-            v-model="customUrl"
+            v-model="form.catUrl"
             placeholder="请输入自定义URL"
           ></a-input>
           <p class="info" v-show="form.urlValue === 'b'">
@@ -63,7 +63,7 @@
           </p>
         </a-form-model-item>
         <a-form-model-item label="选择分类位置" prop="productPosition">
-          <a-tree @select="onSelect" default-expand-all :selectedKeys="selectedK">
+          <a-tree default-expand-all :checkedKeys="selectedK">
             <a-icon slot="switcherIcon" type="down" />
             <a-tree-node key="0-0" title="所有分类">
               <template v-for="item in category">
@@ -73,29 +73,47 @@
           </a-tree>
         </a-form-model-item>
         <a-form-model-item label="产品分类图片">
-          <div class="img-box">
-            <a-upload class="btn" :file-list="fileList" :remove="handleRemove" :before-upload="beforeUpload">
-              <a-button> <a-icon type="upload" /> 选择文件 </a-button>
-            </a-upload>
-            <a-button
-              class="btn"
-              type="primary"
-              :disabled="fileList.length === 0"
-              :loading="uploading"
-              @click="handleUpload"
+          <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+            <img alt="example" style="width: 100%" :src="previewImage" />
+          </a-modal>
+          <ul ref="piclist" class="pic-list">
+            <li v-for="(item, index) in picList" :key="index">
+              <div class="operate">
+                <a-icon type="eye" @click="handlePicPreview(item.path)"></a-icon>
+                <a-icon type="delete" @click="handleDelPic(index)"></a-icon>
+              </div>
+              <img :src="item.path" alt="" />
+            </li>
+            <a-upload
+              list-type="picture-card"
+              class="img-uploader"
+              :action="uploadUrl"
+              :file-list="imgList"
+              accept="image/*"
+              :show-upload-list="false"
+              :data="getUploadData"
+              :before-upload="getUploadToken"
+              @change="handleListUploadChange"
             >
-              {{ uploading ? '上传中' : '开始上传' }}
-            </a-button>
-          </div>
+              <div v-if="imgList.length < 8">
+                <a-icon type="plus" />
+                <div class="ant-upload-text">
+                  上传
+                </div>
+              </div>
+            </a-upload>
+          </ul>
         </a-form-model-item>
         <a-form-model-item label="产品描述">
           <kind-editor ref="kindeditor" @input="getContent"></kind-editor>
         </a-form-model-item>
-        <h5>指向页面</h5>
+
+        <h3 class="title">指向页面</h3>
+        <a-divider></a-divider>
         <b>设置分类指向页面</b>
         <p>
-          <a-select style="width: 120px" :default-value="form.catWebUrl" @change="handleCatePageChange">
-            <template v-for="item in page">
+          <a-select style="width: 120px" :value="form.catWebUrl">
+            <template v-for="item in pages">
               <a-select-option :value="item.path" :key="item.name">
                 {{ item.name }}
               </a-select-option>
@@ -105,8 +123,8 @@
         </p>
         <b>设置详情指向页面</b>
         <p>
-          <a-select style="width: 120px" :default-value="form.catDescUrl" @change="handleDetailPageChange">
-            <template v-for="item in page">
+          <a-select style="width: 120px" :value="form.catDescUrl">
+            <template v-for="item in pages">
               <a-select-option :value="item.path" :key="item.name">
                 {{ item.name }}
               </a-select-option>
@@ -147,7 +165,9 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import sortableJS from 'sortablejs'
-import { getProductCate } from '@/api/category'
+import { getUploadSign } from '@/api/products'
+// eslint-disable-next-line no-unused-vars
+import { addCate, updateCate, getProductCate, getCateDetail } from '@/api/category'
 import KindEditor from '@/components/Kindeditor'
 
 export default {
@@ -157,11 +177,20 @@ export default {
   },
   data() {
     return {
+      type: null,
       showAddNewPage: false,
       newPageName: '',
       newPagePath: '',
       fileList: [],
+      imgList: [],
+      picList: [],
+      previewImage: [],
+      previewVisible: false,
       uploading: false,
+      uploadUrl: 'http://up-z0.qiniup.com',
+      picToken: '',
+      fileName: '',
+      pages: [],
 
       queryParam: {},
       selectedK: [],
@@ -174,6 +203,7 @@ export default {
       form: {
         name: '',
         urlValue: 'a',
+        catUrl: '',
         keyword: {
           words: [
             { keyword: '' },
@@ -189,11 +219,12 @@ export default {
           pageKeyword: '',
           pageDesc: ''
         },
+        catPid: '',
         catWebUrl: '',
         catDescUrl: ''
       },
       rules: {
-        cate: [{ required: true, message: '请输入产品分类名称', trigger: 'blur' }],
+        name: [{ required: true, message: '请输入产品分类名称', trigger: 'blur' }],
         keyword: [{ required: true, message: '请输入分类关键词', trigger: 'blur' }]
       }
     }
@@ -204,6 +235,11 @@ export default {
     })
   },
   created() {
+    this.pages = this.page
+    const { id } = this.$route.params
+    if (!isNaN(id)) {
+      this.loadCateDetail(id)
+    }
     this.loadProductCate()
     console.log(`page: ${this.page}`)
   },
@@ -215,18 +251,65 @@ export default {
       animation: 300,
       onEnd: function(evt) {
         // 拖拽结束发生该事件
-        that.form.keywords.splice(evt.newIndex, 0, that.form.keywords.splice(evt.oldIndex, 1)[0])
-        var newArray = that.form.keywords.slice(0)
-        that.form.keywords = []
+        that.form.keyword.words.splice(evt.newIndex, 0, that.form.keyword.words.splice(evt.oldIndex, 1)[0])
+        var newArray = that.form.keyword.words.slice(0)
+        that.form.keyword.words = []
         that.$nextTick(function() {
-          that.form.keywords = newArray
-          console.log(that.form.keywords)
+          that.form.keyword.words = newArray
+          console.log(that.form.keyword.words)
         })
       }
     })
   },
   methods: {
     ...mapMutations(['SET_PAGE']),
+    initSortableJs() {},
+    handleListUploadChange(info) {
+      this.imgList = info.fileList
+      if (info.file.status === 'done') {
+        console.log(info.file.response.name)
+        console.log(this.picList)
+        this.picList.push({
+          name: info.file.response.name,
+          path: this.getObjectURL(info.file.originFileObj)
+        })
+      }
+    },
+    async getUploadToken() {
+      // 获取图片上传凭证
+      const param = {
+        type: 1
+      }
+      await getUploadSign(param)
+        .then(res => {
+          if (res.code === 200) {
+            this.picToken = res.data.token
+            this.fileName = res.data.fileName
+          } else {
+            throw res
+          }
+        })
+        .catch(err => {
+          this.$message.error(err.msg)
+        })
+    },
+    getUploadData(file) {
+      return {
+        token: this.picToken,
+        key: this.fileName,
+        file: file
+      }
+    },
+    handlePicPreview(url) {
+      this.previewImage = url
+      this.previewVisible = true
+    },
+    handleDelPic(index) {
+      this.picList.splice(index, 1)
+    },
+    handleCancel() {
+      this.previewVisible = false
+    },
     handleAddNewPage() {
       this.SET_PAGE({
         name: this.newPageName,
@@ -234,19 +317,87 @@ export default {
       })
       this.showAddNewPage = false
     },
+    loadCateDetail(id) {
+      console.log(this.pages)
+      getCateDetail({ id: id }).then(res => {
+        if (res.code === 200) {
+          const { data } = res
+          const { form } = this
+          const host = process.env.VUE_APP_HOST
+          console.log(data)
+          form.name = data.catName
+          form.catUrl = data.catUrl ? data.catUrl : '' // 产品url
+          form.urlValue = data.catUrl ? 'b' : 'a'
+          const keyword = data.catKeyWords.map(item => {
+            return {
+              keyword: item
+            }
+          })
+          form.keyword.words = Object.assign(form.keyword.words, keyword)
+          form.keyword.pageKeyword = data.seoKeyWord
+          form.keyword.pageTitle = data.seoTitle
+          form.keyword.pageDesc = data.seoDescription
+          const pid = Number(data.catPid)
+          this.selectedK = pid ? [`0-0-${pid}`] : []
+          this.picList = data.catImgList ? data.catImgList.map(item => {
+            // 产品图片
+            const name = item.split('/')
+            return {
+              path: /^http/.test(item) ? item : host + '/' + item,
+              name: name[name.length - 1]
+            }
+          }) : []
+          this.content = data.catDescription
+          if (data.catWebUrl) {
+            this.pages.push({ name: '自定义1', path: `${data.catWebUrl}` })
+            form.catWebUrl = data.catWebUrl
+          }
+          if (data.catDescUrl) {
+            if (data.catDescUrl !== data.catWebUrl) {
+              this.pages.push({ name: '自定义2', path: `${data.catDescUrl}` })
+              form.catDescUrl = data.catDescUrl
+            } else {
+              form.catDescUrl = data.catWebUrl
+            }
+          }
+          if (form.keyword.pageDesc || form.keyword.pageKeyword || form.keyword.pageTitle) {
+            this.showSeo = true
+          }
+        }
+      })
+    },
     loadProductCate() {
       getProductCate(this.queryParam).then(res => {
-        this.category = res.data.datas.map(item => {
+        const { datas } = res.data
+        this.category = datas.map(item => {
           return {
             name: item.catName,
             id: item.id
           }
         })
+        console.log(this.category)
+        // const cate = []
+        // for (let i = 0; i < datas.length; i++) {
+        //   const item = datas[i]
+        //   if (item.id === 0) {
+        //     cate.push({
+        //       name: item.catName,
+        //       key: `0-0-${item.id}`
+        //     })
+        //     for (let j = 0; j < datas.length; j++) {
+        //       const second = datas[j]
+        //       if (item.id === second.id) {
+        //         cate[i].children = []
+        //         cate[i].children.push({
+        //           name: second.catName,
+        //           key: `0-0-${item.id}-${second.id}`
+        //         })
+        //       }
+        //     }
+        //   }
+        // }
+        // this.category = cate
       })
-    },
-    onSelect(selectedKeys, info) {
-      console.log(selectedKeys, info)
-      this.selectedK = selectedKeys
     },
     handleRemove(file) {
       const index = this.fileList.indexOf(file)
@@ -284,9 +435,45 @@ export default {
     },
     // 提交产品表单
     handleSubmit() {
-      this.$refs.form.validate(valid => {
+      const { form, piclist } = this
+      const titleArr = form.name.split(' ')
+      const titleId = titleArr.reduce((acc, cur) => `${acc}-${cur}`)
+      const selectedKey = this.selectedK.length ? this.selectedK[0].split('-') : 0
+      let params = {}
+      params = {
+        itemCount: 0,
+        catName: form.name,
+        catKeyWords: form.keyword.words.map(item => item.keyword),
+        seoKeyWord: form.keyword.pageKeyword,
+        seoTitle: form.keyword.pageTitle,
+        seoDescription: form.keyword.pageDesc,
+        catUrl: form.urlValue === 'a' ? `/${titleId}-${new Date().valueOf()}.html` : form.catUrl, // 产品分类URL
+        catPid: selectedKey.length ? selectedKey[selectedKey.length - 1] : '',
+        catImgList: piclist,
+        catDescription: this.content,
+        catWebUrl: form.catWebUrl,
+        catDescUrl: form.catDescUrl,
+        catType: 0
+      }
+
+      if (this.$route.params.id) {
+        params.id = this.$route.params.id
+      }
+      this.$refs.form.validate(async valid => {
         if (valid) {
-          console.log(this.form)
+          console.log(params)
+          let res
+          if (params.id) {
+            res = await updateCate(params)
+          } else {
+            res = await addCate(params)
+          }
+          if (res.code === 200) {
+            this.$message.success('操作成功')
+            console.log(res)
+          } else {
+            this.$message.error(res.msg)
+          }
         } else {
           console.log('error submit!!')
           return false
@@ -300,8 +487,64 @@ export default {
 <style scoped lang="less">
 @import '~ant-design-vue/lib/style/themes/default.less';
 
+.pic-list {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  padding: 0;
+  .operate {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    display: none;
+    width: 82px;
+    height: 82px;
+    line-height: 84px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    .anticon {
+      margin: 0 4px;
+    }
+  }
+  li {
+    position: relative;
+    display: block;
+    width: 100px;
+    height: 100px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+    padding: 8px;
+    &:first-child {
+      &:before {
+        position: absolute;
+        content: '封面';
+        padding: 2px 5px;
+        height: 24px;
+        line-height: 24px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+      }
+    }
+    &:hover {
+      .operate {
+        display: block;
+      }
+    }
+    img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+.img-uploader {
+  width: 100px;
+  height: 100px;
+}
 .seo-box {
   .list {
+    padding-left: 0;
     li {
       width: 240px;
       margin: 10px 0;

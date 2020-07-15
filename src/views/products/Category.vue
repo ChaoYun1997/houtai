@@ -22,10 +22,17 @@
         :data="loadCateData"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
-        <a slot="catname" slot-scope="text">{{ text }}</a>
+        <div
+          slot="catname"
+          slot-scope="text, record"
+        >
+          <a @click="$router.push({path:'/products/product-list',query: { catId: record.id }})" >
+            {{ text }}
+          </a>
+        </div>
         <div class="action" slot="action" slot-scope="text, record">
           <a-button type="primary" icon="edit" size="small" @click="edit(record.id)" />
-          <a-button type="danger" icon="delete" size="small" @click="del(id)" />
+          <a-button type="danger" icon="delete" size="small" @click="del(record.id)" />
           <a-button icon="eye" size="small" @click="preview(record.catUrl)" />
         </div>
       </s-table>
@@ -144,21 +151,22 @@ export default {
       }
     }
   },
-  created() {
-    this.loadCategory()
-  },
   methods: {
-    loadCategory() {
-      getProductCate(this.queryParam).then(res => {
-        this.category = res.data.datas
-      })
-    },
     downloadXls() {
       if (!this.category.length) {
         this.$message.error('没有分类信息')
         return false
       }
-      var data = this.category
+      var data = this.category.map(item => {
+        console.log(item)
+        return {
+          ID: item.id,
+          产品分类名称: item.catName,
+          '页面标题/Title': item.seoTitle,
+          '页面关键词/Keywords': item.seoKeyWord,
+          '页面描述/Description': item.seoDescription
+        }
+      })
 
       /* make the worksheet */
       var ws = XLSX.utils.json_to_sheet(data)
@@ -207,7 +215,6 @@ export default {
           // 最终获取到并且格式化后的 json 数据
           const uploadData = data.map((item, index) => {
             return {
-              id: index,
               catName: item['产品分类名称'],
               catTitle: item['页面标题/Title'],
               catKeyword: item['页面关键词/Keywords'],
@@ -226,7 +233,9 @@ export default {
       fileReader.readAsBinaryString(files[0])
     },
     onSelectChange() {},
-    edit() {},
+    edit(id) {
+      this.$router.push(`/products/add-category/${id}`)
+    },
     del() {},
     preview(url) {
       window.open(url)

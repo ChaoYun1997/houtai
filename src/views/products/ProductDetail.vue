@@ -551,6 +551,7 @@ export default {
         form.name = data.shopTitle // 产品标题
         console.log(data.shopTitle)
         form.productUrl = data.shopUrl ? data.shopUrl : '' // 产品url
+        form.urlValue = data.shopUrl ? 'b' : 'a'
         form.keyword.words = data.shopKeyWords.map(item => {
           // 关键词
           return { keyword: item }

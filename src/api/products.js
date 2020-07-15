@@ -10,7 +10,7 @@ const productsApi = {
   UpdateSort: '/shop/updateSort', // 更新产品排序
   DelProduct: '/shop/delShop', // 彻底删除产品
   DelProducts: '/shop/delShops', // 批量彻底删除产品
-  UpdateCate: '/shop/updateCatid', // 更新、移动分类
+  UpdateCate: '/shop/updateCatid', // 更新分类、移动分类
   GetUploadSign: '/shop/getUploadSign', // 获取七牛上传凭证
   GetProductCate: '/shop/getNames', // 获取产品分类列表
   ImportProducts: '/shop/ImportShops' // 批量导入产品
