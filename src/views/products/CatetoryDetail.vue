@@ -1,7 +1,13 @@
 <template>
   <page-header-wrapper>
     <a-card :body-style="{ padding: '24px 32px' }" :bordered="false">
-      <a-form-model ref="form" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-model
+        ref="form"
+        :model="form"
+        :rules="rules"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+      >
         <h3 class="title">基本信息</h3>
         <a-form-model-item label="产品分类名称" prop="name">
           <a-input v-model="form.name" />
@@ -19,24 +25,41 @@
                 </ul>
               </div>
             </transition>
-            <a-button :icon="showSeo ? 'caret-down' : 'caret-up'" type="link" :ghost="true" @click="showSeo = !showSeo">
-              搜索引擎优化设置
-            </a-button>
+            <a-button
+              :icon="showSeo ? 'caret-down' : 'caret-up'"
+              type="link"
+              :ghost="true"
+              @click="showSeo = !showSeo"
+            >搜索引擎优化设置</a-button>
             <transition name="slideToggle">
               <div class="seo" v-show="showSeo">
-                <a-row>
+                <a-row :gutter="[10,10]">
                   <a-col :span="4" :push="1">
                     <span class="label">页面标题</span>
                   </a-col>
-                  <a-col :span="19"><a-input v-model="form.keyword.pageTitle" placeholder="请输入页面标题"/></a-col>
+                  <a-col :span="19" class="right-padd">
+                    <a-input v-model="form.keyword.pageTitle" placeholder="请输入页面标题" />
+                  </a-col>
+                </a-row>
+                <a-row>
                   <a-col :span="4" :push="1">
                     <span class="label">页面关键词</span>
                   </a-col>
-                  <a-col :span="19"><a-input v-model="form.keyword.pageKeyword" placeholder="请输入页面关键词"/></a-col>
+                  <a-col :span="19" class="right-padd">
+                    <a-textarea
+                      :auto-size="{ minRows: 2, maxRows: 6 }"
+                      v-model="form.keyword.pageKeyword"
+                      placeholder="请输入页面关键词"
+                    />
+                  </a-col>
+                </a-row>
+                <a-row>
                   <a-col :span="4" :push="1">
                     <span class="label">页面描述</span>
                   </a-col>
-                  <a-col :span="19"><a-input v-model="form.keyword.pageDesc" placeholder="请输入页面描述"/></a-col>
+                  <a-col :span="19" class="right-padd">
+                    <a-input v-model="form.keyword.pageDesc" placeholder="请输入页面描述" />
+                  </a-col>
                 </a-row>
               </div>
             </transition>
@@ -44,12 +67,8 @@
         </a-form-model-item>
         <a-form-model-item label="分类URL" class="url">
           <a-radio-group v-model="form.urlValue">
-            <a-radio value="a" class="url-radio">
-              系统URL
-            </a-radio>
-            <a-radio value="b" class="url-radio">
-              自定义URL
-            </a-radio>
+            <a-radio value="a" class="url-radio">系统URL</a-radio>
+            <a-radio value="b" class="url-radio">自定义URL</a-radio>
           </a-radio-group>
           <a-input
             class="url-input"
@@ -58,8 +77,8 @@
             placeholder="请输入自定义URL"
           ></a-input>
           <p class="info" v-show="form.urlValue === 'b'">
-            - URL必须以/开头，例如：/about-us.html <br />
-            - 频繁修改详情URL直接影响SEO效果，请仔细斟酌后再提交。
+            - URL必须以/开头，例如：/about-us.html
+            <br />- 频繁修改详情URL直接影响SEO效果，请仔细斟酌后再提交。
           </p>
         </a-form-model-item>
         <a-form-model-item label="选择分类位置" prop="productPosition">
@@ -82,7 +101,7 @@
                 <a-icon type="eye" @click="handlePicPreview(item.path)"></a-icon>
                 <a-icon type="delete" @click="handleDelPic(index)"></a-icon>
               </div>
-              <img :src="item.path" alt="" />
+              <img :src="item.path" alt />
             </li>
             <a-upload
               list-type="picture-card"
@@ -97,9 +116,7 @@
             >
               <div v-if="imgList.length < 8">
                 <a-icon type="plus" />
-                <div class="ant-upload-text">
-                  上传
-                </div>
+                <div class="ant-upload-text">上传</div>
               </div>
             </a-upload>
           </ul>
@@ -114,9 +131,7 @@
         <p>
           <a-select style="width: 120px" :value="form.catWebUrl">
             <template v-for="item in pages">
-              <a-select-option :value="item.path" :key="item.name">
-                {{ item.name }}
-              </a-select-option>
+              <a-select-option :value="item.path" :key="item.name">{{ item.name }}</a-select-option>
             </template>
           </a-select>
           <a-button style="margin-left: 10px;" @click="showAddNewPage = true">新建页面</a-button>
@@ -125,9 +140,7 @@
         <p>
           <a-select style="width: 120px" :value="form.catDescUrl">
             <template v-for="item in pages">
-              <a-select-option :value="item.path" :key="item.name">
-                {{ item.name }}
-              </a-select-option>
+              <a-select-option :value="item.path" :key="item.name">{{ item.name }}</a-select-option>
             </template>
           </a-select>
         </p>
@@ -153,9 +166,7 @@
             style="margin-left: 10px;"
             @click="handleAddNewPage"
             :disabled="newPageName === '' || newPagePath === ''"
-          >
-            确定
-          </a-button>
+          >确定</a-button>
         </div>
       </a-modal>
     </a-card>
@@ -263,7 +274,22 @@ export default {
   },
   methods: {
     ...mapMutations(['SET_PAGE']),
-    initSortableJs() {},
+    getObjectURL(file) {
+      console.log(file)
+      var url = null
+      // 下面函数执行的效果是一样的，只是需要针对不同的浏览器执行不同的 js 函数而已
+      if (window.createObjectURL !== undefined) {
+        // basic
+        url = window.createObjectURL(file)
+      } else if (window.URL !== undefined) {
+        // mozilla(firefox)
+        url = window.URL.createObjectURL(file)
+      } else if (window.webkitURL !== undefined) {
+        // webkit or chrome
+        url = window.webkitURL.createObjectURL(file)
+      }
+      return url
+    },
     handleListUploadChange(info) {
       this.imgList = info.fileList
       if (info.file.status === 'done') {
@@ -339,14 +365,16 @@ export default {
           form.keyword.pageDesc = data.seoDescription
           const pid = Number(data.catPid)
           this.selectedK = pid ? [`0-0-${pid}`] : []
-          this.picList = data.catImgList ? data.catImgList.map(item => {
-            // 产品图片
-            const name = item.split('/')
-            return {
-              path: /^http/.test(item) ? item : host + '/' + item,
-              name: name[name.length - 1]
-            }
-          }) : []
+          this.picList = data.catImgList
+            ? data.catImgList.map(item => {
+                // 产品图片
+                const name = item.split('/')
+                return {
+                  path: /^http/.test(item) ? item : host + '/' + item,
+                  name: name[name.length - 1]
+                }
+              })
+            : []
           this.content = data.catDescription
           if (data.catWebUrl) {
             this.pages.push({ name: '自定义1', path: `${data.catWebUrl}` })
@@ -592,5 +620,14 @@ export default {
 }
 .slideToggle-enter, .slideToggle-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+.input-md {
+  width: 160px;
+}
+.input-lg {
+  width: 420px;
+}
+.right-padd {
+  padding-right: 40px!important;
 }
 </style>

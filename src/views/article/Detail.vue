@@ -1,29 +1,31 @@
 <template>
   <page-header-wrapper>
     <a-card :body-style="{ padding: '24px 32px' }" :bordered="false">
-      <a-form-model ref="form" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-model
+        ref="form"
+        :model="form"
+        :rules="rules"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+      >
         <a-form-model-item label="标题" prop="name">
           <a-input v-model="form.name" />
         </a-form-model-item>
         <a-form-model-item label="文章URL" class="url">
           <a-radio-group v-model="form.urlValue">
-            <a-radio value="a" class="url-radio">
-              系统URL
-            </a-radio>
-            <a-radio value="b" class="url-radio">
-              自定义URL
-            </a-radio>
+            <a-radio value="a" class="url-radio">系统URL</a-radio>
+            <a-radio value="b" class="url-radio">自定义URL</a-radio>
           </a-radio-group>
           <a-input
             class="url-input"
             v-show="form.urlValue === 'b'"
-            v-model="customUrl"
+            v-model="form.articleUrl"
             placeholder="请输入自定义URL"
           ></a-input>
           <p class="info" v-show="form.urlValue === 'b'">
-            - URL必须以/开头，例如：/about-us.html <br />
-            - 请勿使用以p+数字结尾结构的URL，跟系统分页规则冲突，例如：/prod-p2.html <br />
-            - 频繁修改详情URL直接影响SEO效果，请仔细斟酌后再提交。
+            - URL必须以/开头，例如：/about-us.html
+            <br />- 请勿使用以p+数字结尾结构的URL，跟系统分页规则冲突，例如：/prod-p2.html
+            <br />- 频繁修改详情URL直接影响SEO效果，请仔细斟酌后再提交。
           </p>
         </a-form-model-item>
         <a-form-model-item ref="category" label="所属文章分类" prop="category">
@@ -35,11 +37,15 @@
           </template>
           <a-button @click="showCategoryModal = true">选择</a-button>
         </a-form-model-item>
-        <a-form-model-item label="文章关键词" prop="keyword" class="keyword-box">
+        <a-form-model-item label="文章关键词" class="keyword-box">
           <a-row>
             <a-col :span="12">
               <div ref="list" class="list">
-                <div class="list-group-item keyword-input" v-for="(item, index) in form.keyword.words" :key="index">
+                <div
+                  class="list-group-item keyword-input"
+                  v-for="(item, index) in form.keyword.words"
+                  :key="index"
+                >
                   <a-input v-model="item.keyword" placeholder="请输入关键词" />
                   <a-icon
                     v-show="form.keyword.words.length > 1"
@@ -56,9 +62,11 @@
                   />
                 </div>
               </div>
-              <a-button icon="plus" v-show="form.keyword.words.length < 8" @click="handleAddKeyword">
-                新增关键词
-              </a-button>
+              <a-button
+                icon="plus"
+                v-show="form.keyword.words.length < 8"
+                @click="handleAddKeyword"
+              >新增关键词</a-button>
             </a-col>
             <a-col :span="8">
               <a-card class="keyword-list" size="small">
@@ -83,38 +91,49 @@
                   </a-list-item>
                 </a-list>
                 <span slot="actions">
-                  <a-button type="link">管理关键词</a-button>
+                  <a-button type="link" @click="goToKeywords">管理关键词</a-button>
                 </span>
               </a-card>
             </a-col>
           </a-row>
-          <p class="info">
-            -请填写3个以上的关键词，每个关键词的长度≤5个单词，长度不得超过100字符，单词之间不需要增加任何符号，直接空格表示。
-          </p>
-          <a-button :icon="showSeo ? 'caret-down' : 'caret-up'" type="link" :ghost="true" @click="showSeo = !showSeo">
-            搜索引擎优化设置
-          </a-button>
+          <p class="info">-请填写3个以上的关键词，每个关键词的长度≤5个单词，长度不得超过100字符，单词之间不需要增加任何符号，直接空格表示。</p>
+          <a-button
+            :icon="showSeo ? 'caret-down' : 'caret-up'"
+            type="link"
+            :ghost="true"
+            @click="showSeo = !showSeo"
+          >搜索引擎优化设置</a-button>
           <transition name="slideToggle">
             <div class="seo" v-show="showSeo">
               <a-row>
                 <a-col :span="4" :push="1">
                   <span class="label">页面标题</span>
                 </a-col>
-                <a-col :span="19"><a-input v-model="form.keyword.pageTitle" placeholder="请输入页面标题"/></a-col>
+                <a-col :span="19">
+                  <a-input v-model="form.keyword.pageTitle" placeholder="请输入页面标题" />
+                </a-col>
+              </a-row>
+              <a-row>
                 <a-col :span="4" :push="1">
                   <span class="label">页面关键词</span>
                 </a-col>
-                <a-col :span="19"><a-input v-model="form.keyword.pageKeyword" placeholder="请输入页面关键词"/></a-col>
+                <a-col :span="19">
+                  <a-input v-model="form.keyword.pageKeyword" placeholder="请输入页面关键词" />
+                </a-col>
+              </a-row>
+              <a-row>
                 <a-col :span="4" :push="1">
                   <span class="label">页面描述</span>
                 </a-col>
-                <a-col :span="19"><a-input v-model="form.keyword.pageDesc" placeholder="请输入页面描述"/></a-col>
+                <a-col :span="19">
+                  <a-input v-model="form.keyword.pageDesc" placeholder="请输入页面描述" />
+                </a-col>
               </a-row>
             </div>
           </transition>
         </a-form-model-item>
         <a-form-model-item label="文章状态">
-          <a-radio-group :default-value="0">
+          <a-radio-group v-model="form.status">
             <a-radio :value="0">正常</a-radio>
             <a-radio :value="1">草稿</a-radio>
             <a-radio :value="2">定时发布</a-radio>
@@ -132,35 +151,60 @@
             style="width: 220px"
           />
         </a-form-model-item>
-        <a-form-model-item label="文章浏览次数" prop="name">
-          基数 <a-input v-model="form.readingBase" style="width: 100px;" /> + 实际浏览次数
-          <a-input v-model="form.realReading" :disabled="true" style="width: 100px;" /> = 前台显示浏览次数
-          <a-input v-model="reading" :disabled="true" style="width: 100px;" />
+        <a-form-model-item label="文章浏览次数">
+          基数
+          <a-input-number id="inputNumber1" v-model="form.readingBase" style="width: 100px;" />+ 实际浏览次数
+          <a-input-number
+            id="inputNumber2"
+            v-model="form.realReading"
+            :disabled="true"
+            style="width: 100px;"
+          />= 前台显示浏览次数
+          <a-input-number
+            id="inputNumber3"
+            v-model="reading"
+            :disabled="true"
+            style="width: 100px;"
+          />
         </a-form-model-item>
         <a-form-model-item ref="cover" label="文章附图" prop="cover">
-          <a-upload :file-list="coverImg" :before-upload="beforeCoverChange" v-show="!previewCover">
-            <div class="cover-button"><a-icon type="upload"></a-icon></div>
+          <a-upload
+            name="avatar"
+            list-type="picture-card"
+            class="cover-uploader"
+            accept="image/*"
+            :show-upload-list="false"
+            :data="getUploadData"
+            :action="uploadUrl"
+            :before-upload="getUploadToken"
+            @change="handleArticlePicUpload"
+          >
+            <img v-if="coverImg" :src="coverImg" alt="cover" />
+            <div v-else>
+              <a-icon :type="uploading ? 'loading' : 'plus'" />
+              <div class="ant-upload-text">上传</div>
+            </div>
           </a-upload>
-          <div class="cover-preview" v-show="previewCover">
-            <img :src="previewCover" alt="" />
-            <a-icon type="delete" class="del-btn" @click="handleCoverRemove"></a-icon>
-          </div>
         </a-form-model-item>
         <a-form-model-item label="文章内容">
           <kind-editor ref="kindeditor" @input="getContent"></kind-editor>
         </a-form-model-item>
         <a-form-model-item ref="intro" label="文章摘要" prop="intro">
-          <a-textarea v-model="form.intro" placeholder="请输入文章简介" :auto-size="{ minRows: 2, maxRows: 6 }" />
+          <a-textarea
+            v-model="form.intro"
+            placeholder="请输入文章简介"
+            :auto-size="{ minRows: 2, maxRows: 6 }"
+          />
         </a-form-model-item>
         <h3>高级</h3>
         <a-form-model-item label="作者" prop="author">
-          <a-input v-model="form.author" />
+          <a-input v-model="form.info.author" />
         </a-form-model-item>
-        <a-form-model-item label="来源" prop="name">
-          <a-input v-model="form.author" />
+        <a-form-model-item label="来源" prop="source">
+          <a-input v-model="form.info.source" />
         </a-form-model-item>
-        <a-form-model-item label="网址" prop="name">
-          <a-input v-model="form.author" />
+        <a-form-model-item label="网址" prop="website">
+          <a-input v-model="form.info.website" />
         </a-form-model-item>
         <h3>相关产品</h3>
         <a-alert message="选出5~20篇与该产品相关联的产品展示在前台产品详情。" banner closable />
@@ -172,8 +216,7 @@
                 :options="categoryOptions"
                 style="width: 160px"
                 @change="handleProductCateChange"
-              >
-              </a-select>
+              ></a-select>
               <a-input-search
                 placeholder="请输入产品标题"
                 enter-button="搜索"
@@ -188,8 +231,7 @@
                 :columns="productColumns"
                 :data="loadProductData"
                 :rowSelection="rowSelection"
-              >
-              </s-table>
+              ></s-table>
             </a-col>
             <a-col :span="12" class="article-list">
               <h5>已选择的相关产品</h5>
@@ -211,15 +253,15 @@
       </a-form-model>
     </a-card>
     <a-modal v-model="showCategoryModal" title="请选择文章分类">
-      <a-checkbox-group :default-value="form.category" @change="onCategoryChange">
+      <a-radio-group v-model="selectedCate">
         <a-row>
           <template v-for="item in articleCate">
             <a-col :key="item.label">
-              <a-checkbox :value="item.id">{{ item.label }}</a-checkbox>
+              <a-radio :value="item.id">{{ item.label }}</a-radio>
             </a-col>
           </template>
         </a-row>
-      </a-checkbox-group>
+      </a-radio-group>
       <div slot="footer" class="model-footer">
         <a-button type="primary" @click="handleSelectCate" :disabled="selectedCate.length === 0">确 定</a-button>
         <a-button @click="showCategoryModal = false">取 消</a-button>
@@ -236,10 +278,11 @@
 </template>
 
 <script>
-import { getProducts } from '@/api/products'
-import { getProductCate } from '@/api/category'
+import { getProducts, getUploadSign } from '@/api/products'
+import { getProductCate, getArticleCate } from '@/api/category'
+// eslint-disable-next-line no-unused-vars
+import { addArticle, updateArticle } from '@/api/article'
 import { getKeyword } from '@/api/keyword'
-import { articleCategory } from '@/api/article'
 import sortableJS from 'sortablejs'
 import KindEditor from '@/components/Kindeditor'
 import { STable } from '@/components'
@@ -287,10 +330,8 @@ export default {
         parameter = Object.assign(parameter, this.queryParam)
         return getProducts(parameter)
       },
-      queryParam: {
-        pageIndex: 1,
-        pageSize: 10
-      },
+      queryParam: {},
+      queryProductCate: {},
       pagination: {
         size: 'small'
       },
@@ -302,7 +343,11 @@ export default {
 
       content: '',
 
-      coverImg: [],
+      uploading: false,
+      uploadUrl: 'http://up-z0.qiniup.com',
+      picToken: '',
+      fileName: '',
+      coverImg: '',
       previewCover: '',
       imgList: [],
       previewImage: [],
@@ -316,7 +361,8 @@ export default {
       showSeo: true,
       showCategoryModal: false, // 显示选择分类
       categoryLoading: true,
-      selectedCate: [],
+      selectedCate: '',
+      queryArticleCate: {},
       categoryOptions: [], // 产品分类
       articleCategoryOptions: [], // 文章分类分类
 
@@ -337,7 +383,7 @@ export default {
       // 产品表单
       form: {
         name: '',
-        productUrl: '',
+        articleUrl: '',
         urlValue: 'a',
         keyword: {
           words: [{ keyword: '' }],
@@ -349,13 +395,13 @@ export default {
         realReading: 0,
         readingBase: 0,
         category: [],
-        pics: [],
+        coverName: '',
         videoUrl: '',
         intro: '',
-        attribute: {
-          model: '',
-          brand: '',
-          code: ''
+        info: {
+          author: '',
+          source: '',
+          website: ''
         },
         customFields: [{ field: '' }],
         sku: {
@@ -368,32 +414,13 @@ export default {
             }
           ]
         },
-        // sku: [
-        //   {
-        //     name: 'color',
-        //     vals: [
-        //       { value: 'yellow', stock: 10, pic: '' },
-        //       { value: 'white', stock: 10, pic: '' }
-        //     ],
-        //     pic: ''
-        //   }
-        // ],
         desc: [{ 'Product Description': '' }],
-        status: {
-          val: 1, // 默认1 上架状态
-          tmallLink: '',
-          jdLink: '',
-          amazonLink: '',
-          smtLink: '',
-          dhwLink: '',
-          wechatLink: ''
-        },
+        status: 0,
         articles: [],
         linkProducts: []
       },
       rules: {
-        name: [{ required: true, message: '请输入产品名称', trigger: 'blur' }],
-        keyword: [{ required: true, message: '请输入产品关键词', trigger: 'blur' }]
+        name: [{ required: true, message: '请输入文章标题', trigger: 'blur' }]
       }
     }
   },
@@ -434,20 +461,16 @@ export default {
       }
     })
   },
-  watch: {
-    async coverImg(val) {
-      if (val.length > 0) {
-        this.previewCover = await getBase64(val[0])
-      }
-    },
-    async imgList(val) {
-      if (val.length > 0) {
-        this.previewImage = await getBase64(val[0])
-      }
-    }
-  },
   methods: {
     moment,
+    goToKeywords() {
+      this.$confirm({
+        content: '你确定要放弃当前内容前往关键词管理吗',
+        onOk: () => {
+          this.$router.push('/keyword')
+        }
+      })
+    },
     handleDelProduct(id) {
       this.selectedProductRowKeys.forEach((item, index) => {
         if (id === item) {
@@ -479,8 +502,9 @@ export default {
       this.selectedProducts = selectedRows
     },
     loadArticles() {
-      articleCategory().then(res => {
+      getArticleCate(this.queryArticleCate).then(res => {
         const result = res.data.datas
+        console.log(res.data.datas)
         if (result.length > 0) {
           result.forEach(item => {
             this.articleCate.push({
@@ -514,6 +538,63 @@ export default {
       // TODO 刷新数据
     },
     handleDate() {},
+    getObjectURL(file) {
+      console.log(file)
+      var url = null
+      // 下面函数执行的效果是一样的，只是需要针对不同的浏览器执行不同的 js 函数而已
+      if (window.createObjectURL !== undefined) {
+        // basic
+        url = window.createObjectURL(file)
+      } else if (window.URL !== undefined) {
+        // mozilla(firefox)
+        url = window.URL.createObjectURL(file)
+      } else if (window.webkitURL !== undefined) {
+        // webkit or chrome
+        url = window.webkitURL.createObjectURL(file)
+      }
+      return url
+    },
+    handleArticlePicUpload(info) {
+      if (info.file.status === 'uploading') {
+        this.uploading = true
+        return
+      }
+      if (info.file.status === 'done') {
+        console.log(info.file.response.name)
+        this.coverImg = this.getObjectURL(info.file.originFileObj)
+        this.coverName = info.file.response.name
+      }
+    },
+    async getUploadToken(file) {
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message.error('图片不能超过2MB!')
+        return isLt2M
+      }
+      // 获取图片上传凭证
+      const param = {
+        type: 1
+      }
+      await getUploadSign(param)
+        .then(res => {
+          if (res.code === 200) {
+            this.picToken = res.data.token
+            this.fileName = res.data.fileName
+          } else {
+            throw res
+          }
+        })
+        .catch(err => {
+          this.$message.error(err.msg)
+        })
+    },
+    getUploadData(file) {
+      return {
+        token: this.picToken,
+        key: this.fileName,
+        file: file
+      }
+    },
     // 获取编辑器内容
     getContent(content) {
       console.log('content', content)
@@ -557,9 +638,8 @@ export default {
     },
     // 加载分类数据
     loadCategory() {
-      getProductCate().then(res => {
+      getProductCate(this.queryProductCate).then(res => {
         res.data.datas.forEach(item => {
-          console.log(item)
           this.categoryOptions.push({
             label: item.catName,
             value: item.catName,
@@ -580,7 +660,6 @@ export default {
       console.log('del')
     },
     handleAddKeyword() {
-      console.log(this.form.keyword.words.length)
       this.form.keyword.words.push({ keyword: '' })
     },
     handleKeywordList(keyword) {
@@ -591,11 +670,6 @@ export default {
         return
       }
       this.form.keyword.words[length - 1].keyword = keyword
-    },
-    // 产品主图
-    beforeCoverChange(file, fileList) {
-      this.coverImg = fileList
-      return false
     },
     handleCancel() {
       this.previewVisible = false
@@ -611,8 +685,7 @@ export default {
       this.fileList = fileList
     },
     handleCoverRemove() {
-      this.coverImg = []
-      this.previewCover = ''
+      this.coverImg = ''
     },
     handleImgRemove(index) {
       this.imgList.splice(index, 1)
@@ -623,7 +696,6 @@ export default {
       const isKeyExisted = this.form.sku.attr.filter(item => {
         return item.name === value
       })
-      console.log(isKeyExisted, index)
       if (isKeyExisted.length > 0) {
         this.$warning({
           content: '不能选择相同的规格'
@@ -687,15 +759,50 @@ export default {
     },
     // 提交产品表单
     handleSubmit() {
-      this.$refs.form.validate(valid => {
+      const { form } = this
+      const titleArr = form.name.split(' ')
+      const titleId = titleArr.reduce((acc, cur) => `${acc}-${cur}`)
+      const params = {
+        articleUrl: form.urlValue === 'a' ? `/${titleId}-${new Date().valueOf()}.html` : form.articleUrl, // 产品分类URL
+        articleKeys: form.keyword.words.map(item => item.keyword),
+        seoKeyWords: form.keyword.pageKeyword,
+        seoTitle: form.keyword.pageTitle,
+        seoDescription: form.keyword.pageDesc,
+        baseBrowseCount: form.readingBase,
+        browseCount: form.realReading,
+        articleImg: form.coverName,
+        articleContent: this.content,
+        articleAbstract: form.intro,
+        articleAuthor: form.info.author,
+        articleFrom: form.info.source,
+        articleWeb: form.info.website,
+        someShopIdList: this.selectedProductRowKeys,
+        articleTitle: form.name,
+        status: form.status,
+        isTop: true,
+        releaseDate: '2020-07-16T06:11:40.318Z'
+      }
+      if (this.selectedCate) {
+        params.catId = this.selectedCate
+      }
+      if (this.$route.params.id) {
+        params.id = this.$route.params.id
+      }
+      this.$refs.form.validate(async valid => {
         if (valid) {
-          console.log(this.form)
-          // 图片 formdata格式
-          const { imgList } = this
-          const formData = new FormData()
-          imgList.forEach(file => {
-            formData.append('imgs[]', file)
-          })
+          console.log(params)
+          let res
+          if (params.id) {
+            res = await updateArticle(params)
+          } else {
+            res = await addArticle(params)
+          }
+          if (res.code === 200) {
+            this.$message.success('操作成功')
+            console.log(res)
+          } else {
+            this.$message.error(res.msg)
+          }
         } else {
           console.log('error submit!!')
           return false

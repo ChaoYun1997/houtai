@@ -147,7 +147,7 @@ export default {
         content: '你确定要恢复该产品吗？',
         onOk: () => {
           restoreProduct([id]).then(res => {
-            if (res.result.data === 'success') this.$message.success('操作成功')
+            if (res.data === 200) this.$message.success('操作成功')
             this.$refs.table.refresh()
           })
         }
@@ -191,6 +191,7 @@ export default {
               console.log(res)
               if (res.code === 200) {
                 this.$message.success('操作成功')
+                this.$refs.table.refresh()
               } else {
                 throw res
               }

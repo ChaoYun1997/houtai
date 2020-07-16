@@ -86,6 +86,9 @@
         :rowSelection="rowSelection"
       >
         <div class="cover" slot="shopImg" slot-scope="shopImg">
+          <template v-if="!shopImg">
+            <a-icon type="picture" style="font-size:32px;opacity: .3;"></a-icon>
+          </template>
           <img :src="/^http/.test(shopImg) ? shopImg : getImg(shopImg)" alt />
         </div>
         <div slot="shelve" slot-scope="text, record">
@@ -607,6 +610,7 @@ export default {
   }
 }
 .cover {
+  text-align: center;
   img {
     width: 80px;
     height: 80px;
@@ -618,4 +622,5 @@ export default {
     margin-right: 5px;
   }
 }
+
 </style>

@@ -108,7 +108,7 @@ export const asyncRouterMap = [
             meta: { title: '文章管理', keepAlive: true }
           },
           {
-            path: '/articles/basic-list',
+            path: '/articles/add-article',
             name: 'addArticle',
             component: () => import('@/views/article/Detail'),
             meta: { title: '添加文章', keepAlive: true }

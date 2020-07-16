@@ -2,7 +2,13 @@
   <page-header-wrapper>
     <a-card>
       <div class="watermark-wrap">
-        <a-row v-if="watermark.watermarkType" class="wrap-head" type="flex" justify="space-between" align="middle">
+        <a-row
+          v-if="watermark.watermarkType"
+          class="wrap-head"
+          type="flex"
+          justify="space-between"
+          align="middle"
+        >
           <a-col :span="10" class="label-left">
             <span class="icon">
               <a-icon size="large" :type="watermark.isOpen ? 'unlock' : 'lock'"></a-icon>
@@ -13,15 +19,17 @@
             </div>
           </a-col>
           <a-col>
-            <a-button size="large" :type="watermark.isOpen ? 'danger' : 'primary'" @click="handleStatus">
-              {{ watermark.isOpen ? '关闭图片水印功能' : '开启图片水印功能' }}
-            </a-button>
+            <a-button
+              size="large"
+              :type="watermark.isOpen ? 'danger' : 'primary'"
+              @click="handleStatus"
+            >{{ watermark.isOpen ? '关闭图片水印功能' : '开启图片水印功能' }}</a-button>
           </a-col>
         </a-row>
         <a-tabs
           class="wrap-content"
           :activeKey="defaultTabKey"
-          @change="callback"
+          @change="handleSwitchTab"
           v-show="!watermark.watermarkType || watermark.isOpen"
         >
           <a-tab-pane key="1" tab="图片水印">
@@ -33,11 +41,11 @@
                   :style="`font-family:${fontFamily};font-size:${fontSize}px;color:${fontColor};${previewBg}`"
                 >
                   <span class="watermark watermarkImg" ref="text">
-                    <img :src="defaultImg" :style="`opacity:${picOpacity / 100};`" alt="" />
+                    <img :src="defaultImg" :style="`opacity:${picOpacity / 100};`" alt />
                   </span>
                 </div>
               </a-col>
-              <a-col class="" :span="14">
+              <a-col class :span="14">
                 <a-form-model :labelCol="{ span: 4 }" :wrapperCol="{ span: 20 }">
                   <a-form-model-item label="水印图片">
                     <div v-if="uploadedName" class="uploaded-content">
@@ -56,7 +64,8 @@
                       @change="handleUploadChange"
                     >
                       <a-button>
-                        <a-icon :type="imgLoading ? 'loading' : `upload`" /> {{ imgLoading ? '上传中' : '上传图片' }}
+                        <a-icon :type="imgLoading ? 'loading' : `upload`" />
+                        {{ imgLoading ? '上传中' : '上传图片' }}
                       </a-button>
                     </a-upload>
                   </a-form-model-item>
@@ -66,16 +75,28 @@
                         <a-slider v-model="picOpacity" :min="1" :max="100" />
                       </a-col>
                       <a-col :span="4">
-                        <a-input-number v-model="picOpacity" :min="1" :max="100" style="width: 70px;" />
+                        <a-input-number
+                          v-model="picOpacity"
+                          :min="1"
+                          :max="100"
+                          style="width: 70px;"
+                        />
                       </a-col>
                     </a-row>
                   </a-form-model-item>
                   <a-form-model-item label="水印位置">
-                    <a-radio-group :options="plainOptions" v-model="positionVal" @change="onPositionChange" />
+                    <a-radio-group
+                      :options="plainOptions"
+                      v-model="positionVal"
+                      @change="onPositionChange"
+                    />
                   </a-form-model-item>
                   <a-form-model-item :wrapper-col="{ span: 12, offset: 4 }">
                     <a-button type="primary" @click="handlePicSubmit">
-                      提交
+                      <template v-if="picLoading">
+                        <a-icon type="loading"></a-icon>
+                      </template>
+                      <span v-else>提交</span>
                     </a-button>
                   </a-form-model-item>
                 </a-form-model>
@@ -90,27 +111,23 @@
                   ref="previewBox"
                   :style="`font-family:${fontFamily};font-size:${fontSize}px;color:${fontColor};${previewBg}`"
                 >
-                  <span class="watermark" ref="text">
-                    {{ textWatermark }}
-                  </span>
+                  <span class="watermark" ref="text">{{ textWatermark }}</span>
                 </div>
               </a-col>
               <a-col :span="14">
-                <a-form-model layout="horizontal" :labelCol="{ span: 4 }" :wrapperCol="{ span: 20 }">
+                <a-form-model
+                  layout="horizontal"
+                  :labelCol="{ span: 4 }"
+                  :wrapperCol="{ span: 20 }"
+                >
                   <a-form-model-item label="水印文字">
                     <a-input style="width: 200px" v-model="textWatermark"></a-input>
                   </a-form-model-item>
                   <a-form-model-item label="文字字体">
-                    <a-select default-value="SimHei" style="width: 120px" @change="handleFontChange">
-                      <a-select-option value="SimSun">
-                        宋体
-                      </a-select-option>
-                      <a-select-option value="SimHei">
-                        黑体
-                      </a-select-option>
-                      <a-select-option value="Microsoft Yahei">
-                        微软雅黑
-                      </a-select-option>
+                    <a-select v-model="fontFamily" style="width: 120px">
+                      <a-select-option value="SimSun">宋体</a-select-option>
+                      <a-select-option value="SimHei">黑体</a-select-option>
+                      <a-select-option value="Microsoft Yahei">微软雅黑</a-select-option>
                     </a-select>
                   </a-form-model-item>
                   <a-form-model-item label="文字颜色">
@@ -127,11 +144,18 @@
                     </a-row>
                   </a-form-model-item>
                   <a-form-model-item label="水印位置">
-                    <a-radio-group :options="plainOptions" v-model="positionVal" @change="onPositionChange" />
+                    <a-radio-group
+                      :options="plainOptions"
+                      v-model="positionVal"
+                      @change="onPositionChange"
+                    />
                   </a-form-model-item>
                   <a-form-model-item :wrapper-col="{ span: 12, offset: 4 }">
                     <a-button type="primary" @click="handleFontSubmit">
-                      提交
+                      <template v-if="fontLoading">
+                        <a-icon type="loading"></a-icon>
+                      </template>
+                      <span v-else>提交</span>
                     </a-button>
                   </a-form-model-item>
                 </a-form-model>
@@ -145,7 +169,7 @@
 </template>
 
 <script>
-  // eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line no-unused-vars
 import { getWatermark, setWatermarkStatus, saveWatermark } from '@/api/watermark'
 import { getUploadSign } from '@/api/products'
 import storage from 'store'
@@ -163,6 +187,8 @@ export default {
   data() {
     this.plainOptions = plainOptions
     return {
+      fontLoading: false,
+      picLoading: false,
       username: storage.get(USERNAME),
       uid: storage.get(USERID),
       status: true,
@@ -211,7 +237,10 @@ export default {
             this.defaultImg = this.watermark.imgUrl = process.env.VUE_APP_HOST + '/' + this.watermark.imgUrl
           }
           console.log(this.watermark.watermarkType)
-          this.defaultTabKey = this.watermark.watermarkType
+          this.defaultTabKey = this.watermark.watermarkType.toString()
+          this.textWatermark = this.watermark.watemarkText
+          this.fontFamily =
+            this.watermark.fontFamily === 1 ? 'SimSun' : this.watermark.fontFamily === 2 ? 'SimHei' : 'Microsoft Yahei'
         }
       })
     },
@@ -301,17 +330,6 @@ export default {
       this.fontFamily = value
     },
     submit(type) {
-      if (type === 'pic') {
-        if (!this.uploadedName) {
-          this.$message.error('请上传水印图片')
-          return
-        }
-      } else {
-        if (!this.textWatermark) {
-          this.$message.error('请输入水印文字')
-          return
-        }
-      }
       const fonts = {
         SimSun: 1,
         SimHei: 2,
@@ -340,16 +358,31 @@ export default {
         .catch(err => {
           this.$message.error(err.msg)
         })
+        .finally(() => {
+          this.fontLoading = false
+          this.picLoading = false
+        })
     },
     handlePicSubmit() {
+      if (!this.uploadedName) {
+        this.$message.error('请上传水印图片')
+        return
+      }
       this.submit('pic')
+      this.picLoading = true
     },
     handleFontSubmit() {
+      if (!this.textWatermark) {
+        this.$message.error('请输入水印文字')
+        return
+      }
       this.submit('font')
+      this.fontLoading = true
       console.log(this.$refs.color.value)
     },
-    callback(key) {
+    handleSwitchTab(key) {
       console.log(key)
+      this.defaultTabKey = key
     }
   }
 }

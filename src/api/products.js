@@ -160,8 +160,8 @@ export function getUploadSign(param) {
 export function removeProducts(param) {
   return request({
     url: productsApi.DelProducts,
-    method: 'get',
-    params: param
+    method: 'post',
+    data: param
   })
 }
 
