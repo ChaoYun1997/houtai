@@ -103,6 +103,33 @@
           </span>
         </li>
       </ul>
+      <h3 class="title">跟进记录</h3>
+      <h3 class="title">操作</h3>
+      <a-card>
+        <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" :form="form" ref="form">
+          <a-form-item label="意向">
+            <a-radio-group v-model="intention">
+              <a-radio :value="0">低</a-radio>
+              <a-radio :value="1">中</a-radio>
+              <a-radio :value="2">高</a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item label="进展">
+            <a-radio-group v-model="progressing">
+              <a-radio :value="0">待沟通</a-radio>
+              <a-radio :value="1">沟通中</a-radio>
+              <a-radio :value="2">放弃</a-radio>
+              <a-radio :value="3">成单</a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item label="备注">
+            <a-input v-model="note" type="textarea" />
+          </a-form-item>
+          <a-form-item :wrapperCol="{ span: 12, offset: 5 }">
+            <a-button htmlType="submit" type="primary" @click="handleSubmit">提交</a-button>
+          </a-form-item>
+        </a-form>
+      </a-card>
       <!--      <a-descriptions class="info" bordered :column="1">-->
       <!--        <a-descriptions-item>-->
       <!--          <div slot="label" style="width: 120px;">Name</div>-->
@@ -130,7 +157,8 @@
 </template>
 
 <script>
-import { enquiryDetail } from '../../api/enquiry'
+// eslint-disable-next-line no-unused-vars
+import { enquiryDetail, getEnquiryLog, addEnquiryLog } from '../../api/enquiry'
 
 // {
 //   shopId: 0,
@@ -163,7 +191,11 @@ export default {
   name: 'EnquiryDetail',
   data() {
     return {
-      detail: {}
+      detail: {},
+      intention: 0,
+      progressing: 0,
+      note: '',
+      form: this.$form.createForm(this)
     }
   },
   created() {
@@ -178,13 +210,32 @@ export default {
         console.log(res.data)
         this.detail = res.data
       })
+    },
+    handleSubmit() {
+      const params = {
+        enquiryId: this.detail.id + 1,
+        intentionType: this.intention,
+        progressType: this.progressing,
+        note: this.note
+      }
+      addEnquiryLog(params)
+        .then(res => {
+          if (res.code === 200) {
+            this.$message.success('跟进成功')
+          } else {
+            throw res
+          }
+        })
+        .catch(err => {
+          this.$message.error(err.msg || 'fail')
+        })
     }
   }
 }
 </script>
 
 <style scoped lang="less">
-  @import '~ant-design-vue/lib/style/themes/default.less';
+@import '~ant-design-vue/lib/style/themes/default.less';
 .info {
   table {
     tr {
@@ -203,7 +254,7 @@ export default {
   li {
     display: flex;
     border-bottom: 1px solid @border-color-base;
-    b{
+    b {
       display: block;
       width: 25%;
       height: 40px;
@@ -212,7 +263,7 @@ export default {
       background: @background-color-base;
       border-right: 1px solid @border-color-base;
     }
-    span{
+    span {
       padding-left: 20px;
       display: block;
       width: 75%;
