@@ -104,13 +104,13 @@ export const asyncRouterMap = [
             path: '/articles/article-list',
             name: 'articleManage',
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
-            component: () => import('@/views/article/List'),
+            component: () => import('@/views/article/ArticleList'),
             meta: { title: '文章管理', keepAlive: true }
           },
           {
-            path: '/articles/add-article',
+            path: '/articles/add-article/:id?',
             name: 'addArticle',
-            component: () => import('@/views/article/Detail'),
+            component: () => import('@/views/article/ArticleDetail'),
             meta: { title: '添加文章', keepAlive: true }
           },
           {
@@ -171,6 +171,14 @@ export const asyncRouterMap = [
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
             component: () => import('@/views/enquiry/EnquiryList'),
             meta: { title: '询盘管理', keepAlive: true }
+          },
+          {
+            path: '/enquiry/detail/:id?',
+            name: 'enquiryDetail',
+            hidden: true,
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/enquiry/EnquiryDetail'),
+            meta: { title: '询单详情', keepAlive: true }
           },
           {
             path: '/enquiry/enquiry-rules',

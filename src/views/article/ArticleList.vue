@@ -8,11 +8,7 @@
       </div>
 
       <div class="table-page-search-wrapper" style="padding-bottom:20px;">
-        <a-select
-          placeholder="文章分类"
-          v-model="cateParam"
-          style="width: 160px; margin-right:8px"
-        >
+        <a-select placeholder="文章分类" v-model="cateParam" style="width: 160px; margin-right:8px">
           <a-select-option value="all">全部文章分类</a-select-option>
           <template v-for="(item, index) in category">
             <a-select-option :value="item.id" :key="index">{{ item.catName }}</a-select-option>
@@ -24,11 +20,7 @@
           style="width: 160px; margin-right:10px;"
         ></a-input>
 
-        <a-select
-          placeholder="所有状态"
-          v-model="statusParam"
-          style="width: 160px;margin-right:20px;"
-        >
+        <a-select placeholder="所有状态" v-model="statusParam" style="width: 160px;margin-right:20px;">
           <a-select-option value="all">全部状态</a-select-option>
           <a-select-option value="0">正常</a-select-option>
           <a-select-option value="1">草稿</a-select-option>
@@ -59,7 +51,12 @@
           :default-checked="text"
           @change="handleChecked(record.id)"
         ></a-checkbox>
-
+        <span slot="status" slot-scope="text">
+          {{ text === 0 ? '正常' : text === 1 ? '草稿' : '定时发布' }}
+        </span>
+        <span slot="author" slot-scope="text">
+          {{ text || '本站编辑' }}
+        </span>
         <div class="action" slot="action" slot-scope="text, record">
           <a-button type="primary" icon="edit" size="small" @click="edit(record.id)" />
           <a-popconfirm title="你确定要删除该文章吗?" @confirm="del(record.id)">
@@ -113,7 +110,10 @@ const columns = [
   },
   {
     title: '发布人',
-    dataIndex: 'articleAuthor'
+    dataIndex: 'articleAuthor',
+    scopedSlots: {
+      customRender: 'author'
+    }
   },
   {
     title: '发布时间',
@@ -191,6 +191,7 @@ export default {
     },
     // 编辑文章
     edit(id) {
+      console.log(id)
       this.$router.push('/articles/add-article/' + id)
     },
     // 删除文章
@@ -202,8 +203,9 @@ export default {
       })
     },
     // 预览文章
-    preview(id) {
-      console.log(id)
+    preview(url) {
+      const host = process.env.VUE_APP_WEBSITE
+      window.open(`${host}/${url}`)
     },
     // 分享文章
     share(result) {

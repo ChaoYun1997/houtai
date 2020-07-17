@@ -1,13 +1,7 @@
 <template>
   <page-header-wrapper>
     <a-card :body-style="{ padding: '24px 32px' }" :bordered="false">
-      <a-form-model
-        ref="form"
-        :model="form"
-        :rules="rules"
-        :label-col="labelCol"
-        :wrapper-col="wrapperCol"
-      >
+      <a-form-model ref="form" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-form-model-item label="标题" prop="name">
           <a-input v-model="form.name" />
         </a-form-model-item>
@@ -24,28 +18,19 @@
           ></a-input>
           <p class="info" v-show="form.urlValue === 'b'">
             - URL必须以/开头，例如：/about-us.html
-            <br />- 请勿使用以p+数字结尾结构的URL，跟系统分页规则冲突，例如：/prod-p2.html
-            <br />- 频繁修改详情URL直接影响SEO效果，请仔细斟酌后再提交。
+            <br />- 请勿使用以p+数字结尾结构的URL，跟系统分页规则冲突，例如：/prod-p2.html <br />-
+            频繁修改详情URL直接影响SEO效果，请仔细斟酌后再提交。
           </p>
         </a-form-model-item>
         <a-form-model-item ref="category" label="所属文章分类" prop="category">
-          <span class="cate-item" v-if="form.category.length === 0">未分组</span>
-          <template v-else>
-            <template v-for="item in form.category">
-              <span class="cate-item" :key="item">{{ categoryLabel(item) }}</span>
-            </template>
-          </template>
+          <span class="cate-item">{{ cateLabel }}</span>
           <a-button @click="showCategoryModal = true">选择</a-button>
         </a-form-model-item>
         <a-form-model-item label="文章关键词" class="keyword-box">
           <a-row>
             <a-col :span="12">
               <div ref="list" class="list">
-                <div
-                  class="list-group-item keyword-input"
-                  v-for="(item, index) in form.keyword.words"
-                  :key="index"
-                >
+                <div class="list-group-item keyword-input" v-for="(item, index) in form.keyword.words" :key="index">
                   <a-input v-model="item.keyword" placeholder="请输入关键词" />
                   <a-icon
                     v-show="form.keyword.words.length > 1"
@@ -62,11 +47,9 @@
                   />
                 </div>
               </div>
-              <a-button
-                icon="plus"
-                v-show="form.keyword.words.length < 8"
-                @click="handleAddKeyword"
-              >新增关键词</a-button>
+              <a-button icon="plus" v-show="form.keyword.words.length < 8" @click="handleAddKeyword">
+                新增关键词
+              </a-button>
             </a-col>
             <a-col :span="8">
               <a-card class="keyword-list" size="small">
@@ -96,13 +79,12 @@
               </a-card>
             </a-col>
           </a-row>
-          <p class="info">-请填写3个以上的关键词，每个关键词的长度≤5个单词，长度不得超过100字符，单词之间不需要增加任何符号，直接空格表示。</p>
-          <a-button
-            :icon="showSeo ? 'caret-down' : 'caret-up'"
-            type="link"
-            :ghost="true"
-            @click="showSeo = !showSeo"
-          >搜索引擎优化设置</a-button>
+          <p class="info">
+            -请填写3个以上的关键词，每个关键词的长度≤5个单词，长度不得超过100字符，单词之间不需要增加任何符号，直接空格表示。
+          </p>
+          <a-button :icon="showSeo ? 'caret-down' : 'caret-up'" type="link" :ghost="true" @click="showSeo = !showSeo">
+            搜索引擎优化设置
+          </a-button>
           <transition name="slideToggle">
             <div class="seo" v-show="showSeo">
               <a-row>
@@ -143,29 +125,14 @@
           <a-checkbox v-model="form.isTop"></a-checkbox>
         </a-form-model-item>
         <a-form-model-item label="发布时间">
-          <a-date-picker
-            @change="handleDate"
-            :default-value="moment(new Date(), 'YYYY-MM-DD HH:mm:ss')"
-            show-time
-            format="YYYY-MM-DD HH:mm:ss"
-            style="width: 220px"
-          />
+          <a-date-picker v-model="form.releaseDate" show-time format="YYYY-MM-DD HH:mm:ss" style="width: 220px" />
         </a-form-model-item>
         <a-form-model-item label="文章浏览次数">
           基数
           <a-input-number id="inputNumber1" v-model="form.readingBase" style="width: 100px;" />+ 实际浏览次数
-          <a-input-number
-            id="inputNumber2"
-            v-model="form.realReading"
-            :disabled="true"
-            style="width: 100px;"
-          />= 前台显示浏览次数
-          <a-input-number
-            id="inputNumber3"
-            v-model="reading"
-            :disabled="true"
-            style="width: 100px;"
-          />
+          <a-input-number id="inputNumber2" v-model="form.realReading" :disabled="true" style="width: 100px;" />=
+          前台显示浏览次数
+          <a-input-number id="inputNumber3" v-model="reading" :disabled="true" style="width: 100px;" />
         </a-form-model-item>
         <a-form-model-item ref="cover" label="文章附图" prop="cover">
           <a-upload
@@ -187,14 +154,11 @@
           </a-upload>
         </a-form-model-item>
         <a-form-model-item label="文章内容">
-          <kind-editor ref="kindeditor" @input="getContent"></kind-editor>
+          <!--          <k-editor v-model="form.desc"></k-editor>-->
+          <kind-editor @uploadImg="handleEditorUploadPic" :content="form.desc" ref="kindeditor"></kind-editor>
         </a-form-model-item>
         <a-form-model-item ref="intro" label="文章摘要" prop="intro">
-          <a-textarea
-            v-model="form.intro"
-            placeholder="请输入文章简介"
-            :auto-size="{ minRows: 2, maxRows: 6 }"
-          />
+          <a-textarea v-model="form.intro" placeholder="请输入文章简介" :auto-size="{ minRows: 2, maxRows: 6 }" />
         </a-form-model-item>
         <h3>高级</h3>
         <a-form-model-item label="作者" prop="author">
@@ -257,9 +221,10 @@
         <a-row>
           <template v-for="item in articleCate">
             <a-col :key="item.label">
-              <a-radio :value="item.id">{{ item.label }}</a-radio>
+              <a-radio :value="item.id" @change="handleArticleCateChange(item.label)">{{ item.label }}</a-radio>
             </a-col>
           </template>
+          <a-radio :value="0" @change="handleArticleCateChange('未分组')">未分组</a-radio>
         </a-row>
       </a-radio-group>
       <div slot="footer" class="model-footer">
@@ -281,21 +246,13 @@
 import { getProducts, getUploadSign } from '@/api/products'
 import { getProductCate, getArticleCate } from '@/api/category'
 // eslint-disable-next-line no-unused-vars
-import { addArticle, updateArticle } from '@/api/article'
+import { addArticle, updateArticle, getArticleDetail } from '@/api/article'
 import { getKeyword } from '@/api/keyword'
 import sortableJS from 'sortablejs'
 import KindEditor from '@/components/Kindeditor'
+import KEditor from '../../components/KEditor'
 import { STable } from '@/components'
 import moment from 'moment'
-
-function getBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
-    reader.onload = () => resolve(reader.result)
-    reader.onerror = error => reject(error)
-  })
-}
 
 const articleColumns = [
   {
@@ -316,6 +273,7 @@ export default {
   components: {
     STable,
     KindEditor,
+    KEditor,
     VNodes: {
       functional: true,
       render: (h, ctx) => ctx.props.vnodes
@@ -325,7 +283,6 @@ export default {
     this.articleColumns = articleColumns
     this.productColumns = productColumns
     return {
-      productData: [], // 产品数据
       loadProductData: parameter => {
         parameter = Object.assign(parameter, this.queryParam)
         return getProducts(parameter)
@@ -365,6 +322,7 @@ export default {
       queryArticleCate: {},
       categoryOptions: [], // 产品分类
       articleCategoryOptions: [], // 文章分类分类
+      cateLabel: '未分组',
 
       showAddSku: false,
       newSku: '',
@@ -380,6 +338,7 @@ export default {
         width: '700px',
         height: '400px'
       },
+      dateFormat: 'YY-MM-DD hh:mm:ss',
       // 产品表单
       form: {
         name: '',
@@ -394,7 +353,7 @@ export default {
         isTop: false,
         realReading: 0,
         readingBase: 0,
-        category: [],
+        category: '',
         coverName: '',
         videoUrl: '',
         intro: '',
@@ -414,10 +373,11 @@ export default {
             }
           ]
         },
-        desc: [{ 'Product Description': '' }],
+        desc: '',
         status: 0,
         articles: [],
-        linkProducts: []
+        linkProducts: [],
+        releaseDate: null
       },
       rules: {
         name: [{ required: true, message: '请输入文章标题', trigger: 'blur' }]
@@ -435,13 +395,17 @@ export default {
       }
     }
   },
-  created() {
+  async created() {
+    await this.loadArticleCate()
+
+    const { id } = this.$route.params
+    if (!isNaN(id)) {
+      this.loadDetail(id)
+    }
+    this.loadCategory()
     this.loadKeyword()
-    this.loadArticles()
-    this.loadProducts()
   },
   mounted() {
-    this.loadCategory()
     this.initSkuData()
 
     const that = this
@@ -463,6 +427,73 @@ export default {
   },
   methods: {
     moment,
+    loadDetail(id) {
+      getArticleDetail({ id: id }).then(res => {
+        if (res.code === 200) {
+          const { form } = this
+          const { data } = res
+          form.name = data.articleTitle
+          form.intro = data.articleAbstract
+          form.info.author = data.articleAuthor
+          // data.articleContent: "" // 富文本
+          form.info.source = data.articleFrom
+          form.coverName = data.articleImg
+          form.keyword.words = data.articleKeys.map(item => {
+            return {
+              keyword: item
+            }
+          })
+          if (data.articlaUrl) {
+            form.articleUrl = data.articleUrl
+            form.urlValue = 'b'
+          } else {
+            form.urlValue = 'a'
+          }
+          form.desc = data.articleContent
+          form.info.website = data.articleWeb
+          form.readingBase = data.baseBrowseCount
+          form.realReading = data.browseCount
+          const cateName = this.articleCate.find(item => {
+            return item.id === data.catId
+          })
+          form.category = cateName.label
+          form.isTop = data.isTop
+          form.releaseDate = moment(data.releaseDate, this.dateFormat)
+          form.keyword.pageDesc = data.seoDescription
+          form.keyword.pageKeyword = data.seoKeywords
+          form.keyword.pageTitle = data.seoTitle
+          // data.someShopIdList
+          form.status = data.status
+        }
+      })
+    },
+    // 编辑器上传图片
+    async handleEditorUploadPic(file) {
+      console.log(file)
+      const size = file.size / 1024 / 1024
+      if (size > 2) {
+        this.$message.warning('图片不能大于2MB')
+        return
+      }
+      const paramUploadSign = {
+        type: 1
+      }
+      const { data } = await getUploadSign(paramUploadSign)
+      const formData = new FormData()
+      formData.append('token', data.token)
+      formData.append('key', data.fileName)
+      formData.append('file', file)
+      const d = await this.$http.post(this.uploadUrl, formData)
+      let imgUrl = process.env.VUE_APP_HOST
+      if (d.name) {
+        imgUrl = imgUrl + '/' + d.name
+      } else {
+        this.$message.error('上传图片出错')
+      }
+      const img = new Image()
+      img.src = imgUrl
+      this.$refs.kindeditor.editor.appendHtml(`<img style="max-width:100%;" src="${imgUrl}">`)
+    },
     goToKeywords() {
       this.$confirm({
         content: '你确定要放弃当前内容前往关键词管理吗',
@@ -501,28 +532,23 @@ export default {
       this.selectedProductRowKeys = selectedRowKeys
       this.selectedProducts = selectedRows
     },
-    loadArticles() {
+    loadArticleCate() {
       getArticleCate(this.queryArticleCate).then(res => {
         const result = res.data.datas
-        console.log(res.data.datas)
         if (result.length > 0) {
           result.forEach(item => {
             this.articleCate.push({
-              value: item.name,
-              label: item.name
+              value: item.catName,
+              label: item.catName,
+              id: item.id
             })
           })
         }
       })
     },
-    loadProducts() {
-      getProducts(this.queryParam).then(res => {
-        this.productData = res.data.datas
-      })
-    },
     handleArticleCateChange(value) {
-      console.log(`selected ${value}`)
-      // TODO 刷新数据
+      console.log(value)
+      this.cateLabel = value
     },
     handleProductCateChange(value) {
       console.log(`selected ${value}`)
@@ -537,7 +563,6 @@ export default {
       this.queryParam.keyWords = value
       // TODO 刷新数据
     },
-    handleDate() {},
     getObjectURL(file) {
       console.log(file)
       var url = null
@@ -600,7 +625,6 @@ export default {
       console.log('content', content)
       this.content = content
     },
-    afterChange() {},
     initSkuData() {
       if (this.form.sku.attr.length > 0) {
         this.form.sku.attr.forEach(item => {
@@ -617,17 +641,6 @@ export default {
           })
         })
       }
-    },
-    // loadSku() {
-    //   getSku().then(res => {
-    //     this.skuList = res.result.data
-    //   })
-    // },
-    categoryLabel(id) {
-      const cate = this.categoryOptions.find(item => {
-        return item.id === id
-      })
-      return cate.label
     },
     // 加载关键词数据
     loadKeyword() {
@@ -648,11 +661,6 @@ export default {
         })
       })
     },
-    add() {},
-    replace() {},
-    checkMove(e) {
-      window.console.log('Future index: ' + e.draggedContext.futureIndex)
-    },
     handleDelKeyword(index) {
       this.form.keyword.words.splice(index, 1)
     },
@@ -670,19 +678,6 @@ export default {
         return
       }
       this.form.keyword.words[length - 1].keyword = keyword
-    },
-    handleCancel() {
-      this.previewVisible = false
-    },
-    async handlePreview(file) {
-      if (!file.url && !file.preview) {
-        file.preview = await getBase64(file.originFileObj)
-      }
-      this.previewImage = file.url || file.preview
-      this.previewVisible = true
-    },
-    handleChange({ fileList }) {
-      this.fileList = fileList
     },
     handleCoverRemove() {
       this.coverImg = ''
@@ -771,7 +766,7 @@ export default {
         baseBrowseCount: form.readingBase,
         browseCount: form.realReading,
         articleImg: form.coverName,
-        articleContent: this.content,
+        articleContent: this.$refs.kindeditor.outContent,
         articleAbstract: form.intro,
         articleAuthor: form.info.author,
         articleFrom: form.info.source,
@@ -779,7 +774,7 @@ export default {
         someShopIdList: this.selectedProductRowKeys,
         articleTitle: form.name,
         status: form.status,
-        isTop: true,
+        isTop: this.isTop,
         releaseDate: '2020-07-16T06:11:40.318Z'
       }
       if (this.selectedCate) {
@@ -818,6 +813,7 @@ export default {
     },
     // 选择分类
     handleSelectCate() {
+      console.log(this.selectedCate)
       this.form.category = this.selectedCate
       this.showCategoryModal = false
     }
@@ -917,6 +913,13 @@ div.ant-card-body {
   }
 }
 
+.cover-uploader {
+  img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+}
 .cover-uploader > .ant-upload {
   width: 128px;
   height: 128px;

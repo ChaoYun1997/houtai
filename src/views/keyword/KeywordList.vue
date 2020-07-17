@@ -335,10 +335,7 @@ export default {
       productMenu: '',
       articleMenu: '',
       cateMenu: '',
-      queryParam: {
-        pageIndex: 1,
-        pageSize: 10
-      },
+      queryParam: {},
       selectedRowKeys: [],
       selectedRows: [],
       loadData: param => {
@@ -537,6 +534,8 @@ export default {
     },
     onSearch(value) {
       console.log(value)
+      this.queryParam.KeywordName = value
+      this.$refs.table.refresh(true)
     },
     edit(val, id) {
       console.log(val, id)

@@ -106,9 +106,9 @@ export default {
     },
     // 分发编辑器内容改变事件
     outContent(val) {
-      this.$emit('update:content', val)
-      this.$emit('on-content-change', val)
-      this.$emit('input', val)
+      // this.$emit('update:content', val)
+      // this.$emit('on-content-change', val)
+      // this.$emit('input', val)
     },
     // 初始化编辑器内容
     html(val) {
@@ -289,6 +289,9 @@ export default {
         fixToolBar: this.fixToolBar,
         tabIndex: this.tabIndex
       })
+    },
+    setContent(val) {
+      this.editor.html(val)
     }
   }
 }

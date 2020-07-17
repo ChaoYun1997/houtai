@@ -472,7 +472,7 @@ export default {
         itemCount: 0,
         catName: form.name,
         catKeyWords: form.keyword.words.map(item => item.keyword),
-        seoKeyWord: form.keyword.pageKeyword,
+        seoKeyWords: form.keyword.pageKeyword,
         seoTitle: form.keyword.pageTitle,
         seoDescription: form.keyword.pageDesc,
         catUrl: form.urlValue === 'a' ? `/${titleId}-${new Date().valueOf()}.html` : form.catUrl, // 产品分类URL

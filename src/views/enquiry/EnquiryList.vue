@@ -71,14 +71,14 @@
         :rowSelection="rowSelection"
       >
         <template slot="content" slot-scope="text, record">
-          <a href="" @click.prevent="$router.push(`/enquiry/detail/${record.enquiryId}`)">{{ text }}</a>
+          <a href="" @click.prevent="$router.push(`/enquiry/detail/${record.id+1}`)">来自IP：{{ text }}的询盘</a>
         </template>
         <template slot="country" slot-scope="text">
           <img class="country-flag" :src="flags[text]" alt="" />
         </template>
         <template slot="action" slot-scope="text, record">
-          <a-button type="link" size="small" @click="review(record.enquiryId)">查看</a-button>
-          <a-popconfirm title="确定要删除该数据吗?" @confirm="del(record.enquiryId)">
+          <a-button type="link" size="small" @click="$router.push(`/enquiry/detail/${record.id}`)">查看</a-button>
+          <a-popconfirm title="确定要删除该数据吗?" @confirm="del(record.id)">
             <a-button type="link" size="small">删除</a-button>
           </a-popconfirm>
         </template>
@@ -93,22 +93,22 @@ import { getEnquiry } from '@/api/enquiry'
 const columns = [
   {
     title: '询盘单号',
-    dataIndex: 'enquiryId'
+    dataIndex: 'orderNumber'
   },
   {
     title: '询盘内容',
-    dataIndex: 'content',
+    dataIndex: 'contactIP',
     scopedSlots: {
       customRender: 'content'
     }
   },
   {
     title: '发送时间',
-    dataIndex: 'time'
+    dataIndex: 'createDate'
   },
   {
     title: '国家',
-    dataIndex: 'region',
+    dataIndex: 'contactRegion',
     scopedSlots: {
       customRender: 'country'
     }

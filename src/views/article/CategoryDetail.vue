@@ -5,7 +5,7 @@
         <h3 class="title">基本信息</h3>
         <a-divider style="margin: 4px 0 20px 0;" />
         <a-form-model-item label="文章分类名称" prop="cate">
-          <a-input v-model="form.name" />
+          <a-input v-model="form.cate" />
           <p class="info negativeTop">-频繁修改文章名称直接影响SEO效果，请仔细斟酌后再提交。</p>
         </a-form-model-item>
         <a-form-model-item label="分类URL" class="url">
@@ -20,7 +20,7 @@
           <a-input
             class="url-input"
             v-show="form.urlValue === 'b'"
-            v-model="customUrl"
+            v-model="form.catUrl"
             placeholder="请输入自定义URL"
           ></a-input>
           <p class="info" v-show="form.urlValue === 'b'">
@@ -29,7 +29,7 @@
           </p>
         </a-form-model-item>
         <a-form-model-item label="选择分类位置" prop="productPosition">
-          <a-tree show-line @select="onSelect" default-expand-all :selectedKeys="selectedK">
+          <a-tree show-line default-expand-all :checkedKeys="selectedK">
             <a-icon slot="switcherIcon" type="down" />
             <a-tree-node key="0-0" title="所有分类">
               <template v-for="item in category">
@@ -39,20 +39,23 @@
           </a-tree>
         </a-form-model-item>
         <a-form-model-item label="文章分类图片">
-          <div class="img-box">
-            <a-upload class="btn" :file-list="fileList" :remove="handleRemove" :before-upload="beforeUpload">
-              <a-button> <a-icon type="upload" /> 选择文件 </a-button>
-            </a-upload>
-            <a-button
-              class="btn"
-              type="primary"
-              :disabled="fileList.length === 0"
-              :loading="uploading"
-              @click="handleUpload"
-            >
-              {{ uploading ? '上传中' : '开始上传' }}
-            </a-button>
-          </div>
+          <a-upload
+            name="avatar"
+            list-type="picture-card"
+            class="cover-uploader"
+            accept="image/*"
+            :show-upload-list="false"
+            :data="getUploadData"
+            :action="uploadUrl"
+            :before-upload="getUploadToken"
+            @change="handleArticlePicUpload"
+          >
+            <img v-if="coverImg" :src="coverImg" alt="cover" />
+            <div v-else>
+              <a-icon :type="uploading ? 'loading' : 'plus'" />
+              <div class="ant-upload-text">上传</div>
+            </div>
+          </a-upload>
         </a-form-model-item>
         <h3 class="title">指向页面</h3>
         <a-divider style="margin: 4px 0 20px 0;" />
@@ -129,7 +132,8 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { getProductCate } from '@/api/category'
+import { getUploadSign } from '@/api/products'
+import { getArticleCate, updateCate, addCate, getCateDetail } from '@/api/category'
 
 export default {
   name: 'CatetoryDetail',
@@ -138,8 +142,10 @@ export default {
       showAddNewPage: false,
       newPageName: '',
       newPagePath: '',
-      fileList: [],
+      coverImg: '',
+      coverName: '',
       uploading: false,
+      uploadUrl: 'http://up-z0.qiniup.com',
 
       selectedK: [],
       labelCol: { span: 4 },
@@ -147,9 +153,9 @@ export default {
       showSeo: false,
       customUrl: '',
       category: [],
-      content: '',
+      pages: [],
       form: {
-        name: '',
+        cate: '',
         urlValue: 'a',
         keyword: {
           words: [
@@ -180,10 +186,110 @@ export default {
     })
   },
   created() {
+    this.pages = this.page
+    const { id } = this.$route.params
+    if (!isNaN(id)) {
+      this.loadCateDetail(id)
+    }
     this.loadProductCate()
   },
   methods: {
     ...mapMutations(['SET_PAGE']),
+    handleArticlePicUpload(info) {
+      if (info.file.status === 'uploading') {
+        this.uploading = true
+        return
+      }
+      if (info.file.status === 'done') {
+        console.log(info.file.response.name)
+        this.coverImg = this.getObjectURL(info.file.originFileObj)
+        this.coverName = info.file.response.name
+      }
+    },
+    getObjectURL(file) {
+      console.log(file)
+      var url = null
+      // 下面函数执行的效果是一样的，只是需要针对不同的浏览器执行不同的 js 函数而已
+      if (window.createObjectURL !== undefined) {
+        // basic
+        url = window.createObjectURL(file)
+      } else if (window.URL !== undefined) {
+        // mozilla(firefox)
+        url = window.URL.createObjectURL(file)
+      } else if (window.webkitURL !== undefined) {
+        // webkit or chrome
+        url = window.webkitURL.createObjectURL(file)
+      }
+      return url
+    },
+    async getUploadToken(file) {
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message.error('图片不能超过2MB!')
+        return isLt2M
+      }
+      // 获取图片上传凭证
+      const param = {
+        type: 1
+      }
+      await getUploadSign(param)
+        .then(res => {
+          if (res.code === 200) {
+            this.picToken = res.data.token
+            this.fileName = res.data.fileName
+          } else {
+            throw res
+          }
+        })
+        .catch(err => {
+          this.$message.error(err.msg)
+        })
+    },
+    getUploadData(file) {
+      return {
+        token: this.picToken,
+        key: this.fileName,
+        file: file
+      }
+    },
+    loadCateDetail(id) {
+      getCateDetail({ id: id }).then(res => {
+        if (res.code === 200) {
+          const { data } = res
+          const { form } = this
+          console.log(data)
+          form.cate = data.catName
+          form.urlValue = data.catUrl ? 'b' : 'a'
+          form.catUrl = data.catUrl // 产品url
+          const keyword = data.catKeyWords.map(item => {
+            return {
+              keyword: item
+            }
+          })
+          form.keyword.words = Object.assign(form.keyword.words, keyword)
+          form.keyword.pageKeyword = data.seoKeyWord
+          form.keyword.pageTitle = data.seoTitle
+          form.keyword.pageDesc = data.seoDescription
+          const pid = Number(data.catPid)
+          this.selectedK = pid ? [`0-0-${pid}`] : []
+          if (data.catWebUrl) {
+            this.pages.push({ name: '自定义1', path: `${data.catWebUrl}` })
+            form.catWebUrl = data.catWebUrl
+          }
+          if (data.catDescUrl) {
+            if (data.catDescUrl !== data.catWebUrl) {
+              this.pages.push({ name: '自定义2', path: `${data.catDescUrl}` })
+              form.catDescUrl = data.catDescUrl
+            } else {
+              form.catDescUrl = data.catWebUrl
+            }
+          }
+          if (form.keyword.pageDesc || form.keyword.pageKeyword || form.keyword.pageTitle) {
+            this.showSeo = true
+          }
+        }
+      })
+    },
     handleAddNewPage() {
       this.SET_PAGE({
         name: this.newPageName,
@@ -192,7 +298,7 @@ export default {
       this.showAddNewPage = false
     },
     loadProductCate() {
-      getProductCate(this.queryCate).then(res => {
+      getArticleCate(this.queryCate).then(res => {
         this.category = res.data.datas.map(item => {
           return {
             name: item.catName,
@@ -204,27 +310,6 @@ export default {
     onSelect(selectedKeys, info) {
       console.log(selectedKeys, info)
       this.selectedK = selectedKeys
-    },
-    handleRemove(file) {
-      const index = this.fileList.indexOf(file)
-      const newFileList = this.fileList.slice()
-      newFileList.splice(index, 1)
-      this.fileList = newFileList
-    },
-    beforeUpload(file) {
-      this.fileList = [...this.fileList, file]
-      return false
-    },
-    handleUpload() {
-      const { fileList } = this
-      const formData = new FormData()
-      fileList.forEach(file => {
-        formData.append('files[]', file)
-      })
-      this.uploading = true
-
-      // You can use any AJAX library you like
-      // TODO 上传图片
     },
     // 获取编辑器内容
     getContent(content) {
@@ -244,9 +329,43 @@ export default {
     },
     // 提交文章分类表单
     handleSubmit() {
-      this.$refs.form.validate(valid => {
+      const { form } = this
+      const titleArr = form.cate.split(' ')
+      const titleId = titleArr.reduce((acc, cur) => `${acc}-${cur}`)
+      const selectedKey = this.selectedK.length ? this.selectedK[0].split('-') : 0
+      let params = {}
+      params = {
+        itemCount: 0,
+        catName: form.cate,
+        seoKeyWords: form.keyword.pageKeyword,
+        seoTitle: form.keyword.pageTitle,
+        seoDescription: form.keyword.pageDesc,
+        catUrl: form.urlValue === 'a' ? `/${titleId}-${new Date().valueOf()}.html` : form.catUrl, // 产品分类URL
+        catPid: selectedKey.length ? selectedKey[selectedKey.length - 1] : 0,
+        catImgList: [this.coverName],
+        catWebUrl: form.catWebUrl,
+        catDescUrl: form.catDescUrl,
+        catType: 1
+      }
+
+      if (this.$route.params.id) {
+        params.id = Number(this.$route.params.id)
+      }
+      this.$refs.form.validate(async valid => {
         if (valid) {
-          console.log(this.form)
+          console.log(params)
+          let res
+          if (params.id) {
+            res = await updateCate(params)
+          } else {
+            res = await addCate(params)
+          }
+          if (res.code === 200) {
+            this.$message.success('操作成功')
+            console.log(res)
+          } else {
+            this.$message.error(res.msg)
+          }
         } else {
           console.log('error submit!!')
           return false
@@ -260,6 +379,17 @@ export default {
 <style scoped lang="less">
 @import '~ant-design-vue/lib/style/themes/default.less';
 
+.cover-uploader {
+  img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+}
+.cover-uploader > .ant-upload {
+  width: 128px;
+  height: 128px;
+}
 .seo-box {
   .list {
     li {
