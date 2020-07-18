@@ -187,6 +187,17 @@
             <a-radio :value="0">下架(访客不可见)</a-radio>
           </a-radio-group>
         </a-form-model-item>
+        <!--        <a-form-model-item label="产品标签">-->
+        <!--          <template v-for="tag in tags">-->
+        <!--            <a-checkable-tag-->
+        <!--              :key="tag"-->
+        <!--              :checked="selectedTags.indexOf(tag) > -1"-->
+        <!--              @change="checked => handleTagChange(tag, checked)"-->
+        <!--            >-->
+        <!--              {{ tag }}-->
+        <!--            </a-checkable-tag>-->
+        <!--          </template>-->
+        <!--        </a-form-model-item>-->
         <h3>相关文章</h3>
         <a-alert message="选出5~20篇与该产品相关联的文章展示在前台产品详情。" banner closable />
         <a-card class="panel-box">
@@ -378,7 +389,8 @@ export default {
       selectedProductRowKeys: [], // 已选择产品
 
       content: '',
-
+      tags: ['推荐产品', '最新产品', '热门产品'],
+      selectedTags: [],
       uploadUrl: 'http://up-z0.qiniup.com',
       picToken: '',
       fileName: '',
@@ -636,6 +648,12 @@ export default {
       getProducts().then(res => {
         this.productData = res.result.data
       })
+    },
+    handleTagChange(tag, checked) {
+      const { selectedTags } = this
+      const nextSelectedTags = checked ? [...selectedTags, tag] : selectedTags.filter(t => t !== tag)
+      console.log('You are interested in: ', nextSelectedTags)
+      this.selectedTags = nextSelectedTags
     },
     handleArticleCateChange(value) {
       this.queryArticle.catId = value

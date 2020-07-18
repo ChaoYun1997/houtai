@@ -267,7 +267,7 @@ export default {
             }
           })
           form.keyword.words = Object.assign(form.keyword.words, keyword)
-          form.keyword.pageKeyword = data.seoKeyWord
+          form.keyword.pageKeyword = data.seoKeyWords
           form.keyword.pageTitle = data.seoTitle
           form.keyword.pageDesc = data.seoDescription
           const pid = Number(data.catPid)
@@ -349,7 +349,7 @@ export default {
       }
 
       if (this.$route.params.id) {
-        params.id = Number(this.$route.params.id)
+        params.id = this.$route.params.id
       }
       this.$refs.form.validate(async valid => {
         if (valid) {

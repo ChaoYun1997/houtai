@@ -181,12 +181,6 @@ export const asyncRouterMap = [
             meta: { title: '询单详情', keepAlive: true }
           },
           {
-            path: '/enquiry/enquiry-rules',
-            name: 'enquiryRules',
-            component: () => import('@/views/list/BasicList'),
-            meta: { title: '询盘规则', keepAlive: true }
-          },
-          {
             path: '/enquiry/recycle-bin',
             name: 'enquiryRecycleBin',
             component: () => import('@/views/enquiry/EnquiryRecycleBin'),

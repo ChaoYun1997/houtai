@@ -10,6 +10,7 @@ import i18n from './locales'
 import { VueAxios } from './utils/request'
 import ProLayout, { PageHeaderWrapper } from '@ant-design-vue/pro-layout'
 import themePluginConfig from '../config/themePluginConfig'
+import Print from 'vue-print-nb'
 
 // mock
 // WARNING: `mockjs` NOT SUPPORT `IE` PLEASE DO NOT USE IN `production` ENV.
@@ -22,6 +23,7 @@ import './utils/filter' // global filter
 import './global.less'
 
 Vue.config.productionTip = false
+Vue.use(Print)
 
 // mount axios to `Vue.$http` and `this.$http`
 Vue.use(VueAxios)

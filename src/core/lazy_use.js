@@ -21,6 +21,7 @@ import {
   Tabs,
   Transfer,
   Tree,
+  Timeline,
   Icon,
   Badge,
   Popover,
@@ -105,6 +106,7 @@ Vue.use(Result)
 Vue.use(Statistic)
 Vue.use(Descriptions)
 Vue.use(Slider)
+Vue.use(Timeline)
 
 Vue.prototype.$confirm = Modal.confirm
 Vue.prototype.$message = message

@@ -34,11 +34,11 @@
                 </a-select>
               </a-form-item>
             </a-col>
-            <a-col :md="8" :sm="24">
-              <a-form-item label="标签">
-                <a-checkbox-group v-model="queryParam.shopTags" :options="tagOptions"></a-checkbox-group>
-              </a-form-item>
-            </a-col>
+            <!--            <a-col :md="8" :sm="24">-->
+            <!--              <a-form-item label="标签">-->
+            <!--                <a-checkbox-group v-model="queryParam.shopTags" :options="tagOptions"></a-checkbox-group>-->
+            <!--              </a-form-item>-->
+            <!--            </a-col>-->
             <a-col :md="8" :sm="24">
               <a-form-item label="更新日期">
                 <a-date-picker v-model="queryParam.updateDate" style="width: 100%" placeholder="请输入更新日期" />
@@ -73,7 +73,7 @@
         <a-button @click="setCategory">移动到分类</a-button>
         <a-button @click="setCategory">添加到分类</a-button>
         <a-button @click="handleDel">删除</a-button>
-        <a-button @click="handleDownload">下载产品链接二维码</a-button>
+        <!--        <a-button @click="handleDownload">下载产品链接二维码</a-button>-->
       </div>
       <s-table
         ref="table"
@@ -110,8 +110,8 @@
           <a-popconfirm title="你确定要删除该产品吗?" @confirm="del(record.id)">
             <a-button type="danger" icon="delete" size="small" />
           </a-popconfirm>
-          <a-button icon="share-alt" size="small" @click="share(record.id)" />
-          <a-button icon="eye" size="small" @click="preview(record.shopUrl)" />
+          <!--          <a-button icon="share-alt" size="small" @click="share(record.id)" />-->
+          <!--          <a-button icon="eye" size="small" @click="preview(record.shopUrl)" />-->
         </div>
       </s-table>
     </a-card>
@@ -545,7 +545,7 @@ export default {
       const IDs = this.selectedRows.map(item => {
         return item.id
       })
-      this.handleBatchAction('ItemCatId', this.categoryCheckList, IDs)
+      console.log('ItemCatId', this.categoryCheckList, IDs)
       // setCategory().then(res => {
       //   const result = res.result
       //   if (result.data === 'success') {
@@ -558,12 +558,13 @@ export default {
     // 批量删除
     handleDel() {
       if (!this.checkSelected()) return
+
       // TODO
       this.$confirm({
         content: '你确定要删除这些产品吗？',
         onOk: () => {
-          delProduct().then(res => {
-            if (res.result.data === 'success') this.$message.success('操作成功')
+          delProduct(this.selectedRowKeys).then(res => {
+            if (res.code === 200) this.$message.success('操作成功')
             this.$refs.table.refresh()
           })
         }
@@ -622,5 +623,4 @@ export default {
     margin-right: 5px;
   }
 }
-
 </style>

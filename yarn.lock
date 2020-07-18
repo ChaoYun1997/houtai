@@ -3460,7 +3460,7 @@ core-js-compat@^3.6.2, core-js-compat@^3.6.4:
     browserslist "^4.8.5"
     semver "7.0.0"
 
-core-js@^2.4.0:
+core-js@^2.4.0, core-js@^2.6.5:
   version "2.6.11"
   resolved "https://registry.npm.taobao.org/core-js/download/core-js-2.6.11.tgz#38831469f9922bded8ee21c9dc46985e0399308c"
   integrity sha1-OIMUafmSK97Y7iHJ3EaYXgOZMIw=
@@ -4321,6 +4321,13 @@ ecc-jsbn@~0.1.1:
   dependencies:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
+
+echarts@^4.6.0:
+  version "4.8.0"
+  resolved "https://registry.yarnpkg.com/echarts/-/echarts-4.8.0.tgz#b2c1cfb9229b13d368ee104fc8eea600b574d4c4"
+  integrity sha512-YwShpug8fWngj/RlgxDaYrLBoD+LsZUArrusjNPHpAF+is+gGe38xx4W848AwWMGoi745t3OXM52JedNrv+F6g==
+  dependencies:
+    zrender "4.3.1"
 
 editorconfig@^0.15.3:
   version "0.15.3"
@@ -9098,6 +9105,11 @@ qrcode@^1.4.4:
     pngjs "^3.3.0"
     yargs "^13.2.4"
 
+qrcodejs2@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/qrcodejs2/-/qrcodejs2-0.0.2.tgz#465afe5e39f19facecb932c11f7a186109146ae1"
+  integrity sha1-Rlr+Xjnxn6zsuTLBH3oYYQkUauE=
+
 qs@6.7.0:
   version "6.7.0"
   resolved "https://registry.npm.taobao.org/qs/download/qs-6.7.0.tgz#41dc1a015e3d581f1621776be31afb2876a9b1bc"
@@ -11144,6 +11156,16 @@ vue-loader@^15.7.0, vue-loader@^15.9.1:
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
 
+vue-print-nb@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/vue-print-nb/-/vue-print-nb-1.5.0.tgz#b2af7fa2923ffe69ab4e98586e0037e993813161"
+  integrity sha512-bBs0V4EANm2dbcA5zntChfFWns4/jM/b8Cp8WzRvoeaOUTrkD5R1cH20oLTCvwN60ZLIlcREtbkah4sP+uLhWg==
+  dependencies:
+    core-js "^2.6.5"
+    echarts "^4.6.0"
+    qrcodejs2 "0.0.2"
+    vue "^2.6.10"
+
 vue-quill-editor@^3.0.6:
   version "3.0.6"
   resolved "https://registry.npm.taobao.org/vue-quill-editor/download/vue-quill-editor-3.0.6.tgz#1f85646211d68a31a80a72cb7f45bb2f119bc8fb"
@@ -11735,3 +11757,8 @@ yorkie@^2.0.0:
     is-ci "^1.0.10"
     normalize-path "^1.0.0"
     strip-indent "^2.0.0"
+
+zrender@4.3.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/zrender/-/zrender-4.3.1.tgz#baf8aa6dc8187a2f819692d7d5f9bedfa2b90fa3"
+  integrity sha512-CeH2TpJeCdG0TAGYoPSAcFX2ogdug1K7LIn9UO/q9HWqQ54gWhrMAlDP9AwWYMUDhrPe4VeazQ4DW3msD96nUQ==

@@ -6,24 +6,27 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="询盘来源">
-                <a-select @change="handleSourceSelect" placeholder="请选择" default-value="0">
-                  <a-select-option value="0">Contact Us</a-select-option>
-                  <a-select-option value="1">Product Enquiry</a-select-option>
+                <a-select placeholder="请选择" v-model="enquirySource">
+                  <a-select-option value="all">请选择询盘来源</a-select-option>
+                  <a-select-option value="Contact Us">Contact Us</a-select-option>
+                  <a-select-option value="Product Enquiry">Product Enquiry</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="来源终端">
-                <a-select @change="handleDeviceSelect" placeholder="请选择" default-value="0">
-                  <a-select-option value="0">Android</a-select-option>
-                  <a-select-option value="1">Iphone/Ipad</a-select-option>
-                  <a-select-option value="2">PC</a-select-option>
+                <a-select v-model="equipment" placeholder="请选择">
+                  <a-select-option value="all">请选择来源终端</a-select-option>
+                  <a-select-option value="Android">Android</a-select-option>
+                  <a-select-option value="Iphone/Ipad">Iphone/Ipad</a-select-option>
+                  <a-select-option value="PC">PC</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="跟进状态">
-                <a-select @change="handleStatusSelect" placeholder="请选择" default-value="0">
+                <a-select v-model="state" placeholder="请选择">
+                  <a-select-option value="all">请选择询盘状态</a-select-option>
                   <a-select-option value="0">待沟通</a-select-option>
                   <a-select-option value="1">沟通中</a-select-option>
                   <a-select-option value="2">放弃</a-select-option>
@@ -33,8 +36,8 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="国家地区">
-                <a-select placeholder="请选择" default-value="0" @change="handleCountrySelected">
-                  <a-select-option value="0">全部</a-select-option>
+                <a-select placeholder="请选择" v-model="contactRegion">
+                  <a-select-option value="all">全部</a-select-option>
                   <template v-for="(item, index) in country">
                     <a-select-option :value="item" :key="index">
                       {{ item }}
@@ -45,7 +48,7 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="更新日期">
-                <a-range-picker @change="onChange" />
+                <a-range-picker @change="onDateChange" />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
@@ -71,7 +74,7 @@
         :rowSelection="rowSelection"
       >
         <template slot="content" slot-scope="text, record">
-          <a href="" @click.prevent="$router.push(`/enquiry/detail/${record.id+1}`)">来自IP：{{ text }}的询盘</a>
+          <a href="" @click.prevent="$router.push(`/enquiry/detail/${record.id}`)">来自IP：{{ text }}的询盘</a>
         </template>
         <template slot="country" slot-scope="text">
           <img class="country-flag" :src="flags[text]" alt="" />
@@ -89,7 +92,8 @@
 <script>
 import STable from '@/components/Table'
 import { country } from '@/utils/country'
-import { getEnquiry } from '@/api/enquiry'
+import { getEnquiry, delEnquiry, delEnquirys } from '../../api/enquiry'
+import moment from 'moment'
 const columns = [
   {
     title: '询盘单号',
@@ -145,6 +149,10 @@ export default {
     this.columns = columns
     this.flags = flags
     return {
+      contactRegion: 'all',
+      state: 'all',
+      equipment: 'all',
+      enquirySource: 'all',
       queryParam: {},
       selectedRowKeys: [],
       loadData: parameter => {
@@ -163,24 +171,84 @@ export default {
   },
   methods: {
     handleDel() {
+      if (!this.checkSelected()) return
+      this.$confirm({
+        content: '确定要删除这些数据吗？',
+        centered: true,
+        onOk: () => {
+          delEnquirys(this.selectedRowKeys)
+            .then(res => {
+              if (res.code === 200) {
+                this.$message.success('操作成功')
+                this.$refs.table.refresh()
+              } else throw res
+            })
+            .catch(err => {
+              this.$message.error(err.msg || '操作失败')
+            })
+        }
+      })
       console.log(this.selectedRowKeys)
     },
     handleReaded() {
+      if (!this.checkSelected()) return
       console.log(this.selectedRowKeys)
     },
     handleUnread() {
+      if (!this.checkSelected()) return
       console.log(this.selectedRowKeys)
     },
-    del(id) {},
-    handleQuery() {},
-    handleReset() {},
-    handleSourceSelect() {},
-    handleDeviceSelect() {},
-    handleStatusSelect() {},
-    handleCountrySelected() {},
-    onProductSelectChange() {},
-    onChange(date, dateString) {
-      console.log(date, dateString)
+    checkSelected() {
+      if (this.selectedRowKeys.length === 0) {
+        this.$message.warning('请选择至少一款产品')
+        return false
+      }
+      return true
+    },
+    del(id) {
+      delEnquiry({ id: id })
+        .then(res => {
+          if (res.code === 200) {
+            this.$message.success('操作成功')
+            this.$refs.table.refresh()
+          } else throw res
+        })
+        .catch(err => {
+          this.$message.error(err.msg || '操作失败')
+        })
+    },
+    handleQuery() {
+      if (this.contactRegion !== 'all') {
+        this.queryParam.contactRegion = this.contactRegion
+      } else delete this.queryParam.contactRegion
+      if (this.state !== 'all') {
+        this.queryParam.state = this.state
+      } else delete this.queryParam.state
+      if (this.equipment !== 'all') {
+        this.queryParam.equipment = this.equipment
+      } else delete this.queryParam.equipment
+      if (this.enquirySource !== 'all') {
+        this.queryParam.enquirySource = this.enquirySource
+      } else delete this.queryParam.enquirySource
+      this.$refs.table.refresh(true)
+    },
+    handleReset() {
+      this.queryParam = {}
+      this.enquirySource = 'all'
+      this.equipment = 'all'
+      this.state = 'all'
+      this.contactRegion = 'all'
+      this.$refs.datap.value = null
+      this.$refs.table.refresh(true)
+    },
+    onProductSelectChange(selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
+    },
+    onDateChange() {
+      console.log(this.$refs.datap)
+      this.queryParam.startDate = moment(this.dates[0]._d, 'YY-MM-DD hh:mm:ss').format()
+      this.queryParam.endDate = moment(this.dates[1]._d, 'YY-MM-DD hh:mm:ss').format()
     }
   }
 }

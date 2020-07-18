@@ -6,8 +6,10 @@ const enquiryApi = {
   Enquiries: '/enquiry/enquirys', // 询单列表
   Detail: '/enquiry/enquiry', // 询单详情
   DelEnquiry: '/enquiry/delEnquiry', // 删除询单
+  DelEnquirys: '/enquiry/delEnquirys', // 批量删除询单
   SetRead: '/enquiry/setRead', // 设置已读状态
   Restore: '/enquiry/restore', // 恢复询单
+  RestoreEnquirys: '/enquiry/restore', // 批量恢复询单
   AddEnquiryLog: '/enquirylog/push', // 新增询单日志
   GetEnquiryLog: '/enquirylog/getList' // 获取询单日志
 }
@@ -67,6 +69,28 @@ export function enquiryDetail(param) {
   })
 }
 
+// 批量彻底删除询盘 id=1&isRemove=false  Remove true彻底删除 false回收站？
+export function removeEnquirys(param) {
+  return request({
+    url: enquiryApi.DelEnquirys,
+    method: 'post',
+    params: {
+      isRemove: true
+    },
+    data: param
+  })
+}
+// 批量删除询盘 id=1&isRemove=false  Remove true彻底删除 false回收站？
+export function delEnquirys(param) {
+  return request({
+    url: enquiryApi.DelEnquirys,
+    method: 'post',
+    params: {
+      isRemove: false
+    },
+    data: param
+  })
+}
 // 删除询盘 id=1&isRemove=false  Remove true彻底删除 false回收站？
 export function delEnquiry(param) {
   return request({
@@ -127,6 +151,15 @@ export function setEnquiryIsReaded(param) {
 export function restoreEnquiry(param) {
   return request({
     url: enquiryApi.Restore,
+    method: 'post',
+    params: param
+  })
+}
+
+// 批量恢复询单 id
+export function restoreEnquirys(param) {
+  return request({
+    url: enquiryApi.RestoreEnquirys,
     method: 'post',
     params: param
   })

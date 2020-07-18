@@ -1,109 +1,124 @@
 <template>
   <page-header-wrapper>
+    <a-button v-print="'#print-content'" type="primary" style="margin-bottom: 20px;">打印</a-button>
     <a-card :bordered="false">
-      <a-descriptions bordered>
-        <a-descriptions-item label="询盘单号">
-          {{ detail.orderNumber }}
-        </a-descriptions-item>
-        <a-descriptions-item label="发送时间">
-          {{ detail.createDate }}
-        </a-descriptions-item>
-        <a-descriptions-item label="联系人IP">
-          {{ detail.contactIP }}
-        </a-descriptions-item>
-        <a-descriptions-item label="国家/地区">
-          {{ detail.contactRegion }}
-        </a-descriptions-item>
-        <a-descriptions-item label="询盘来源">
-          {{ detail.enquirySource }}
-        </a-descriptions-item>
-        <a-descriptions-item label="来源网页">
-          {{ detail.sourceUrl }}
-        </a-descriptions-item>
-      </a-descriptions>
-      <br />
-      <h3 class="title">询盘信息</h3>
-      <a-descriptions layout="vertical" :column="4" bordered>
-        <a-descriptions-item label="产品图片">
-          <a-icon type="picture" style="font-size: 32px; opacity: .3" v-if="!detail.shopImgUrl"></a-icon>
-          <img v-else :src="detail.shopImgUrl" alt="" class="cover" />
-        </a-descriptions-item>
-        <a-descriptions-item label="产品名称">
-          {{ detail.shopName }}
-        </a-descriptions-item>
-        <a-descriptions-item label="产品属性">
-          {{ detail.shopSku }}
-        </a-descriptions-item>
-        <a-descriptions-item label="数量">
-          {{ detail.quantity }}
-        </a-descriptions-item>
-      </a-descriptions>
-      <ul class="table-list">
-        <li>
-          <b>Name</b>
-          <span>
-            {{ detail.contactName }}
-          </span>
-        </li>
-        <li>
-          <b>E-mail</b>
-          <span>
-            {{ detail.contactEMail }}
-          </span>
-        </li>
-        <li>
-          <b>Company Name</b>
-          <span>
-            {{ detail.contactCompany }}
-          </span>
-        </li>
-        <li>
-          <b>Tell</b>
-          <span>
-            {{ detail.contactTel }}
-          </span>
-        </li>
-        <li>
-          <b>Message</b>
-          <span>
-            {{ detail.message }}
-          </span>
-        </li>
-      </ul>
-      <h3 class="title">设备信息</h3>
-      <ul class="table-list">
-        <li>
-          <b>访问终端</b>
-          <span>
-            {{ detail.equipment }}
-          </span>
-        </li>
-        <li>
-          <b>浏览器</b>
-          <span>
-            {{ detail.browser }}
-          </span>
-        </li>
-        <li>
-          <b>语言</b>
-          <span>
-            {{ detail.language }}
-          </span>
-        </li>
-        <li>
-          <b>操作系统</b>
-          <span>
-            {{ detail.systemName }}
-          </span>
-        </li>
-        <li>
-          <b>客户端</b>
-          <span>
-            {{ detail.browserUa }}
-          </span>
-        </li>
-      </ul>
-      <h3 class="title">跟进记录</h3>
+      <div id="print-content">
+        <a-descriptions bordered>
+          <a-descriptions-item label="询盘单号">
+            {{ detail.orderNumber }}
+          </a-descriptions-item>
+          <a-descriptions-item label="发送时间">
+            {{ detail.createDate }}
+          </a-descriptions-item>
+          <a-descriptions-item label="联系人IP">
+            {{ detail.contactIP }}
+          </a-descriptions-item>
+          <a-descriptions-item label="国家/地区">
+            {{ detail.contactRegion }}
+          </a-descriptions-item>
+          <a-descriptions-item label="询盘来源">
+            {{ detail.enquirySource }}
+          </a-descriptions-item>
+          <a-descriptions-item label="来源网页">
+            {{ detail.sourceUrl }}
+          </a-descriptions-item>
+        </a-descriptions>
+        <br />
+        <h3 class="title">询盘信息</h3>
+        <a-descriptions layout="vertical" :column="4" bordered>
+          <a-descriptions-item label="产品图片">
+            <a-icon type="picture" style="font-size: 32px; opacity: .3" v-if="!detail.shopImgUrl"></a-icon>
+            <img v-else :src="imgUrl" alt="" class="cover" />
+          </a-descriptions-item>
+          <a-descriptions-item label="产品名称">
+            {{ detail.shopName }}
+          </a-descriptions-item>
+          <a-descriptions-item label="产品属性">
+            {{ detail.shopSku }}
+          </a-descriptions-item>
+          <a-descriptions-item label="数量">
+            {{ detail.quantity }}
+          </a-descriptions-item>
+        </a-descriptions>
+        <ul class="table-list">
+          <li>
+            <b>Name</b>
+            <span>
+              {{ detail.contactName }}
+            </span>
+          </li>
+          <li>
+            <b>E-mail</b>
+            <span>
+              {{ detail.contactEMail }}
+            </span>
+          </li>
+          <li>
+            <b>Company Name</b>
+            <span>
+              {{ detail.contactCompany }}
+            </span>
+          </li>
+          <li>
+            <b>Tell</b>
+            <span>
+              {{ detail.contactTel }}
+            </span>
+          </li>
+          <li>
+            <b>Message</b>
+            <span>
+              {{ detail.message }}
+            </span>
+          </li>
+        </ul>
+        <h3 class="title">设备信息</h3>
+        <ul class="table-list">
+          <li>
+            <b>访问终端</b>
+            <span>
+              {{ detail.equipment }}
+            </span>
+          </li>
+          <li>
+            <b>浏览器</b>
+            <span>
+              {{ detail.browser }}
+            </span>
+          </li>
+          <li>
+            <b>语言</b>
+            <span>
+              {{ detail.language }}
+            </span>
+          </li>
+          <li>
+            <b>操作系统</b>
+            <span>
+              {{ detail.systemName }}
+            </span>
+          </li>
+          <li>
+            <b>客户端</b>
+            <span>
+              {{ detail.browserUa }}
+            </span>
+          </li>
+        </ul>
+        <h3 class="title">跟进记录</h3>
+        <a-timeline style="margin-top: 20px;">
+          <template v-for="(item, index) in progressingLog">
+            <a-timeline-item :key="index">
+              <a-row>
+                <a-col :span="4"> 意向：{{ intentions[item.intentionType] }} </a-col>
+                <a-col :span="12"> 进展：{{ progressingText[item.progressType] }} </a-col>
+              </a-row>
+              <p>备注：{{ item.note }}</p>
+            </a-timeline-item>
+          </template>
+        </a-timeline>
+      </div>
+
       <h3 class="title">操作</h3>
       <a-card>
         <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" :form="form" ref="form">
@@ -160,6 +175,8 @@
 // eslint-disable-next-line no-unused-vars
 import { enquiryDetail, getEnquiryLog, addEnquiryLog } from '../../api/enquiry'
 
+const intentions = ['低', '中', '高']
+const progressingText = ['待沟通', '沟通中', '放弃', '成单']
 // {
 //   shopId: 0,
 //   shopSku: null,
@@ -190,21 +207,41 @@ import { enquiryDetail, getEnquiryLog, addEnquiryLog } from '../../api/enquiry'
 export default {
   name: 'EnquiryDetail',
   data() {
+    this.intentions = intentions
+    this.progressingText = progressingText
     return {
       detail: {},
       intention: 0,
       progressing: 0,
       note: '',
-      form: this.$form.createForm(this)
+      form: this.$form.createForm(this),
+      progressingLog: []
+    }
+  },
+  computed: {
+    imgUrl() {
+      const host = process.env.VUE_APP_HOST
+      const url = host + '/' + this.detail.shopImgUrl
+      return url
     }
   },
   created() {
     const { id } = this.$route.params
     if (!isNaN(id)) {
       this.loadDetail(id)
+      this.loadEnquiryLog(id)
     }
   },
   methods: {
+    loadEnquiryLog(id) {
+      getEnquiryLog({ enquiryId: id }).then(res => {
+        console.log(res)
+        this.progressingLog = res.data
+      })
+    },
+    handlePrint() {
+      window.print()
+    },
     loadDetail(id) {
       enquiryDetail({ id: id }).then(res => {
         console.log(res.data)
@@ -213,7 +250,7 @@ export default {
     },
     handleSubmit() {
       const params = {
-        enquiryId: this.detail.id + 1,
+        enquiryId: this.detail.id,
         intentionType: this.intention,
         progressType: this.progressing,
         note: this.note
@@ -255,21 +292,22 @@ export default {
     display: flex;
     border-bottom: 1px solid @border-color-base;
     b {
-      display: block;
+      display: flex;
+      align-items: center;
       width: 25%;
-      height: 40px;
-      padding-left: 20px;
-      line-height: 40px;
+      padding: 10px 20px;
       background: @background-color-base;
       border-right: 1px solid @border-color-base;
     }
     span {
-      padding-left: 20px;
+      padding: 10px 20px;
       display: block;
       width: 75%;
-      height: 40px;
-      line-height: 40px;
     }
   }
 }
+  .cover{
+    width: 100px;
+    height: auto;
+  }
 </style>
