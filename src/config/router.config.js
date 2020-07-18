@@ -48,26 +48,32 @@ export const asyncRouterMap = [
           // },
           {
             path: '/products/product-list/:pageNo([1-9]\\d*)?',
-            name: 'TableListWrapper',
+            name: 'ProductList',
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
             component: () => import('@/views/products/ProductList'),
             meta: { title: '产品管理', keepAlive: true }
           },
           {
             path: '/products/add-product/:id?',
-            name: 'BasicList',
+            name: 'AddProduct',
             component: () => import('@/views/products/ProductDetail'),
             meta: { title: '添加产品', keepAlive: true }
           },
           {
+            path: '/products/product-sort',
+            name: 'ProductSort',
+            component: () => import('@/views/products/ProductSort'),
+            meta: { title: '产品排序', keepAlive: true }
+          },
+          {
             path: '/products/category-manage',
-            name: 'CardList',
+            name: 'ProductCategory',
             component: () => import('@/views/products/Category'),
             meta: { title: '管理产品分类', keepAlive: true }
           },
           {
             path: '/products/add-category/:id?',
-            name: 'addProductCategory',
+            name: 'AddProductCategory',
             component: () => import('@/views/products/CatetoryDetail'),
             meta: { title: '添加产品分类', keepAlive: true }
           },
@@ -80,13 +86,13 @@ export const asyncRouterMap = [
           // },
           {
             path: '/products/watermark',
-            name: 'watermark',
+            name: 'Watermark',
             component: () => import('@/views/products/Watermark'),
             meta: { title: '设置水印', keepAlive: true }
           },
           {
             path: '/products/recycle-bin',
-            name: 'productsRecycleBin',
+            name: 'ProductsRecycleBin',
             component: () => import('@/views/products/RecycleBin'),
             meta: { title: '产品回收站', keepAlive: true }
           }
