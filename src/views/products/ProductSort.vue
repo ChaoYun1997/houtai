@@ -11,7 +11,7 @@
         </template>
       </a-alert>
       <div class="table-page-search-wrapper">
-        <a-select placeholder="请选择" v-model="cateParam" style="width: 500px">
+        <a-select placeholder="请选择" v-model="cateParam" style="width: 500px" @change="handleQueryCate">
           <a-select-option value="all">全部</a-select-option>
           <template v-for="(item, index) in category">
             <a-select-option :value="item.id" :key="index">{{ item.label }}</a-select-option>
@@ -33,14 +33,21 @@
             <p>
               {{ item.shopTitle }}
             </p>
-            <a-input-number
-              :value="item.sort"
-              :min="0"
-              @change="value => handleNumSort(index, value)"
-            ></a-input-number>
+            <a-input-number :value="item.sort" :min="0" @change="value => handleNumSort(index, value)"></a-input-number>
           </li>
         </template>
       </ul>
+      <br />
+      <div class="flex-between">
+        <span>总共 {{ total }} 条记录</span>
+        <a-pagination
+          v-model="current"
+          :pageSize="queryParam.pageSize"
+          :total="total"
+          show-less-items
+          @change="handlePaginationChange"
+        />
+      </div>
       <p class="flex-right">
         <a-button type="primary" style="margin-top: 20px" @click="handleSaveSort">保存</a-button>
       </p>
@@ -63,7 +70,8 @@ export default {
         pageIndex: 1
       },
       products: [],
-      current: null
+      current: 1,
+      total: 0
     }
   },
   created() {
@@ -95,6 +103,7 @@ export default {
     loadProducts() {
       getProducts(this.queryParam).then(res => {
         if (res.code === 200) {
+          this.total = res.data.totalCount
           this.products = res.data.datas.map((item, index) => {
             return Object.assign(item, { sort: index })
           })
@@ -122,6 +131,11 @@ export default {
         }
       })
     },
+    handlePaginationChange(page, pageSize) {
+      this.queryParam.pageSize = pageSize
+      this.queryParam.pageIndex = page
+      this.loadProducts()
+    },
     handleSaveSort() {
       const params = this.products.map(item => {
         return {
@@ -140,13 +154,14 @@ export default {
         })
     },
     handleQueryPageSize(value) {
-      console.log(value)
+      this.queryParam.pageIndex = 1
       this.queryParam.pageSize = value
       this.loadProducts()
     },
-    saveCurrentNum(index) {
-      this.current = index
-      console.log(this.current)
+    handleQueryCate(value) {
+      this.queryParam.pageIndex = 1
+      this.queryParam.catId = value === 'all' ? '' : value
+      this.loadProducts()
     },
     handleNumSort(current, index) {
       const temp = this.products[current]
@@ -204,6 +219,11 @@ export default {
 .info {
   font-size: 12px;
   margin-bottom: 20px;
+}
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
 }
 .flex-right {
   display: flex;
