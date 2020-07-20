@@ -6,7 +6,7 @@
         type="error"
         showIcon
         style="margin-bottom: 24px;"
-        message="账户或密码或验证码错误"
+        :message="errText"
       />
       <a-form-item>
         <a-input
@@ -206,6 +206,7 @@ import { getCode } from '@/api/user'
 export default {
   data() {
     return {
+      errText: '账户、密码错误',
       showFogPwd: false,
       verifyCode: '',
       authCode: '',
@@ -340,6 +341,7 @@ export default {
     },
     requestFailed(err) {
       this.isLoginError = true
+      this.errText = err.msg || '请求出现错误，请稍后再试'
       this.$notification['error']({
         message: '错误',
         description: (err.response || {}).data || err.msg || '请求出现错误，请稍后再试',

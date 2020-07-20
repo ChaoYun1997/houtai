@@ -14,7 +14,13 @@ const getters = {
   details: state => state.products.details,
   page: state => state.pages.page,
   picToken: state => state.user.qiniuPic.token,
-  videoToken: state => state.user.qiniuVideo.token
+  videoToken: state => state.user.qiniuVideo.token,
+  website: state => state.user.website,
+  websiteName: state => state.user.websiteName,
+  phone: state => state.user.phone,
+  openDate: state => state.user.openDate,
+  expDate: state => state.user.expDate,
+  nick: state => state.user.nick
 }
 
 export default getters

@@ -8,8 +8,9 @@ const enquiryApi = {
   DelEnquiry: '/enquiry/delEnquiry', // 删除询单
   DelEnquirys: '/enquiry/delEnquirys', // 批量删除询单
   SetRead: '/enquiry/setRead', // 设置已读状态
+  SetReads: '/enquiry/setReads', // 批量设置已读状态
   Restore: '/enquiry/restore', // 恢复询单
-  RestoreEnquirys: '/enquiry/restore', // 批量恢复询单
+  RestoreEnquirys: '/enquiry/restores', // 批量恢复询单
   AddEnquiryLog: '/enquirylog/push', // 新增询单日志
   GetEnquiryLog: '/enquirylog/getList' // 获取询单日志
 }
@@ -147,6 +148,42 @@ export function setEnquiryIsReaded(param) {
   })
 }
 
+/** 批量设置已读状态
+ * parameter: {
+ *     id: 1
+ *     isRead: boolean
+ * }
+ * @param parameter
+ * @returns {*}
+ */
+export function setEnquirysIsReaded(param) {
+  return request({
+    url: enquiryApi.SetReads,
+    method: 'post',
+    params: {
+      isRead: true
+    },
+    data: param
+  })
+}
+/** 批量设置未读状态
+ * parameter: {
+ *     id: 1
+ *     isRead: boolean
+ * }
+ * @param parameter
+ * @returns {*}
+ */
+export function setEnquirysIsUnRead(param) {
+  return request({
+    url: enquiryApi.SetReads,
+    method: 'post',
+    params: {
+      isRead: false
+    },
+    data: param
+  })
+}
 // 恢复询单 id
 export function restoreEnquiry(param) {
   return request({
@@ -161,6 +198,6 @@ export function restoreEnquirys(param) {
   return request({
     url: enquiryApi.RestoreEnquirys,
     method: 'post',
-    params: param
+    data: param
   })
 }

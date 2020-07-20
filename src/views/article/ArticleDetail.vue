@@ -402,6 +402,10 @@ export default {
     if (!isNaN(id)) {
       this.loadDetail(id)
     }
+    const { keyword } = this.$route.query
+    if (keyword) {
+      this.form.keyword.words[0] = { keyword: keyword }
+    }
     this.loadCategory()
     this.loadKeyword()
   },

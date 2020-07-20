@@ -92,7 +92,7 @@
 <script>
 import STable from '@/components/Table'
 import { country } from '@/utils/country'
-import { getEnquiry, delEnquiry, delEnquirys } from '../../api/enquiry'
+import { getEnquiry, delEnquiry, delEnquirys, setEnquirysIsReaded, setEnquirysIsUnRead } from '../../api/enquiry'
 import moment from 'moment'
 const columns = [
   {
@@ -193,10 +193,30 @@ export default {
     handleReaded() {
       if (!this.checkSelected()) return
       console.log(this.selectedRowKeys)
+      setEnquirysIsReaded(this.selectedRowKeys)
+        .then(res => {
+          if (res.code === 200) {
+            this.$message.success('操作成功')
+            this.$refs.table.refresh()
+          } else throw res
+        })
+        .catch(err => {
+          this.$message.error(err.msg || '操作失败')
+        })
     },
     handleUnread() {
       if (!this.checkSelected()) return
       console.log(this.selectedRowKeys)
+      setEnquirysIsUnRead(this.selectedRowKeys)
+        .then(res => {
+          if (res.code === 200) {
+            this.$message.success('操作成功')
+            this.$refs.table.refresh()
+          } else throw res
+        })
+        .catch(err => {
+          this.$message.error(err.msg || '操作失败')
+        })
     },
     checkSelected() {
       if (this.selectedRowKeys.length === 0) {

@@ -51,7 +51,6 @@
           </a-row>
         </a-form>
       </div>
-
       <div class="table-operator batch-action">
         <a-dropdown>
           <a-menu slot="overlay" @click="handleMenuClick">
@@ -70,7 +69,7 @@
             <a-icon type="down" />
           </a-button>
         </a-dropdown>
-        <a-button @click="setCategory">移动到分类</a-button>
+        <a-button @click="updateCategory">移动到分类</a-button>
         <a-button @click="setCategory">添加到分类</a-button>
         <a-button @click="handleDel">删除</a-button>
         <!--        <a-button @click="handleDownload">下载产品链接二维码</a-button>-->
@@ -94,7 +93,11 @@
         <div slot="shelve" slot-scope="text, record">
           <a-switch :checked="checkIsShelve(record.isShelve)" @change="checked => onSwitchChange(checked, record.id)" />
         </div>
-
+        <span slot="cate" slot-scope="catId">
+          <template v-for="item in getCateName(catId)">
+            {{ item }}
+          </template>
+        </span>
         <span slot="shopTags" slot-scope="shopTags">
           <a-tag
             v-for="tag in shopTags"
@@ -157,7 +160,7 @@
 import moment from 'moment'
 import STable from '@/components/Table'
 // eslint-disable-next-line no-unused-vars
-import { getProducts, delProduct, updateProp, importProducts } from '@/api/products'
+import { getProducts, delProduct, updateProp, importProducts, appendToCates, updateCate } from '@/api/products'
 import { getProductCate } from '@/api/category'
 import * as XLSX from 'xlsx'
 import JSZip from 'jszip'
@@ -188,7 +191,10 @@ const columns = [
   },
   {
     title: '产品分类',
-    dataIndex: 'catId'
+    dataIndex: 'catId',
+    scopedSlots: {
+      customRender: 'cate'
+    }
   },
   {
     title: '更新时间',
@@ -235,6 +241,7 @@ export default {
 
       category: [],
       categoryCheckList: [],
+      isUpdateCate: false, // true 新增到分类  false 移动、更新分类
       showCategory: false,
       shelved: 'all',
       cateParam: 'all',
@@ -262,7 +269,6 @@ export default {
       this.queryParam.catId = catId
       this.cateParam = catId
     }
-    console.log(`catid: ${catId}`)
     this.loadCateData()
     // this.loadProductData()
   },
@@ -299,6 +305,17 @@ export default {
       //   sortType: 0
       // })
     },
+    getCateName(cate) {
+      if (!cate.length) return false
+      const name = []
+      console.log(cate)
+      cate.forEach(item => {
+        const target = this.category.find(i => i.id === item)
+        if (!target) return
+        name.push(target.label)
+      })
+      return name
+    },
     checkIsShelve(shelve) {
       return shelve
     },
@@ -309,7 +326,6 @@ export default {
       }
       getProductCate(params).then(res => {
         res.data.datas.forEach(item => {
-          console.log(item)
           this.category.push({
             label: item.catName,
             value: item.id,
@@ -537,15 +553,25 @@ export default {
     // 批量设置分类弹窗
     setCategory() {
       if (!this.checkSelected()) return
+      this.isUpdateCate = false
+      this.showCategory = true
+    },
+    updateCategory() {
+      if (!this.checkSelected()) return
+      this.isUpdateCate = true
       this.showCategory = true
     },
     // 批量设置分类
     handleSetCategory() {
-      // TODO 接入设置分类接口
       const IDs = this.selectedRows.map(item => {
         return item.id
       })
       console.log('ItemCatId', this.categoryCheckList, IDs)
+      if (this.isUpdateCate) {
+        this.updateProductsToCate(this.categoryCheckList, IDs)
+      } else {
+        this.appendProductsToCate(this.categoryCheckList, IDs)
+      }
       // setCategory().then(res => {
       //   const result = res.result
       //   if (result.data === 'success') {
@@ -554,6 +580,44 @@ export default {
       //     this.category = []
       //   }
       // })
+    },
+    updateProductsToCate(cates, id) {
+      const params = {
+        idList: id,
+        catIdList: cates
+      }
+      updateCate(params)
+        .then(res => {
+          if (res.code === 200) {
+            this.$message.success('操作成功')
+            this.$refs.table.refresh()
+          } else throw res
+        })
+        .catch(err => {
+          this.$message.error(err.msg || '操作失败')
+        })
+        .finally(() => {
+          this.showCategory = false
+        })
+    },
+    appendProductsToCate(cates, id) {
+      const params = {
+        idList: id,
+        catIdList: cates
+      }
+      appendToCates(params)
+        .then(res => {
+          if (res.code === 200) {
+            this.$message.success('操作成功')
+            this.$refs.table.refresh()
+          } else throw res
+        })
+        .catch(err => {
+          this.$message.error(err.msg || '操作失败')
+        })
+        .finally(() => {
+          this.showCategory = false
+        })
     },
     // 批量删除
     handleDel() {

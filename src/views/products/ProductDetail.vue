@@ -508,9 +508,13 @@ export default {
   },
   created() {
     const { id } = this.$route.params
-    const { copy } = this.$route.query
+    const { copy, keyword } = this.$route.query
     if (id || copy) {
       this.loadProductDetail(id || copy)
+    }
+
+    if (keyword) {
+      this.form.keyword.words[0] = { keyword: keyword }
     }
 
     this.loadKeyword()
@@ -581,6 +585,7 @@ export default {
           }
         })
         // form.shopImg = data.shopImg
+        form.category = data.catId
         form.videoUrl = data.shopVideoUrl
         form.intro = data.shopDesc
         form.attribute.brand = data.shopBrand
@@ -730,6 +735,7 @@ export default {
       const cate = this.categoryOptions.find(item => {
         return item.id === id
       })
+      if (!cate) return
       return cate.label
     },
     // 加载关键词数据

@@ -1,14 +1,15 @@
 import storage from 'store'
 // import { login, getInfo, logout } from '@/api/login'
-import { login, logout, updatePwd } from '@/api/user'
+import { getUserInfo, login, logout, updatePwd } from '@/api/user'
 import { getUploadSign } from '@/api/products'
 import { ACCESS_TOKEN, USERNAME, USERID } from '@/store/mutation-types'
-import { welcome } from '@/utils/util'
+// import { welcome } from '@/utils/util'
 
 const user = {
   state: {
     token: '',
     name: '',
+    nick: '',
     welcome: '',
     avatar: '',
     roles: [],
@@ -24,10 +25,33 @@ const user = {
     qiniuVideo: {
       token: '',
       filename: ''
-    }
+    },
+    website: '',
+    websiteName: '',
+    phone: '',
+    openDate: '',
+    expDate: ''
   },
 
   mutations: {
+    SET_NICK(state, nick) {
+      state.nick = nick
+    },
+    SET_OPENDATE(state, openDate) {
+      state.openDate = openDate
+    },
+    SET_EXPDATE(state, expDate) {
+      state.expDate = expDate
+    },
+    SET_WEBSITE(state, website) {
+      state.website = website
+    },
+    SET_WEBSITE_NAME(state, name) {
+      state.websiteName = name
+    },
+    SET_PHONE(state, phone) {
+      state.phone = phone
+    },
     SET_QINIUPIC: (state, qiniuPic) => {
       state.qiniuPic.token = qiniuPic.token
       state.qiniuPic.filename = qiniuPic.fileName
@@ -39,9 +63,8 @@ const user = {
     SET_TOKEN: (state, token) => {
       state.token = token
     },
-    SET_NAME: (state, { name, welcome }) => {
+    SET_NAME: (state, name) => {
       state.name = name
-      state.welcome = welcome
     },
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
@@ -66,13 +89,15 @@ const user = {
         const param = {
           type: 1
         }
-        getUploadSign(param).then(res => {
-          console.log(res)
-          commit('SET_QINIUPIC', res.data)
-          resolve(res)
-        }).catch(err => {
-          reject(err)
-        })
+        getUploadSign(param)
+          .then(res => {
+            console.log(res)
+            commit('SET_QINIUPIC', res.data)
+            resolve(res)
+          })
+          .catch(err => {
+            reject(err)
+          })
       })
     },
     // 获取七牛视频上传凭证
@@ -115,14 +140,24 @@ const user = {
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        if (!state.name) {
-          console.log(`name: ${state.name}`)
-          commit('SET_NAME', { name: state.info.userName, welcome: welcome() })
-          commit('SET_UID', state.info.uid)
-          resolve()
-        } else {
-          reject(new Error('fail'))
-        }
+        getUserInfo()
+          .then(res => {
+            if (res.code !== 200) {
+              reject(res)
+            }
+            const { data } = res
+            commit('SET_NAME', data.userName)
+            commit('SET_NICK', data.userNick)
+            commit('SET_UID', data.id)
+            commit('SET_WEBSITE', data.siteAddress)
+            commit('SET_WEBSITE_NAME', data.siteName)
+            commit('SET_OPENDATE', data.openDate)
+            commit('SET_EXPDATE', data.expirationDate)
+            resolve()
+          })
+          .catch(error => {
+            reject(error)
+          })
       })
     },
     // Login ({ commit }, userInfo) {

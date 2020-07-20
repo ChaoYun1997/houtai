@@ -251,6 +251,11 @@ export default {
     if (!isNaN(id)) {
       this.loadCateDetail(id)
     }
+    const { keyword } = this.$route.query
+    if (keyword) {
+      this.showSeo = true
+      this.form.keyword.words[0] = { keyword: keyword }
+    }
     this.loadProductCate()
     console.log(`page: ${this.page}`)
   },

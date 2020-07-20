@@ -20,7 +20,10 @@
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
         <div class="cover" slot="shopImg" slot-scope="shopImg">
-          <img :src="/^http/.test(shopImg) ? shopImg : getImg(shopImg)" alt="" />
+          <template v-if="!shopImg">
+            <a-icon type="picture" style="font-size:32px;opacity: .3;"></a-icon>
+          </template>
+          <img :src="/^http/.test(shopImg) ? shopImg : getImg(shopImg)" alt />
         </div>
 
         <span slot="shopTags" slot-scope="shopTags">

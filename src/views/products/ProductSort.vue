@@ -57,7 +57,7 @@
 
 <script>
 import sortableJS from 'sortablejs'
-import { getProducts, updateSort } from '../../api/products'
+import { getSortProducts, updateSort } from '../../api/products'
 import { getProductCate } from '@/api/category'
 export default {
   name: 'ProductSort',
@@ -101,7 +101,7 @@ export default {
       return name ? process.env.VUE_APP_HOST + '/' + name : ''
     },
     loadProducts() {
-      getProducts(this.queryParam).then(res => {
+      getSortProducts(this.queryParam).then(res => {
         if (res.code === 200) {
           this.total = res.data.totalCount
           this.products = res.data.datas.map((item, index) => {
@@ -186,7 +186,6 @@ export default {
 @import '~ant-design-vue/lib/style/themes/default.less';
 .sort-box {
   display: flex;
-  justify-content: space-between;
   flex-wrap: wrap;
   margin: 0 -5px;
   padding: 0;

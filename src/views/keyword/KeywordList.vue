@@ -573,12 +573,13 @@ export default {
         })
     },
     appendToNew(type, keyword, id) {
-      const types = {
-        product: 0,
-        article: 1,
-        cate: 2
+      if (type === 'product') {
+        this.$router.push({ path: '/products/add-product', query: { keyword: keyword } })
+      } else if (type === 'article') {
+        this.$router.push({ path: '/articles/add-article', query: { keyword: keyword } })
+      } else {
+        this.$router.push({ path: '/products/add-category', query: { keyword: keyword } })
       }
-      console.log(type, types, keyword, id)
     },
     closeAppend() {
       console.log('close')
@@ -592,9 +593,9 @@ export default {
     },
     handleAppendTo(type) {
       const types = {
-        product: 0,
-        article: 1,
-        cate: 2
+        product: 1,
+        article: 2,
+        cate: 3
       }
       const params = {
         id: this.currentOfAppend.id,

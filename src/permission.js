@@ -23,7 +23,7 @@ router.beforeEach((to, from, next) => {
       next({ path: defaultRoutePath })
       NProgress.done()
     } else {
-      if (store.getters.nickname === '') {
+      if (store.getters.nick === '') {
         store
           .dispatch('GetInfo')
           .then(res => {

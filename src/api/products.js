@@ -4,9 +4,11 @@ const productsApi = {
   List: '/shop/shops', // 产品列表
   AddProduct: '/shop/push', // 发布产品
   AppendToCate: '/shop/AppendToCat', // 添加到分类
+  AppendToCates: '/shop/AppendToCats', // 批量添加到分类
   UpdateProduct: '/shop/updateShop', // 更新产品
   Detail: '/shop/shop', // 产品详情
   UpdateProperty: '/shop/updateProp', // 更新产品字段
+  GetSortProducts: '/shop/sortShops', // 获取排序产品列表
   UpdateSort: '/shop/updateSort', // 更新产品排序
   DelProduct: '/shop/delShop', // 彻底删除产品
   DelProducts: '/shop/delShops', // 批量彻底删除产品
@@ -60,6 +62,15 @@ export function appendToCate(param) {
   })
 }
 
+// 批量添加到分类
+export function appendToCates(param) {
+  return request({
+    url: productsApi.AppendToCates,
+    method: 'post',
+    data: param
+  })
+}
+
 // 更新产品
 export function updateProduct(param) {
   return request({
@@ -85,6 +96,15 @@ export function updateProp(param, id) {
     method: 'post',
     params: param,
     data: id
+  })
+}
+
+// 更新产品排序
+export function getSortProducts(param) {
+  return request({
+    url: productsApi.GetSortProducts,
+    method: 'post',
+    data: param
   })
 }
 
@@ -143,7 +163,7 @@ export function updateCate(param) {
   return request({
     url: productsApi.UpdateCate,
     method: 'post',
-    params: param
+    data: param
   })
 }
 
