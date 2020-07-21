@@ -6,7 +6,8 @@ const userApi = {
   GetCode: '/user/getCode',
   LoginStatus: '/user/check',
   Updatepwd: '/user/updatepwd',
-  UserInfo: '/user/info'
+  UserInfo: '/user/info',
+  UpdateWebsite: '/user/updateWeb'
 }
 
 // 登陆
@@ -57,4 +58,12 @@ export function getUserInfo() {
     url: userApi.UserInfo,
     method: 'get'
   })
+}
+
+export function updateWebsite(param) {
+return request({
+  url: userApi.UpdateWebsite,
+  method: 'post',
+  data: param
+})
 }

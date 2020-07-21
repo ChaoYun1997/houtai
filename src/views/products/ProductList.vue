@@ -88,14 +88,14 @@
           <template v-if="!shopImg">
             <a-icon type="picture" style="font-size:32px;opacity: .3;"></a-icon>
           </template>
-          <img :src="/^http/.test(shopImg) ? shopImg : getImg(shopImg)" alt />
+          <img v-else :src="/^http/.test(shopImg) ? shopImg : getImg(shopImg)" alt />
         </div>
         <div slot="shelve" slot-scope="text, record">
           <a-switch :checked="checkIsShelve(record.isShelve)" @change="checked => onSwitchChange(checked, record.id)" />
         </div>
         <span slot="cate" slot-scope="catId">
-          <template v-for="item in getCateName(catId)">
-            {{ item }}
+          <template v-for="(item, index) in getCateName(catId)">
+            <span :key="index">{{ item }}<br /></span>
           </template>
         </span>
         <span slot="shopTags" slot-scope="shopTags">
@@ -308,7 +308,6 @@ export default {
     getCateName(cate) {
       if (!cate.length) return false
       const name = []
-      console.log(cate)
       cate.forEach(item => {
         const target = this.category.find(i => i.id === item)
         if (!target) return
@@ -345,8 +344,8 @@ export default {
         })
     },
     downloadXls() {
-      const host = window.location.host
-      window.open(host + '/files/productTemplate.xls')
+      // const host = window.location.host
+      window.open('/files/productTemplate.xls')
     },
     handleRemove(file) {
       const index = this.fileList.indexOf(file)

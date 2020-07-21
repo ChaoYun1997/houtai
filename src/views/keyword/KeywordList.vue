@@ -272,10 +272,10 @@ const productColumns = [
   }
 ]
 const columns = [
-  // {
-  //   title: '#',
-  //   dataIndex: 'id'
-  // },
+  {
+    title: '#',
+    dataIndex: 'id'
+  },
   {
     title: '关键词',
     dataIndex: 'keyWord',
@@ -482,10 +482,10 @@ export default {
       const countName = menuName[1]
       if (min !== '') {
         this.queryParam[`min${countName}`] = min
-      }
+      } else delete this.queryParam[`min${countName}`]
       if (max !== '') {
         this.queryParam[`max${countName}`] = max
-      }
+      } else delete this.queryParam[`max${countName}`]
 
       console.log(this.queryParam)
       this.$refs.table.refresh(true)
@@ -524,6 +524,10 @@ export default {
         })
         .catch(err => {
           this.fail(err)
+        })
+        .finally(() => {
+          this.showAddKeyword = false
+          this.$refs.table.refresh(true)
         })
     },
     success() {
@@ -639,7 +643,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import '~ant-design-vue/lib/style/themes/default.less';
+@import '~ant-design-vue/es/style/themes/default.less';
 
 .keyword-menu {
   .ant-menu.ant-menu-dark .ant-menu-item-selected {

@@ -648,7 +648,10 @@ export default {
     },
     // 加载关键词数据
     loadKeyword() {
-      getKeyword().then(res => {
+      getKeyword({
+        pageIndex: 1,
+        pageSize: 100
+      }).then(res => {
         this.keywordListLoading = false
         this.keywordList = res.data.datas
       })

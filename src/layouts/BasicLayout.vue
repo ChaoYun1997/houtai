@@ -11,7 +11,7 @@
     :i18nRender="i18nRender"
     v-bind="settings"
   >
-    <setting-drawer :settings="settings" @change="handleSettingChange" />
+    <setting-drawer v-if="false" :settings="settings" @change="handleSettingChange" />
     <template v-slot:rightContentRender>
       <right-content :top-menu="settings.layout === 'topmenu'" :is-mobile="isMobile" :theme="settings.theme" />
     </template>
@@ -23,6 +23,7 @@
 </template>
 
 <script>
+  // eslint-disable-next-line no-unused-vars
 import { SettingDrawer, updateTheme } from '@ant-design-vue/pro-layout'
 import { i18nRender } from '@/locales'
 import { mapState } from 'vuex'
@@ -99,7 +100,7 @@ export default {
     }
 
     // first update color
-    updateTheme(this.settings.primaryColor)
+    // updateTheme(this.settings.primaryColor)
   },
   methods: {
     i18nRender,

@@ -740,7 +740,7 @@ export default {
     },
     // 加载关键词数据
     loadKeyword() {
-      getKeyword().then(res => {
+      getKeyword({ pageIndex: 1, pageSize: 100 }).then(res => {
         this.keywordListLoading = false
         this.keywordList = res.data.datas
       })
@@ -1044,7 +1044,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import '~ant-design-vue/lib/style/themes/default.less';
+@import '~ant-design-vue/es/style/themes/default.less';
 
 h3 {
   margin-top: 40px;

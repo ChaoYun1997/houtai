@@ -119,12 +119,12 @@ export const asyncRouterMap = [
             component: () => import('@/views/article/ArticleDetail'),
             meta: { title: '添加文章', keepAlive: true }
           },
-          {
-            path: '/articles/sort',
-            name: 'articleSort',
-            component: () => import('@/views/article/Sort'),
-            meta: { title: '文章排序', keepAlive: true }
-          },
+          // {
+          //   path: '/articles/sort',
+          //   name: 'articleSort',
+          //   component: () => import('@/views/article/Sort'),
+          //   meta: { title: '文章排序', keepAlive: true }
+          // },
           {
             path: '/articles/article-category',
             name: 'articleCategory',

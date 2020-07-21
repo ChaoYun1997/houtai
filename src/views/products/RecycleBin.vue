@@ -23,7 +23,7 @@
           <template v-if="!shopImg">
             <a-icon type="picture" style="font-size:32px;opacity: .3;"></a-icon>
           </template>
-          <img :src="/^http/.test(shopImg) ? shopImg : getImg(shopImg)" alt />
+          <img v-else :src="/^http/.test(shopImg) ? shopImg : getImg(shopImg)" alt />
         </div>
 
         <span slot="shopTags" slot-scope="shopTags">

@@ -66,7 +66,7 @@ export function updateKeyword(param) {
 export function delKeyword(param) {
   return request({
     url: keywordApi.DelKeyword,
-    method: 'post',
+    method: 'get',
     params: param
   })
 }

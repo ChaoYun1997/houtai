@@ -125,7 +125,7 @@ const vueConfig = {
     // If you want to turn on the proxy, please remove the mockjs /src/main.jsL11
     proxy: {
       '/sys': {
-        target: 'http://dy.xiqishuo.com',
+        target: 'http://api.fish-cloud.com',
         changeOrigin: true,
         pathRewrite: {
           '^/sys': '/sys'
