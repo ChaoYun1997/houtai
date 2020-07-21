@@ -12,12 +12,11 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['login', 'register', 'registerResult'] // no redirect whitelist
 const loginRoutePath = '/user/login'
-const defaultRoutePath = '/dashboard/workplace'
+const defaultRoutePath = '/dashboard/home'
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
   to.meta && typeof to.meta.title !== 'undefined' && setDocumentTitle(`${i18nRender(to.meta.title)} - ${domTitle}`)
-  console.log(storage.get(ACCESS_TOKEN))
   /* has token */
   if (storage.get(ACCESS_TOKEN)) {
     if (to.path === loginRoutePath) {
@@ -31,6 +30,7 @@ router.beforeEach((to, from, next) => {
             store.dispatch('GenerateRoutesWithoutRoles').then(() => {
               // 动态添加可访问路由表
               router.addRoutes(store.getters.addRouters)
+              console.log(router)
               // 请求带有 redirect 重定向时，登录自动重定向到该地址
               const redirect = decodeURIComponent(from.query.redirect || to.path)
               if (to.path === redirect) {

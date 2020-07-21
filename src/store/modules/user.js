@@ -217,9 +217,11 @@ const user = {
       return new Promise(resolve => {
         logout(state.token)
           .then(() => {
+            storage.remove(ACCESS_TOKEN)
             resolve()
           })
           .catch(() => {
+            storage.remove(ACCESS_TOKEN)
             resolve()
           })
           .finally(() => {
@@ -228,7 +230,6 @@ const user = {
             commit('SET_NAME', '')
             commit('SET_UID', '')
             // commit('SET_ROLES', [])
-            storage.remove(ACCESS_TOKEN)
             storage.remove(USERNAME)
             storage.remove(USERID)
           })

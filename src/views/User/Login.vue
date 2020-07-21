@@ -1,13 +1,7 @@
 <template>
   <div class="main">
     <a-form id="formLogin" class="user-layout-login" ref="formLogin" :form="form" @submit="handleSubmit">
-      <a-alert
-        v-if="isLoginError"
-        type="error"
-        showIcon
-        style="margin-bottom: 24px;"
-        :message="errText"
-      />
+      <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px;" :message="errText" />
       <a-form-item>
         <a-input
           size="large"
@@ -118,7 +112,7 @@
         <!--          style="float: right;"-->
         <!--        >忘记密码-->
         <!--        </router-link>-->
-        <a-button class="forge-password" type="link" @click="showFogPwd = true">忘记密码</a-button>
+        <!--        <a-button class="forge-password" type="link" @click="showFogPwd = true">忘记密码</a-button>-->
       </a-form-item>
 
       <a-form-item style="margin-top:24px">
@@ -148,7 +142,7 @@
       <!--      </div>-->
     </a-form>
     <a-modal title="忘记密码" v-model="showFogPwd">
-      <a-form ref="formPwd" :form="formPwd" @submit="submitPwd">
+      <a-form ref="formPwd" :form="formPwd">
         <a-form-item>
           <a-input
             type="text"
@@ -181,19 +175,14 @@
           </a-input>
         </a-form-item>
         <a-form-item>
-          <a-button
-            type="primary"
-            htmlType="submit"
-            class="login-button"
-          >
+          <a-button type="primary" class="login-button" @click="submitPwd">
             确定
           </a-button>
         </a-form-item>
       </a-form>
-      <div slot="footer">
-      </div>
+      <div slot="footer"></div>
     </a-modal>
-    <a-button @click="Logout">登出</a-button>
+    <!--    <a-button @click="Logout">登出</a-button>-->
   </div>
 </template>
 
