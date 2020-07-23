@@ -1,5 +1,5 @@
 <template>
-  <page-header-wrapper>
+  <div>
     <div class="table-page-search-wrapper">
       <a-input-search
         placeholder="请输入关键词"
@@ -245,7 +245,7 @@
         <a-button @click="closeAppend">取 消</a-button>
       </div>
     </a-modal>
-  </page-header-wrapper>
+  </div>
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <page-header-wrapper>
+  <div>
     <a-card>
       <div slot="title">
         <a-button type="primary" @click="handleRestore">
@@ -41,7 +41,7 @@
         </div>
       </s-table>
     </a-card>
-  </page-header-wrapper>
+  </div>
 </template>
 
 <script>

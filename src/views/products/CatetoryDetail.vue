@@ -1,5 +1,5 @@
 <template>
-  <page-header-wrapper>
+  <div>
     <a-card :body-style="{ padding: '24px 32px' }" :bordered="false">
       <a-form-model
         ref="form"
@@ -170,7 +170,7 @@
         </div>
       </a-modal>
     </a-card>
-  </page-header-wrapper>
+  </div>
 </template>
 
 <script>

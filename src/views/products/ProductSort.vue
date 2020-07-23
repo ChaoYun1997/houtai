@@ -1,5 +1,5 @@
 <template>
-  <page-header-wrapper>
+  <div>
     <a-card :bordered="false">
       <a-alert type="info" class="info">
         <template slot="message">
@@ -52,7 +52,7 @@
         <a-button type="primary" style="margin-top: 20px" @click="handleSaveSort">保存</a-button>
       </p>
     </a-card>
-  </page-header-wrapper>
+  </div>
 </template>
 
 <script>

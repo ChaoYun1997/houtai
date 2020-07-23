@@ -1,5 +1,5 @@
 <template>
-  <page-header-wrapper>
+  <div>
     <a-card>
       <div class="watermark-wrap">
         <a-row v-if="watermark.watermarkType" class="wrap-head" type="flex" justify="space-between" align="middle">
@@ -136,7 +136,7 @@
         </a-tabs>
       </div>
     </a-card>
-  </page-header-wrapper>
+  </div>
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <page-header-wrapper>
+  <div>
     <a-button v-print="'#print-content'" type="primary" style="margin-bottom: 20px;">打印</a-button>
     <a-card :bordered="false">
       <div id="print-content">
@@ -168,7 +168,7 @@
       <!--        </a-descriptions-item>-->
       <!--      </a-descriptions>-->
     </a-card>
-  </page-header-wrapper>
+  </div>
 </template>
 
 <script>

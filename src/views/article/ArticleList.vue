@@ -1,5 +1,5 @@
 <template>
-  <page-header-wrapper>
+  <div>
     <a-card :bordered="false">
       <div class="table-operator">
         <div slot="title">
@@ -67,7 +67,7 @@
         </div>
       </s-table>
     </a-card>
-  </page-header-wrapper>
+  </div>
 </template>
 
 <script>

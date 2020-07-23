@@ -1,5 +1,5 @@
 <template>
-  <page-header-wrapper>
+  <div>
     <a-card :bordered="false">
       <div slot="title">
         <a-button type="primary" icon="plus" @click="$router.push('/articles/add-category')">
@@ -63,7 +63,7 @@
         <a-button @click="visibleUploadXls = false">取 消</a-button>
       </div>
     </a-modal>
-  </page-header-wrapper>
+  </div>
 </template>
 
 <script>
