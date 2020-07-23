@@ -59,7 +59,6 @@ export default {
         content: this.$t('layouts.usermenu.dialog.content'),
         onOk: () => {
           return this.$store.dispatch('Logout').then(() => {
-            console.log(this)
             this.$router.push({ name: 'login' })
           })
         },

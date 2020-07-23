@@ -30,25 +30,27 @@
       </a-form-item>
       <a-form-item>
         <a-row class="verify-code">
-          <a-col :span="12">
+          <a-col :span="24">
             验证码
           </a-col>
-          <a-col :span="12" class="img-box">
+          <a-col :span="17">
+            <a-input
+              size="large"
+              type="text"
+              v-decorator="[
+                'code',
+                {
+                  rules: [{ required: true, message: '请输入图片验证码' }],
+                  validateTrigger: 'blur'
+                }
+              ]"
+              placeholder="请输入图片验证码"
+            />
+          </a-col>
+          <a-col :span="6" class="img-box" :push="1">
             <img :src="authCode" alt="" @click="updateVerifyCode" />
           </a-col>
         </a-row>
-        <a-input
-          size="large"
-          type="text"
-          v-decorator="[
-            'code',
-            {
-              rules: [{ required: true, message: '请输入图片验证码' }],
-              validateTrigger: 'blur'
-            }
-          ]"
-          placeholder="请输入图片验证码"
-        />
       </a-form-item>
       <!--      <a-tabs-->
       <!--        :activeKey="customActiveKey"-->

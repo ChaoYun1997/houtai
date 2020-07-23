@@ -179,7 +179,7 @@ const plainOptions = [
   { label: '左上角', value: 1, position: 'lt' },
   { label: '右上角', value: 2, position: 'rt' },
   { label: '中间', value: 3, position: 'center' },
-  { label: '左下角', value: 4, position: 'lt' },
+  { label: '左下角', value: 4, position: 'lb' },
   { label: '右下角', value: 5, position: 'rb' }
 ]
 export default {
@@ -237,7 +237,7 @@ export default {
             this.defaultImg = this.watermark.imgUrl = process.env.VUE_APP_HOST + '/' + this.watermark.imgUrl
           }
           console.log(this.watermark.watermarkType)
-          this.defaultTabKey = this.watermark.watermarkType.toString()
+          this.defaultTabKey = this.watermark.watermarkType ? this.watermark.watermarkType.toString() : '1'
           this.textWatermark = this.watermark.watemarkText
           this.fontFamily =
             this.watermark.fontFamily === 1 ? 'SimSun' : this.watermark.fontFamily === 2 ? 'SimHei' : 'Microsoft Yahei'
