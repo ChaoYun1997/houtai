@@ -30,9 +30,6 @@
       </a-form-item>
       <a-form-item>
         <a-row class="verify-code">
-          <a-col :span="24">
-            验证码
-          </a-col>
           <a-col :span="17">
             <a-input
               size="large"
@@ -107,7 +104,7 @@
       <!--      </a-tabs>-->
 
       <a-form-item>
-        <a-checkbox v-decorator="['rememberMe', { valuePropName: 'checked' }]">自动登录</a-checkbox>
+        <!--        <a-checkbox v-decorator="['rememberMe', { valuePropName: 'checked' }]">自动登录</a-checkbox>-->
         <!--        <router-link-->
         <!--          :to="{ name: 'recover' }"-->
         <!--          class="forge-password"-->
@@ -344,6 +341,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '~ant-design-vue/es/style/themes/default.less';
 .user-layout-login {
   label {
     font-size: 14px;
@@ -395,6 +393,9 @@ export default {
     display: flex;
     justify-content: flex-end;
     img {
+      border: 1px solid @border-color-base;
+      width: 100%;
+      height: 40px;
       cursor: pointer;
     }
   }

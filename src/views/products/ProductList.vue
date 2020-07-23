@@ -1,5 +1,5 @@
 <template>
-  <page-header-wrapper>
+  <div>
     <a-card :bordered="false">
       <div class="table-operator">
         <div slot="title">
@@ -11,7 +11,7 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="搜索" :lable-col="{ span: 24, offset: 12 }">
+              <a-form-item label="搜索产品" :lable-col="{ span: 24, offset: 12 }">
                 <a-input placeholder="请输入关键词" v-model="queryParam.keyWords"></a-input>
               </a-form-item>
             </a-col>
@@ -152,7 +152,7 @@
         <a-button @click="showCategory = false">取 消</a-button>
       </div>
     </a-modal>
-  </page-header-wrapper>
+  </div>
 </template>
 
 <script>
@@ -169,10 +169,6 @@ import qrcode from 'qrcode'
 
 const tagOptions = ['热点产品', '新产品', '推荐产品']
 const columns = [
-  {
-    title: '#',
-    dataIndex: 'id'
-  },
   {
     title: '产品图片',
     dataIndex: 'shopImg',

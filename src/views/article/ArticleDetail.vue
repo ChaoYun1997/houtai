@@ -1,5 +1,5 @@
 <template>
-  <page-header-wrapper>
+  <div>
     <a-card :body-style="{ padding: '24px 32px' }" :bordered="false">
       <a-form-model ref="form" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-form-model-item label="标题" prop="name">
@@ -239,7 +239,7 @@
         <a-button @click="showAddSku = false">取 消</a-button>
       </div>
     </a-modal>
-  </page-header-wrapper>
+  </div>
 </template>
 
 <script>

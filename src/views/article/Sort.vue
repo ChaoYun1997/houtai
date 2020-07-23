@@ -1,5 +1,5 @@
 <template>
-  <page-header-wrapper> </page-header-wrapper>
+  <div> </div>
 </template>
 
 <script>

@@ -1,7 +1,7 @@
 <template>
-    <page-header-wrapper>
+    <div>
 
-    </page-header-wrapper>
+    </div>
 </template>
 
 <script>
