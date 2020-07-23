@@ -2,13 +2,7 @@
   <page-header-wrapper>
     <a-card>
       <div class="watermark-wrap">
-        <a-row
-          v-if="watermark.watermarkType"
-          class="wrap-head"
-          type="flex"
-          justify="space-between"
-          align="middle"
-        >
+        <a-row v-if="watermark.watermarkType" class="wrap-head" type="flex" justify="space-between" align="middle">
           <a-col :span="10" class="label-left">
             <span class="icon">
               <a-icon size="large" :type="watermark.isOpen ? 'unlock' : 'lock'"></a-icon>
@@ -19,11 +13,9 @@
             </div>
           </a-col>
           <a-col>
-            <a-button
-              size="large"
-              :type="watermark.isOpen ? 'danger' : 'primary'"
-              @click="handleStatus"
-            >{{ watermark.isOpen ? '关闭图片水印功能' : '开启图片水印功能' }}</a-button>
+            <a-button size="large" :type="watermark.isOpen ? 'danger' : 'primary'" @click="handleStatus">{{
+              watermark.isOpen ? '关闭图片水印功能' : '开启图片水印功能'
+            }}</a-button>
           </a-col>
         </a-row>
         <a-tabs
@@ -56,12 +48,8 @@
                       v-else
                       name="file"
                       accept="image/*"
-                      :multiple="true"
-                      :action="uploadUrl"
-                      :data="getUploadData"
                       :showUploadList="false"
-                      :before-upload="getUploadToken"
-                      @change="handleUploadChange"
+                      :custom-request="customRequest"
                     >
                       <a-button>
                         <a-icon :type="imgLoading ? 'loading' : `upload`" />
@@ -75,21 +63,12 @@
                         <a-slider v-model="picOpacity" :min="1" :max="100" />
                       </a-col>
                       <a-col :span="4">
-                        <a-input-number
-                          v-model="picOpacity"
-                          :min="1"
-                          :max="100"
-                          style="width: 70px;"
-                        />
+                        <a-input-number v-model="picOpacity" :min="1" :max="100" style="width: 70px;" />
                       </a-col>
                     </a-row>
                   </a-form-model-item>
                   <a-form-model-item label="水印位置">
-                    <a-radio-group
-                      :options="plainOptions"
-                      v-model="positionVal"
-                      @change="onPositionChange"
-                    />
+                    <a-radio-group :options="plainOptions" v-model="positionVal" @change="onPositionChange" />
                   </a-form-model-item>
                   <a-form-model-item :wrapper-col="{ span: 12, offset: 4 }">
                     <a-button type="primary" @click="handlePicSubmit">
@@ -115,11 +94,7 @@
                 </div>
               </a-col>
               <a-col :span="14">
-                <a-form-model
-                  layout="horizontal"
-                  :labelCol="{ span: 4 }"
-                  :wrapperCol="{ span: 20 }"
-                >
+                <a-form-model layout="horizontal" :labelCol="{ span: 4 }" :wrapperCol="{ span: 20 }">
                   <a-form-model-item label="水印文字">
                     <a-input style="width: 200px" v-model="textWatermark"></a-input>
                   </a-form-model-item>
@@ -144,11 +119,7 @@
                     </a-row>
                   </a-form-model-item>
                   <a-form-model-item label="水印位置">
-                    <a-radio-group
-                      :options="plainOptions"
-                      v-model="positionVal"
-                      @change="onPositionChange"
-                    />
+                    <a-radio-group :options="plainOptions" v-model="positionVal" @change="onPositionChange" />
                   </a-form-model-item>
                   <a-form-model-item :wrapper-col="{ span: 12, offset: 4 }">
                     <a-button type="primary" @click="handleFontSubmit">
@@ -236,7 +207,6 @@ export default {
           if (this.watermark.imgUrl) {
             this.defaultImg = this.watermark.imgUrl = process.env.VUE_APP_HOST + '/' + this.watermark.imgUrl
           }
-          console.log(this.watermark.watermarkType)
           this.defaultTabKey = this.watermark.watermarkType ? this.watermark.watermarkType.toString() : '1'
           this.textWatermark = this.watermark.watemarkText
           this.fontFamily =
@@ -251,7 +221,20 @@ export default {
         file: file
       }
     },
-    async getUploadToken() {
+    imgReader(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image()
+        img.src = src
+        img.onload = () => {
+          resolve({
+            width: img.width,
+            height: img.height
+          })
+        }
+        img.onerror = reject
+      })
+    },
+    async getUploadToken(file) {
       // 获取图片上传凭证
       const param = {
         type: 1
@@ -274,10 +257,46 @@ export default {
       this.uploadedName = ''
       this.defaultImg = require('@/assets/watermark.png')
     },
+    async customRequest(info) {
+      const src = this.getObjectURL(info.file)
+      const img = await this.imgReader(src)
+      console.log(img)
+      if (img.width > 150 || img.height > 80) {
+        this.$message.error('水印图片尺寸不能大于150*80')
+        return false
+      }
+      // 获取图片上传凭证
+      const param = {
+        type: 1
+      }
+      getUploadSign(param).then(res => {
+        if (res.code === 200) {
+          this.picToken = res.data.token
+          this.fileName = res.data.fileName
+
+          var fd = new FormData()
+          fd.append('key', res.data.fileName)
+          fd.append('token', res.data.token)
+          fd.append('file', info.file)
+
+          this.$http
+            .post(this.uploadUrl, fd)
+            .then(res => {
+              console.log(res)
+              this.imgLoading = false
+              this.defaultImg = this.getObjectURL(info.file)
+              this.uploadedName = res.name
+              this.$message.success(`${info.file.name} 上传成功`)
+            })
+            .catch(err => {
+              console.log(err)
+              this.$message.error(`${info.file.name} 上传失败`)
+            })
+        }
+      })
+    },
     handleUploadChange(info) {
-      console.log(info)
       if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList)
         this.imgLoading = true
       }
       if (info.file.status === 'done') {

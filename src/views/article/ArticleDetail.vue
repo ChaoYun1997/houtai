@@ -436,12 +436,15 @@ export default {
         if (res.code === 200) {
           const { form } = this
           const { data } = res
+          // eslint-disable-next-line no-unused-vars
+          const host = process.env.VUE_APP_HOST
           form.name = data.articleTitle
           form.intro = data.articleAbstract
           form.info.author = data.articleAuthor
           // data.articleContent: "" // 富文本
           form.info.source = data.articleFrom
           form.coverName = data.articleImg
+          this.coverImg = data.articleImg ? host + '/' + data.articleImg : ''
           form.keyword.words = data.articleKeys.map(item => {
             return {
               keyword: item
@@ -460,7 +463,7 @@ export default {
           const cateName = this.articleCate.find(item => {
             return item.id === data.catId
           })
-          form.category = cateName.label
+          form.category = cateName ? cateName.label : ''
           form.isTop = data.isTop
           form.releaseDate = moment(data.releaseDate, this.dateFormat)
           form.keyword.pageDesc = data.seoDescription
@@ -591,7 +594,7 @@ export default {
       if (info.file.status === 'done') {
         console.log(info.file.response.name)
         this.coverImg = this.getObjectURL(info.file.originFileObj)
-        this.coverName = info.file.response.name
+        this.form.coverName = info.file.response.name
       }
     },
     async getUploadToken(file) {
