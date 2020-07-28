@@ -29,7 +29,7 @@
           </p>
         </a-form-model-item>
         <a-form-model-item label="选择分类位置" prop="productPosition">
-          <a-tree show-line default-expand-all :checkedKeys="selectedK">
+          <a-tree show-line default-expand-all :selectedKeys.sync="selectedK">
             <a-icon slot="switcherIcon" type="down" />
             <a-tree-node key="0-0" title="所有分类">
               <template v-for="item in category">
@@ -271,6 +271,7 @@ export default {
           form.keyword.pageTitle = data.seoTitle
           form.keyword.pageDesc = data.seoDescription
           const pid = Number(data.catPid)
+          // this.selectedK = ['0-0-9']
           this.selectedK = pid ? [`0-0-${pid}`] : []
           if (data.catWebUrl) {
             this.pages.push({ name: '自定义1', path: `${data.catWebUrl}` })

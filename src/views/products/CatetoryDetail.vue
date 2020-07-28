@@ -1,13 +1,7 @@
 <template>
   <div>
     <a-card :body-style="{ padding: '24px 32px' }" :bordered="false">
-      <a-form-model
-        ref="form"
-        :model="form"
-        :rules="rules"
-        :label-col="labelCol"
-        :wrapper-col="wrapperCol"
-      >
+      <a-form-model ref="form" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <h3 class="title">基本信息</h3>
         <a-form-model-item label="产品分类名称" prop="name">
           <a-input v-model="form.name" />
@@ -25,15 +19,12 @@
                 </ul>
               </div>
             </transition>
-            <a-button
-              :icon="showSeo ? 'caret-down' : 'caret-up'"
-              type="link"
-              :ghost="true"
-              @click="showSeo = !showSeo"
-            >搜索引擎优化设置</a-button>
+            <a-button :icon="showSeo ? 'caret-down' : 'caret-up'" type="link" :ghost="true" @click="showSeo = !showSeo">
+              搜索引擎优化设置
+            </a-button>
             <transition name="slideToggle">
               <div class="seo" v-show="showSeo">
-                <a-row :gutter="[10,10]">
+                <a-row :gutter="[10, 10]">
                   <a-col :span="4" :push="1">
                     <span class="label">页面标题</span>
                   </a-col>
@@ -82,7 +73,7 @@
           </p>
         </a-form-model-item>
         <a-form-model-item label="选择分类位置" prop="productPosition">
-          <a-tree default-expand-all :checkedKeys="selectedK">
+          <a-tree show-line default-expand-all :selectedKeys.sync="selectedK">
             <a-icon slot="switcherIcon" type="down" />
             <a-tree-node key="0-0" title="所有分类">
               <template v-for="item in category">
@@ -166,7 +157,9 @@
             style="margin-left: 10px;"
             @click="handleAddNewPage"
             :disabled="newPageName === '' || newPagePath === ''"
-          >确定</a-button>
+          >
+            确定
+          </a-button>
         </div>
       </a-modal>
     </a-card>
@@ -279,6 +272,26 @@ export default {
   },
   methods: {
     ...mapMutations(['SET_PAGE']),
+    treeTransfer(data, id) {
+      function tree(pid) {
+        const arr = []
+        data
+          .filter(item => item.catPid === pid)
+          .forEach(item => {
+            const obj = {
+              title: item.catName,
+              key: `0-${pid}-${item.id}`
+            }
+            const child = tree(item.id)
+            if (child.length) {
+              obj.children = child
+            }
+            arr.push(obj)
+          })
+        return arr
+      }
+      return tree(id)
+    },
     getObjectURL(file) {
       console.log(file)
       var url = null
@@ -633,6 +646,9 @@ export default {
   width: 420px;
 }
 .right-padd {
-  padding-right: 40px!important;
+  padding-right: 40px !important;
+}
+.ant-btn-background-ghost.ant-btn-link{
+  color: @primary-color;
 }
 </style>

@@ -1078,4 +1078,7 @@ div.ant-card-body {
     }
   }
 }
+.ant-btn-background-ghost.ant-btn-link{
+  color: @primary-color;
+}
 </style>

@@ -1337,4 +1337,7 @@ div.ant-card-body {
   width: 100px;
   height: 100px;
 }
+.ant-btn-background-ghost.ant-btn-link{
+  color: @primary-color;
+}
 </style>
