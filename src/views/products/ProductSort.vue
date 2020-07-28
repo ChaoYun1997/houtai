@@ -200,6 +200,11 @@ export default {
     font-size: 12px;
     text-align: center;
     border: 1px solid @border-color-base;
+    p{
+      width:100%;
+      padding:5px 0;
+      margin-bottom:5px;
+    }
     img,
     .img-box {
       display: flex;
