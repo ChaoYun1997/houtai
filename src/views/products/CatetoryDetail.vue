@@ -19,9 +19,8 @@
                 </ul>
               </div>
             </transition>
-            <a-button :icon="showSeo ? 'caret-down' : 'caret-up'" type="link" :ghost="true" @click="showSeo = !showSeo">
-              搜索引擎优化设置
-            </a-button>
+            <a-button :icon="showSeo ? 'caret-down' : 'caret-up'" type="link" :ghost="true" @click="showSeo = !showSeo" >搜索引擎优化设置</a-button
+            >
             <transition name="slideToggle">
               <div class="seo" v-show="showSeo">
                 <a-row :gutter="[10, 10]">
@@ -89,10 +88,10 @@
           <ul ref="piclist" class="pic-list">
             <li v-for="(item, index) in picList" :key="index">
               <div class="operate">
-                <a-icon type="eye" @click="handlePicPreview(item.path)"></a-icon>
+                <a-icon type="eye" @click="handlePicPreview(item)"></a-icon>
                 <a-icon type="delete" @click="handleDelPic(index)"></a-icon>
               </div>
-              <img :src="item.path" alt />
+              <img :src="getRealPic(item)" alt />
             </li>
             <a-upload
               list-type="picture-card"
@@ -120,23 +119,23 @@
         <a-divider></a-divider>
         <b>设置分类指向页面</b>
         <p>
-          <a-select style="width: 120px" :value="form.catWebUrl">
-            <template v-for="item in pages">
-              <a-select-option :value="item.path" :key="item.name">{{ item.name }}</a-select-option>
+          <a-select style="width: 120px" :value="form.catWebUrl" @change="onCatWebUrlChange">
+            <template v-for="(item, index) in pages">
+              <a-select-option :value="item.path" :key="index">{{ item.name }}</a-select-option>
             </template>
           </a-select>
           <a-button style="margin-left: 10px;" @click="showAddNewPage = true">新建页面</a-button>
         </p>
         <b>设置详情指向页面</b>
         <p>
-          <a-select style="width: 120px" :value="form.catDescUrl">
-            <template v-for="item in pages">
-              <a-select-option :value="item.path" :key="item.name">{{ item.name }}</a-select-option>
+          <a-select style="width: 120px" :value="form.catDescUrl" @change="onCatDescUrlChange">
+            <template v-for="(item, index) in pages">
+              <a-select-option :value="item.path" :key="index">{{ item.name }}</a-select-option>
             </template>
           </a-select>
         </p>
         <a-form-model-item>
-          <a-button type="primary" @click="handleSubmit">提交</a-button>
+          <a-button type="primary" @click="handleSubmit" :loading="submitLoading">提交</a-button>
         </a-form-model-item>
       </a-form-model>
       <a-modal v-model="showAddNewPage" title="添加新页面">
@@ -181,6 +180,7 @@ export default {
   },
   data() {
     return {
+      submitLoading: false,
       type: null,
       showAddNewPage: false,
       newPageName: '',
@@ -191,7 +191,7 @@ export default {
       previewImage: [],
       previewVisible: false,
       uploading: false,
-      uploadUrl: 'http://up-z0.qiniup.com',
+      uploadUrl: process.env.VUE_APP_QINIU_HOST,
       picToken: '',
       fileName: '',
       pages: [],
@@ -250,7 +250,6 @@ export default {
       this.form.keyword.words[0] = { keyword: keyword }
     }
     this.loadProductCate()
-    console.log(`page: ${this.page}`)
   },
   mounted() {
     const that = this
@@ -311,12 +310,8 @@ export default {
     handleListUploadChange(info) {
       this.imgList = info.fileList
       if (info.file.status === 'done') {
-        console.log(info.file.response.name)
+        this.picList.push(info.file.response.name)
         console.log(this.picList)
-        this.picList.push({
-          name: info.file.response.name,
-          path: this.getObjectURL(info.file.originFileObj)
-        })
       }
     },
     async getUploadToken() {
@@ -344,8 +339,11 @@ export default {
         file: file
       }
     },
-    handlePicPreview(url) {
-      this.previewImage = url
+    getRealPic(name) {
+      return process.env.VUE_APP_HOST + '/' + name
+    },
+    handlePicPreview(name) {
+      this.previewImage = process.env.VUE_APP_HOST + '/' + name
       this.previewVisible = true
     },
     handleDelPic(index) {
@@ -362,12 +360,10 @@ export default {
       this.showAddNewPage = false
     },
     loadCateDetail(id) {
-      console.log(this.pages)
       getCateDetail({ id: id }).then(res => {
         if (res.code === 200) {
           const { data } = res
           const { form } = this
-          const host = process.env.VUE_APP_HOST
           console.log(data)
           form.name = data.catName
           form.catUrl = data.catUrl ? data.catUrl : '' // 产品url
@@ -383,16 +379,7 @@ export default {
           form.keyword.pageDesc = data.seoDescription
           const pid = Number(data.catPid)
           this.selectedK = pid ? [`0-0-${pid}`] : []
-          this.picList = data.catImgList
-            ? data.catImgList.map(item => {
-                // 产品图片
-                const name = item.split('/')
-                return {
-                  path: /^http/.test(item) ? item : host + '/' + item,
-                  name: name[name.length - 1]
-                }
-              })
-            : []
+          this.picList = data.catImgList ? data.catImgList : []
           this.content = data.catDescription
           if (data.catWebUrl) {
             this.pages.push({ name: '自定义1', path: `${data.catWebUrl}` })
@@ -421,7 +408,6 @@ export default {
             id: item.id
           }
         })
-        console.log(this.category)
         // const cate = []
         // for (let i = 0; i < datas.length; i++) {
         //   const item = datas[i]
@@ -479,9 +465,17 @@ export default {
       console.log(`selected ${value}`)
       this.form.catDescUrl = value
     },
+    onCatWebUrlChange(val) {
+      console.log(val)
+      this.form.catWebUrl = val
+    },
+    onCatDescUrlChange(val) {
+      console.log(val)
+      this.form.catDescUrl = val
+    },
     // 提交产品表单
     handleSubmit() {
-      const { form, piclist } = this
+      const { form, picList } = this
       const titleArr = form.name.split(' ')
       const titleId = titleArr.reduce((acc, cur) => `${acc}-${cur}`)
       const selectedKey = this.selectedK.length ? this.selectedK[0].split('-') : 0
@@ -495,7 +489,7 @@ export default {
         seoDescription: form.keyword.pageDesc,
         catUrl: form.urlValue === 'a' ? `/${titleId}-${new Date().valueOf()}.html` : form.catUrl, // 产品分类URL
         catPid: selectedKey.length ? selectedKey[selectedKey.length - 1] : '',
-        catImgList: piclist,
+        catImgList: picList,
         catDescription: this.content,
         catWebUrl: form.catWebUrl,
         catDescUrl: form.catDescUrl,
@@ -508,12 +502,14 @@ export default {
       this.$refs.form.validate(async valid => {
         if (valid) {
           console.log(params)
+          this.submitLoading = true
           let res
           if (params.id) {
             res = await updateCate(params)
           } else {
             res = await addCate(params)
           }
+          this.submitLoading = false
           if (res.code === 200) {
             this.$message.success('操作成功')
             console.log(res)
@@ -521,6 +517,7 @@ export default {
             this.$message.error(res.msg)
           }
         } else {
+          this.submitLoading = false
           console.log('error submit!!')
           return false
         }
@@ -648,7 +645,7 @@ export default {
 .right-padd {
   padding-right: 40px !important;
 }
-.ant-btn-background-ghost.ant-btn-link{
+.ant-btn-background-ghost.ant-btn-link {
   color: @primary-color;
 }
 </style>

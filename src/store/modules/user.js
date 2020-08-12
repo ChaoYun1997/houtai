@@ -73,7 +73,6 @@ const user = {
       state.roles = roles
     },
     SET_INFO: (state, info) => {
-      console.log(info)
       state.info.uid = info.uid
       state.info.username = info.userName
     },
@@ -91,7 +90,6 @@ const user = {
         }
         getUploadSign(param)
           .then(res => {
-            console.log(res)
             commit('SET_QINIUPIC', res.data)
             resolve(res)
           })
@@ -178,7 +176,6 @@ const user = {
     //   return new Promise((resolve, reject) => {
     //     getInfo()
     //       .then(response => {
-    //         console.log(response)
     //         const result = response.result
     //
     //         if (result.role && result.role.permissions.length > 0) {

@@ -13,9 +13,9 @@
             </div>
           </a-col>
           <a-col>
-            <a-button size="large" :type="watermark.isOpen ? 'danger' : 'primary'" @click="handleStatus">{{
-              watermark.isOpen ? '关闭图片水印功能' : '开启图片水印功能'
-            }}</a-button>
+            <a-button size="large" :type="watermark.isOpen ? 'danger' : 'primary'" @click="handleStatus">
+              {{ watermark.isOpen ? '关闭图片水印功能' : '开启图片水印功能' }}
+            </a-button>
           </a-col>
         </a-row>
         <a-tabs
@@ -179,7 +179,7 @@ export default {
       imgLoading: false,
       uploadedName: '',
       defaultImg: require('@/assets/watermark.png'),
-      uploadUrl: 'http://up-z0.qiniup.com',
+      uploadUrl: process.env.VUE_APP_QINIU_HOST,
       picToken: '',
       fileName: '',
       positionVal: 2

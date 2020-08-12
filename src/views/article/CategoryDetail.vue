@@ -1,7 +1,13 @@
 <template>
   <div>
     <a-card :body-style="{ padding: '24px 32px' }" :bordered="false">
-      <a-form-model ref="form" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-model
+        ref="form"
+        :model="form"
+        :rules="rules"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+      >
         <h3 class="title">基本信息</h3>
         <a-divider style="margin: 4px 0 20px 0;" />
         <a-form-model-item label="文章分类名称" prop="cate">
@@ -10,12 +16,8 @@
         </a-form-model-item>
         <a-form-model-item label="分类URL" class="url">
           <a-radio-group v-model="form.urlValue">
-            <a-radio value="a" class="url-radio">
-              系统URL
-            </a-radio>
-            <a-radio value="b" class="url-radio">
-              自定义URL
-            </a-radio>
+            <a-radio value="a" class="url-radio">系统URL</a-radio>
+            <a-radio value="b" class="url-radio">自定义URL</a-radio>
           </a-radio-group>
           <a-input
             class="url-input"
@@ -24,8 +26,8 @@
             placeholder="请输入自定义URL"
           ></a-input>
           <p class="info" v-show="form.urlValue === 'b'">
-            - URL必须以/开头，例如：/about-us.html <br />
-            - 频繁修改详情URL直接影响SEO效果，请仔细斟酌后再提交。
+            - URL必须以/开头，例如：/about-us.html
+            <br />- 频繁修改详情URL直接影响SEO效果，请仔细斟酌后再提交。
           </p>
         </a-form-model-item>
         <a-form-model-item label="选择分类位置" prop="productPosition">
@@ -61,22 +63,26 @@
         <a-divider style="margin: 4px 0 20px 0;" />
         <b>设置分类指向页面</b>
         <p>
-          <a-select style="width: 120px" :default-value="form.catWebUrl" @change="handleCatePageChange">
+          <a-select
+            style="width: 120px"
+            :default-value="form.catWebUrl"
+            @change="handleCatePageChange"
+          >
             <template v-for="item in page">
-              <a-select-option :value="item.path" :key="item.name">
-                {{ item.name }}
-              </a-select-option>
+              <a-select-option :value="item.path" :key="item.name">{{ item.name }}</a-select-option>
             </template>
           </a-select>
           <a-button style="margin-left: 10px;" @click="showAddNewPage = true">新建页面</a-button>
         </p>
         <b>设置详情指向页面</b>
         <p>
-          <a-select style="width: 120px" :default-value="form.catDescUrl" @change="handleDetailPageChange">
+          <a-select
+            style="width: 120px"
+            :default-value="form.catDescUrl"
+            @change="handleDetailPageChange"
+          >
             <template v-for="item in page">
-              <a-select-option :value="item.path" :key="item.name">
-                {{ item.name }}
-              </a-select-option>
+              <a-select-option :value="item.path" :key="item.name">{{ item.name }}</a-select-option>
             </template>
           </a-select>
         </p>
@@ -87,19 +93,25 @@
             <a-col :span="4" :push="1">
               <span class="label">页面标题</span>
             </a-col>
-            <a-col :span="19"><a-input v-model="form.keyword.pageTitle" placeholder="请输入页面标题"/></a-col>
+            <a-col :span="19">
+              <a-input v-model="form.keyword.pageTitle" placeholder="请输入页面标题" />
+            </a-col>
             <a-col :span="4" :push="1">
               <span class="label">页面关键词</span>
             </a-col>
-            <a-col :span="19"><a-input v-model="form.keyword.pageKeyword" placeholder="请输入页面关键词"/></a-col>
+            <a-col :span="19">
+              <a-input v-model="form.keyword.pageKeyword" placeholder="请输入页面关键词" />
+            </a-col>
             <a-col :span="4" :push="1">
               <span class="label">页面描述</span>
             </a-col>
-            <a-col :span="19"><a-input v-model="form.keyword.pageDesc" placeholder="请输入页面描述"/></a-col>
+            <a-col :span="19">
+              <a-input v-model="form.keyword.pageDesc" placeholder="请输入页面描述" />
+            </a-col>
           </a-row>
         </div>
         <a-form-model-item>
-          <a-button type="primary" @click="handleSubmit">提交</a-button>
+          <a-button type="primary" @click="handleSubmit" :loading="submitLoading">提交</a-button>
         </a-form-model-item>
       </a-form-model>
     </a-card>
@@ -122,9 +134,7 @@
           style="margin-left: 10px;"
           @click="handleAddNewPage"
           :disabled="newPageName === '' || newPagePath === ''"
-        >
-          确定
-        </a-button>
+        >确定</a-button>
       </div>
     </a-modal>
   </div>
@@ -139,13 +149,14 @@ export default {
   name: 'CatetoryDetail',
   data() {
     return {
+      submitLoading: false,
       showAddNewPage: false,
       newPageName: '',
       newPagePath: '',
       coverImg: '',
       coverName: '',
       uploading: false,
-      uploadUrl: 'http://up-z0.qiniup.com',
+      uploadUrl: process.env.VUE_APP_QINIU_HOST,
 
       selectedK: [],
       labelCol: { span: 4 },
@@ -182,7 +193,7 @@ export default {
   },
   computed: {
     ...mapState({
-      page: state => state.pages.page
+      page: (state) => state.pages.page
     })
   },
   created() {
@@ -233,7 +244,7 @@ export default {
         type: 1
       }
       await getUploadSign(param)
-        .then(res => {
+        .then((res) => {
           if (res.code === 200) {
             this.picToken = res.data.token
             this.fileName = res.data.fileName
@@ -241,7 +252,7 @@ export default {
             throw res
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg)
         })
     },
@@ -253,7 +264,7 @@ export default {
       }
     },
     loadCateDetail(id) {
-      getCateDetail({ id: id }).then(res => {
+      getCateDetail({ id: id }).then((res) => {
         if (res.code === 200) {
           const { data } = res
           const { form } = this
@@ -261,7 +272,7 @@ export default {
           form.cate = data.catName
           form.urlValue = data.catUrl ? 'b' : 'a'
           form.catUrl = data.catUrl // 产品url
-          const keyword = data.catKeyWords.map(item => {
+          const keyword = data.catKeyWords.map((item) => {
             return {
               keyword: item
             }
@@ -299,8 +310,8 @@ export default {
       this.showAddNewPage = false
     },
     loadProductCate() {
-      getArticleCate(this.queryCate).then(res => {
-        this.category = res.data.datas.map(item => {
+      getArticleCate(this.queryCate).then((res) => {
+        this.category = res.data.datas.map((item) => {
           return {
             name: item.catName,
             id: item.id
@@ -352,15 +363,17 @@ export default {
       if (this.$route.params.id) {
         params.id = this.$route.params.id
       }
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
           console.log(params)
+          this.submitLoading = true
           let res
           if (params.id) {
             res = await updateCate(params)
           } else {
             res = await addCate(params)
           }
+          this.submitLoading = false
           if (res.code === 200) {
             this.$message.success('操作成功')
             console.log(res)
@@ -369,6 +382,7 @@ export default {
           }
         } else {
           console.log('error submit!!')
+          this.submitLoading = false
           return false
         }
       })
