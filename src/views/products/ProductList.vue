@@ -34,11 +34,11 @@
                 </a-select>
               </a-form-item>
             </a-col>
-            <!--            <a-col :md="8" :sm="24">-->
-            <!--              <a-form-item label="标签">-->
-            <!--                <a-checkbox-group v-model="queryParam.shopTags" :options="tagOptions"></a-checkbox-group>-->
-            <!--              </a-form-item>-->
-            <!--            </a-col>-->
+            <a-col :md="8" :sm="24">
+              <a-form-item label="产品标签">
+                <a-checkbox-group v-model="shopTag" :options="tagOptions"></a-checkbox-group>
+              </a-form-item>
+            </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="更新日期">
                 <a-date-picker v-model="queryParam.updateDate" style="width: 100%" placeholder="请输入更新日期" />
@@ -113,11 +113,42 @@
           <a-popconfirm title="你确定要删除该产品吗?" @confirm="del(record.id)">
             <a-button type="danger" icon="delete" size="small" />
           </a-popconfirm>
-          <!--          <a-button icon="share-alt" size="small" @click="share(record.id)" />-->
-          <!--          <a-button icon="eye" size="small" @click="preview(record.shopUrl)" />-->
+          <a-button icon="share-alt" size="small" @click="handleShare(record)" />
+          <a-button icon="eye" size="small" @click="preview(record.id)" />
         </div>
       </s-table>
     </a-card>
+    <a-modal v-model="visibleShare" title="分享产品">
+      <a-row :gutter="[10, 20]">
+        <a-col :span="4">
+          产品名称
+        </a-col>
+        <a-col :span="20">
+          {{ share.name }}
+        </a-col>
+        <a-col :span="4">
+          产品链接
+        </a-col>
+        <a-col :span="20">
+          {{ share.link }}
+        </a-col>
+        <a-col :span="4">
+          产品二维码
+        </a-col>
+        <a-col :span="20">
+          <img :src="share.linkBase64" alt="" />
+        </a-col>
+        <a-col :span="4">
+          分享到
+        </a-col>
+        <a-col :span="20">
+          <share-this :shareThisEmbedUrl="shareUrl" :url="share.link"></share-this>
+        </a-col>
+      </a-row>
+      <div slot="footer" class="model-footer">
+        <a-button @click="hideShare">关闭</a-button>
+      </div>
+    </a-modal>
     <a-modal v-model="visibleUploadXls" title="导入产品">
       <p>
         <b>产品信息</b>
@@ -159,6 +190,7 @@
 // eslint-disable-next-line no-unused-vars
 import moment from 'moment'
 import STable from '@/components/Table'
+import { mapState } from 'vuex'
 // eslint-disable-next-line no-unused-vars
 import { getProducts, delProduct, updateProp, importProducts, appendToCates, updateCate } from '@/api/products'
 import { getProductCate } from '@/api/category'
@@ -166,6 +198,7 @@ import * as XLSX from 'xlsx'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 import qrcode from 'qrcode'
+import ShareThis from '@/components/ShareThis'
 
 const tagOptions = ['热点产品', '新产品', '推荐产品']
 const columns = [
@@ -227,11 +260,19 @@ const columns = [
 export default {
   name: 'List',
   components: {
-    STable
+    STable,
+    ShareThis
   },
   data() {
     this.columns = columns
     return {
+      shareUrl: process.env.VUE_APP_SHARE_THIS,
+      visibleShare: false,
+      share: {
+        name: '',
+        link: '',
+        linkBase64: ''
+      },
       // 筛选
       updateDate: '',
 
@@ -242,6 +283,7 @@ export default {
       shelved: 'all',
       cateParam: 'all',
       queryParam: {},
+      shopTag: [],
       loadData: parameter => {
         parameter = Object.assign(parameter, this.queryParam)
         return getProducts(parameter)
@@ -269,6 +311,13 @@ export default {
     // this.loadProductData()
   },
   computed: {
+    ...mapState({
+      website: state => {
+        return /^http/.test(state.user.website)
+          ? state.user.website
+          : process.env.VUE_APP_PROTOCAL_HEAD + state.user.website
+      }
+    }),
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,
@@ -473,12 +522,54 @@ export default {
       })
     },
     // 分享文章
-    share(result) {
-      console.log(result)
+    async handleShare(result) {
+      this.share.name = result.shopTitle
+      this.share.link = this.website + '/Details/' + result.id
+      this.share.linkBase64 = await this.getLinkQrcode(this.share.link)
+      this.visibleShare = true
+    },
+    hideShare() {
+      this.share.name = ''
+      this.share.link = ''
+      this.share.linkBase64 = ''
+      this.visibleShare = false
+    },
+    getLinkQrcode(link) {
+      return new Promise((resolve, reject) => {
+        qrcode.toDataURL(link, (err, url) => {
+          if (err) {
+            reject(err)
+            return false
+          }
+          resolve(url)
+        })
+      })
     },
     // 预览文章
-    preview(link) {
-      window.open(link)
+    preview(id) {
+      const link = this.website + '/Details/' + id
+      window.open(link, '_blank')
+    },
+    clearTagParams() {
+      const tagObj = {
+        热点产品: 'isHot',
+        新产品: 'isNew',
+        推荐产品: 'isRecommend'
+      }
+      Object.keys(tagObj).forEach(k => {
+        this.queryParam[tagObj[k]] = false
+      })
+    },
+    handleTagFilter() {
+      const tagObj = {
+        热点产品: 'isHot',
+        新产品: 'isNew',
+        推荐产品: 'isRecommend'
+      }
+      this.clearTagParams()
+      this.shopTag.forEach(item => {
+        this.queryParam[tagObj[item]] = true
+      })
     },
     // 批量操作
     handleMenuClick(value) {
@@ -520,6 +611,11 @@ export default {
     },
     // 查询
     handleQuery() {
+      if (this.shopTag.length) {
+        this.handleTagFilter()
+      } else {
+        this.clearTagParams()
+      }
       if (this.shelved !== 'all') {
         this.queryParam.isShelve = this.shelved === '1'
       }
@@ -533,6 +629,7 @@ export default {
     // 重置查询
     handleReset() {
       this.queryParam = {}
+      this.shopTag = []
       this.shelved = 'all'
       this.cateParam = 'all'
       // this.loadProductData()

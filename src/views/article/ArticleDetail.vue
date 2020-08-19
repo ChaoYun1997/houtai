@@ -882,7 +882,6 @@ h3 {
     content: '';
     border-left: 5px solid @primary-color;
     padding-left: 10px;
-    height: 24px;
   }
 }
 .info {

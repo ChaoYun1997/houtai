@@ -40,6 +40,7 @@
     "vue-print-nb": "^1.5.0",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.1.2",
+    "vue-sharethis": "^0.0.1",
     "vue-svg-component-runtime": "^1.0.1",
     "vuedraggable": "^2.23.2",
     "vuex": "^3.1.1",

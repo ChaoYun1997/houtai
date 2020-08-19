@@ -10,6 +10,7 @@ const productsApi = {
   UpdateProperty: '/shop/updateProp', // 更新产品字段
   GetSortProducts: '/shop/sortShops', // 获取排序产品列表
   UpdateSort: '/shop/updateSort', // 更新产品排序
+  RecoverSort: '/shop/updateSort', // 恢复默认产品排序
   DelProduct: '/shop/delShop', // 彻底删除产品
   DelProducts: '/shop/delShops', // 批量彻底删除产品
   UpdateCate: '/shop/updateCatid', // 更新分类、移动分类
@@ -112,6 +113,15 @@ export function getSortProducts(param) {
 export function updateSort(param) {
   return request({
     url: productsApi.UpdateSort,
+    method: 'post',
+    data: param
+  })
+}
+
+// 默认产品排序
+export function recoverSort(param) {
+  return request({
+    url: productsApi.RecoverSort,
     method: 'post',
     data: param
   })

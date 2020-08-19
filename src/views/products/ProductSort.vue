@@ -11,17 +11,24 @@
         </template>
       </a-alert>
       <div class="table-page-search-wrapper">
-        <a-select placeholder="请选择" v-model="cateParam" style="width: 500px" @change="handleQueryCate">
-          <a-select-option value="all">全部</a-select-option>
-          <template v-for="(item, index) in category">
-            <a-select-option :value="item.id" :key="index">{{ item.label }}</a-select-option>
-          </template>
-        </a-select>
-        <a-select v-model="queryParam.pageSize" style="width: 120px" @change="handleQueryPageSize">
-          <a-select-option :value="20">20</a-select-option>
-          <a-select-option :value="30">30</a-select-option>
-          <a-select-option :value="50">50</a-select-option>
-        </a-select>
+        <a-row>
+          <a-col :span="20">
+            <a-select placeholder="请选择" v-model="cateParam" style="width: 500px" @change="handleQueryCate">
+              <a-select-option value="all">全部</a-select-option>
+              <template v-for="(item, index) in category">
+                <a-select-option :value="item.id" :key="index">{{ item.label }}</a-select-option>
+              </template>
+            </a-select>
+            <a-button @click="recoverDefaultSort" type="primary" style="margin-left:10px;">恢复默认排序</a-button>
+          </a-col>
+          <a-col :span="4" class="content-right">
+            <a-select v-model="queryParam.pageSize" style="width: 120px" @change="handleQueryPageSize">
+              <a-select-option :value="20">20</a-select-option>
+              <a-select-option :value="30">30</a-select-option>
+              <a-select-option :value="50">50</a-select-option>
+            </a-select>
+          </a-col>
+        </a-row>
       </div>
       <ul class="sort-box" ref="list">
         <template v-for="(item, index) in products">
@@ -57,7 +64,7 @@
 
 <script>
 import sortableJS from 'sortablejs'
-import { getSortProducts, updateSort } from '../../api/products'
+import { getSortProducts, updateSort, recoverSort } from '../../api/products'
 import { getProductCate } from '@/api/category'
 export default {
   name: 'ProductSort',
@@ -163,6 +170,17 @@ export default {
       this.queryParam.catId = value === 'all' ? '' : value
       this.loadProducts()
     },
+    recoverDefaultSort() {
+      recoverSort()
+        .then(res => {
+          if (res.code === 200) {
+            this.$message.success('操作成功')
+          } else throw res
+        })
+        .catch(err => {
+          this.$message.error(err.msg || '操作失败')
+        })
+    },
     handleNumSort(current, index) {
       const temp = this.products[current]
       const len = this.products.length
@@ -184,6 +202,10 @@ export default {
 
 <style scoped lang="less">
 @import '~ant-design-vue/lib/style/themes/default.less';
+.content-right{
+  display: flex;
+  justify-content: flex-end;
+}
 .sort-box {
   display: flex;
   flex-wrap: wrap;
@@ -200,10 +222,10 @@ export default {
     font-size: 12px;
     text-align: center;
     border: 1px solid @border-color-base;
-    p{
-      width:100%;
-      padding:5px 0;
-      margin-bottom:5px;
+    p {
+      width: 100%;
+      padding: 5px 0;
+      margin-bottom: 5px;
     }
     img,
     .img-box {
@@ -216,8 +238,6 @@ export default {
   }
 }
 .table-page-search-wrapper {
-  display: flex;
-  justify-content: space-between;
   padding-bottom: 20px;
 }
 .info {

@@ -27,7 +27,8 @@
           <p class="info" v-show="form.urlValue === 'b'">
             - URL必须以/开头，例如：/about-us.html
             <br />- 请勿使用以p+数字结尾结构的URL，跟系统分页规则冲突，例如：/prod-p2.html
-            <br />- 频繁修改详情URL直接影响SEO效果，请仔细斟酌后再提交。
+            <br />-
+            频繁修改详情URL直接影响SEO效果，请仔细斟酌后再提交。
           </p>
         </a-form-model-item>
         <a-form-model-item label="产品关键词" prop="keyword" class="keyword-box">
@@ -307,12 +308,38 @@
         <!--        </a-form-model-item>-->
         <h3>产品描述</h3>
         <a-form-model-item label="产品描述">
-          <kind-editor
-            @uploadImg="handleEditorUploadPic"
-            :content="form.desc"
-            id="k-editor"
-            ref="kindeditor"
-          ></kind-editor>
+          <div class="panel-box">
+            <div class="custom-desc">
+              <template v-for="(item, index) in form.descs">
+                <a-button
+                  :class="{'a-btn':true,'active':selectedDesc===index}"
+                  size="large"
+                  :key="index"
+                  @click="handleDescBtn(index)"
+                >
+                  {{ item.name }}
+                  <a-button
+                    icon="edit"
+                    @click.stop="handleDescEditBtn(item, index)"
+                    class="a-icon"
+                  />
+                  <a-icon
+                    v-if="index!==0"
+                    type="close"
+                    @click.stop="handleDescDelBtnEdit"
+                    class="a-icon delete-icon"
+                  />
+                </a-button>
+              </template>
+              <a-button size="large" icon="plus" @click="visibleAddDesc = true"></a-button>
+            </div>
+            <kind-editor
+              @uploadImg="handleEditorUploadPic"
+              :content="form.desc"
+              id="k-editor"
+              ref="kindeditor"
+            ></kind-editor>
+          </div>
         </a-form-model-item>
         <h3>产品状态</h3>
         <a-form-model-item label="产品状态">
@@ -432,6 +459,13 @@
       </a-form-model>
     </a-card>
 
+    <a-modal v-model="visibleAddDesc" title="添加描述" centered @cancel="handleCancelAddDesc">
+      <a-input v-model="newDesc" placeholder="请输入描述名称"></a-input>
+      <div slot="footer">
+        <a-button type="primary" @click="handleAddDesc" :disabled="newDesc === ''">确 定</a-button>
+        <a-button @click="handleCancelAddDesc">取 消</a-button>
+      </div>
+    </a-modal>
     <a-modal v-model="visibleAddItem" title="添加SKU" centered>
       <a-input placeholder="请输入SKU名称" v-model="newSku"></a-input>
       <div slot="footer" class="model-footer">
@@ -499,6 +533,10 @@ export default {
     this.articleColumns = articleColumns
     this.productColumns = productColumns
     return {
+      editDesc: '',
+      newDesc: '',
+      visibleAddDesc: false,
+      selectedDesc: 0,
       submitLoading: false,
       visibleAddItem: false,
       newSku: '',
@@ -615,6 +653,12 @@ export default {
           ]
         },
         desc: '',
+        descs: [
+          {
+            name: 'Product Description',
+            content: '<b>test</b>'
+          }
+        ],
         status: {
           val: 1, // 默认1 上架状态
           tmallLink: '',
@@ -897,6 +941,42 @@ export default {
       getProducts().then((res) => {
         this.productData = res.result.data
       })
+    },
+    handleA() {
+      console.log('a')
+    },
+    handleB() {
+      console.log('b')
+    },
+    handleDescBtn(index) {
+      console.log(index)
+      this.selectedDesc = index
+    },
+    handleDescEditBtn(item, index) {
+      console.log('edit')
+      this.editDesc = index
+      this.newDesc = item.name
+      this.visibleAddDesc = true
+    },
+    handleAddDesc() {
+      if (this.editDesc !== '') {
+        this.form.descs[this.editDesc].name = this.newDesc
+        this.newDesc = ''
+        this.editDesc = ''
+        this.visibleAddDesc = false
+        return
+      }
+      this.form.descs.push({
+        name: this.newDesc,
+        content: ''
+      })
+      this.newDesc = ''
+      this.visibleAddDesc = false
+    },
+    handleCancelAddDesc() {
+      this.visibleAddDesc = false
+      this.editDesc = ''
+      this.newDesc = ''
     },
     handleTagChange(tag, checked) {
       const { selectedTags } = this
@@ -1213,4 +1293,58 @@ export default {
 
 <style scoped lang="less">
 @import './ProductDetail.less';
+.custom-desc {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  .a-btn {
+    position: relative;
+    padding-right: 20px;
+    margin-right: 10px;
+    &.active {
+      border: 1px solid #40a9ff;
+    }
+    &:hover {
+      .a-icon {
+        display: block;
+      }
+      .delete-icon {
+        display: block;
+      }
+    }
+    .a-icon {
+      display: none;
+      position: absolute;
+      transform: scale(0.7);
+      background: dodgerblue;
+      width: 18px;
+      height: 18px;
+      color: white;
+      top: 2px;
+      right: 2px;
+      font-weight: bold;
+      border-radius: 3px;
+      i {
+        margin-top: -2px;
+      }
+    }
+    .delete-icon {
+      display: none;
+      background: red;
+      bottom: 2px;
+      font-size: 13px;
+      top: auto;
+    }
+  }
+}
+.aa {
+  .btn {
+    display: none;
+  }
+  &:hover {
+    .btn {
+      display: block;
+    }
+  }
+}
 </style>

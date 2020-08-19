@@ -11184,6 +11184,11 @@ vue-router@^3.1.2:
   resolved "https://registry.npm.taobao.org/vue-router/download/vue-router-3.1.6.tgz#45f5a3a3843e31702c061dd829393554e4328f89"
   integrity sha1-RfWjo4Q+MXAsBh3YKTk1VOQyj4k=
 
+vue-sharethis@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/vue-sharethis/-/vue-sharethis-0.0.1.tgz#89de968c69f658c065fda30f3db58c9fab659622"
+  integrity sha512-2CPXIjJaFyFTjnFq2iHF8jZz/PmxmMO9Hq0sAnEkLjf+hBe3jB1UFNkf+lpR2nmEojYcia396JtKBCyDx0Fg/A==
+
 vue-style-loader@^4.1.0, vue-style-loader@^4.1.2:
   version "4.1.2"
   resolved "https://registry.npm.taobao.org/vue-style-loader/download/vue-style-loader-4.1.2.tgz#dedf349806f25ceb4e64f3ad7c0a44fba735fcf8"

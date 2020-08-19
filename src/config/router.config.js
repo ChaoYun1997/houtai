@@ -72,6 +72,12 @@ export const asyncRouterMap = [
             meta: { title: '管理产品分类', keepAlive: true }
           },
           {
+            path: '/products/product-cate-sort',
+            name: 'ProductCateSort',
+            component: () => import('@/views/products/ProductCateSort'),
+            meta: { title: '产品分类排序', keepAlive: true }
+          },
+          {
             path: '/products/add-category/:id?',
             name: 'AddProductCategory',
             component: () => import('@/views/products/CatetoryDetail'),
@@ -130,6 +136,12 @@ export const asyncRouterMap = [
             name: 'articleCategory',
             component: () => import('@/views/article/Category'),
             meta: { title: '管理文章分类', keepAlive: true }
+          },
+          {
+            path: '/articles/article-cate-sort',
+            name: 'ArticleCateSort',
+            component: () => import('@/views/article/ArticleCateSort'),
+            meta: { title: '文章分类排序', keepAlive: true }
           },
           {
             path: '/articles/add-category/:id?',
