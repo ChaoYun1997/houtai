@@ -1,13 +1,7 @@
 <template>
   <div>
     <a-card :body-style="{ padding: '24px 32px' }" :bordered="false">
-      <a-form-model
-        ref="form"
-        :model="form"
-        :rules="rules"
-        :label-col="labelCol"
-        :wrapper-col="wrapperCol"
-      >
+      <a-form-model ref="form" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-form-model-item label="标题" prop="name">
           <a-input v-model="form.name" />
         </a-form-model-item>
@@ -24,8 +18,7 @@
           ></a-input>
           <p class="info" v-show="form.urlValue === 'b'">
             - URL必须以/开头，例如：/about-us.html
-            <br />- 请勿使用以p+数字结尾结构的URL，跟系统分页规则冲突，例如：/prod-p2.html
-            <br />-
+            <br />- 请勿使用以p+数字结尾结构的URL，跟系统分页规则冲突，例如：/prod-p2.html <br />-
             频繁修改详情URL直接影响SEO效果，请仔细斟酌后再提交。
           </p>
         </a-form-model-item>
@@ -37,11 +30,7 @@
           <a-row>
             <a-col :span="12">
               <div ref="list" class="list">
-                <div
-                  class="list-group-item keyword-input"
-                  v-for="(item, index) in form.keyword.words"
-                  :key="index"
-                >
+                <div class="list-group-item keyword-input" v-for="(item, index) in form.keyword.words" :key="index">
                   <a-input v-model="item.keyword" placeholder="请输入关键词" />
                   <a-icon
                     v-show="form.keyword.words.length > 1"
@@ -58,11 +47,9 @@
                   />
                 </div>
               </div>
-              <a-button
-                icon="plus"
-                v-show="form.keyword.words.length < 8"
-                @click="handleAddKeyword"
-              >新增关键词</a-button>
+              <a-button icon="plus" v-show="form.keyword.words.length < 8" @click="handleAddKeyword">
+                新增关键词
+              </a-button>
             </a-col>
             <a-col :span="8">
               <a-card class="keyword-list" size="small">
@@ -92,13 +79,12 @@
               </a-card>
             </a-col>
           </a-row>
-          <p class="info">-请填写3个以上的关键词，每个关键词的长度≤5个单词，长度不得超过100字符，单词之间不需要增加任何符号，直接空格表示。</p>
-          <a-button
-            :icon="showSeo ? 'caret-down' : 'caret-up'"
-            type="link"
-            :ghost="true"
-            @click="showSeo = !showSeo"
-          >搜索引擎优化设置</a-button>
+          <p class="info">
+            -请填写3个以上的关键词，每个关键词的长度≤5个单词，长度不得超过100字符，单词之间不需要增加任何符号，直接空格表示。
+          </p>
+          <a-button :icon="showSeo ? 'caret-down' : 'caret-up'" type="link" :ghost="true" @click="showSeo = !showSeo">
+            搜索引擎优化设置
+          </a-button>
           <transition name="slideToggle">
             <div class="seo" v-show="showSeo">
               <a-row>
@@ -139,29 +125,14 @@
           <a-checkbox v-model="form.isTop"></a-checkbox>
         </a-form-model-item>
         <a-form-model-item label="发布时间">
-          <a-date-picker
-            v-model="form.releaseDate"
-            show-time
-            format="YYYY-MM-DD HH:mm:ss"
-            style="width: 220px"
-          />
+          <a-date-picker v-model="form.releaseDate" show-time format="YYYY-MM-DD HH:mm:ss" style="width: 220px" />
         </a-form-model-item>
         <a-form-model-item label="文章浏览次数">
           基数
           <a-input-number id="inputNumber1" v-model="form.readingBase" style="width: 100px;" />+ 实际浏览次数
-          <a-input-number
-            id="inputNumber2"
-            v-model="form.realReading"
-            :disabled="true"
-            style="width: 100px;"
-          />=
+          <a-input-number id="inputNumber2" v-model="form.realReading" :disabled="true" style="width: 100px;" />=
           前台显示浏览次数
-          <a-input-number
-            id="inputNumber3"
-            v-model="reading"
-            :disabled="true"
-            style="width: 100px;"
-          />
+          <a-input-number id="inputNumber3" v-model="reading" :disabled="true" style="width: 100px;" />
         </a-form-model-item>
         <a-form-model-item ref="cover" label="文章附图" prop="cover">
           <a-upload
@@ -187,11 +158,7 @@
           <kind-editor @uploadImg="handleEditorUploadPic" :content="form.desc" ref="kindeditor"></kind-editor>
         </a-form-model-item>
         <a-form-model-item ref="intro" label="文章摘要" prop="intro">
-          <a-textarea
-            v-model="form.intro"
-            placeholder="请输入文章简介"
-            :auto-size="{ minRows: 2, maxRows: 6 }"
-          />
+          <a-textarea v-model="form.intro" placeholder="请输入文章简介" :auto-size="{ minRows: 2, maxRows: 6 }" />
         </a-form-model-item>
         <h3>高级</h3>
         <a-form-model-item label="作者" prop="author">
@@ -222,6 +189,7 @@
               />
               <s-table
                 ref="table"
+                style="margin-top: 10px;"
                 size="default"
                 :rowKey="record => record.id"
                 :scroll="{ y: 380 }"
@@ -254,10 +222,7 @@
         <a-row>
           <template v-for="item in articleCate">
             <a-col :key="item.label">
-              <a-radio
-                :value="item.id"
-                @change="handleArticleCateChange(item.label)"
-              >{{ item.label }}</a-radio>
+              <a-radio :value="item.id" @change="handleArticleCateChange(item.label)">{{ item.label }}</a-radio>
             </a-col>
           </template>
           <a-radio :value="0" @change="handleArticleCateChange('未分组')">未分组</a-radio>
@@ -320,7 +285,7 @@ export default {
     this.productColumns = productColumns
     return {
       submitLoading: false,
-      loadProductData: (parameter) => {
+      loadProductData: parameter => {
         parameter = Object.assign(parameter, this.queryParam)
         return getProducts(parameter)
       },
@@ -357,7 +322,13 @@ export default {
       categoryLoading: true,
       selectedCate: '',
       queryArticleCate: {},
-      categoryOptions: [], // 产品分类
+      categoryOptions: [
+        {
+          label: '全部分类',
+          value: 'all',
+          id: null
+        }
+      ], // 产品分类
       articleCategoryOptions: [], // 文章分类分类
       cateLabel: '未分组',
 
@@ -454,12 +425,12 @@ export default {
     const sortable = sortableJS.create(this.$refs.list, {
       sort: true,
       animation: 300,
-      onEnd: function (evt) {
+      onEnd: function(evt) {
         // 拖拽结束发生该事件
         that.form.keyword.words.splice(evt.newIndex, 0, that.form.keyword.words.splice(evt.oldIndex, 1)[0])
         var newArray = that.form.keyword.words.slice(0)
         that.form.keyword.words = []
-        that.$nextTick(function () {
+        that.$nextTick(function() {
           that.form.keyword.words = newArray
           console.log(that.form.keyword.words)
         })
@@ -469,7 +440,7 @@ export default {
   methods: {
     moment,
     loadDetail(id) {
-      getArticleDetail({ id: id }).then((res) => {
+      getArticleDetail({ id: id }).then(res => {
         if (res.code === 200) {
           const { form } = this
           const { data } = res
@@ -482,7 +453,7 @@ export default {
           form.info.source = data.articleFrom
           form.coverName = data.articleImg
           this.coverImg = data.articleImg ? host + '/' + data.articleImg : ''
-          form.keyword.words = data.articleKeys.map((item) => {
+          form.keyword.words = data.articleKeys.map(item => {
             return {
               keyword: item
             }
@@ -497,7 +468,7 @@ export default {
           form.info.website = data.articleWeb
           form.readingBase = data.baseBrowseCount
           form.realReading = data.browseCount
-          const cateName = this.articleCate.find((item) => {
+          const cateName = this.articleCate.find(item => {
             return item.id === data.catId
           })
           form.category = cateName ? cateName.label : ''
@@ -553,7 +524,6 @@ export default {
           this.selectedProducts.splice(index, 1)
         }
       })
-      // TODO 提交产品关联统一放到提交Submit操作
     },
     // 文章相关
     handleDelArticle(id) {
@@ -564,7 +534,6 @@ export default {
           this.selectedArticles.splice(index, 1)
         }
       })
-      // TODO 提交文章关联统一放到提交Submit操作
     },
     onArticleSelectChange(selectedRowKeys, selectedRows) {
       console.log('selectedRowKeys changed: ', selectedRows)
@@ -577,10 +546,10 @@ export default {
       this.selectedProducts = selectedRows
     },
     loadArticleCate() {
-      getArticleCate(this.queryArticleCate).then((res) => {
+      getArticleCate(this.queryArticleCate).then(res => {
         const result = res.data.datas
         if (result.length > 0) {
-          result.forEach((item) => {
+          result.forEach(item => {
             this.articleCate.push({
               value: item.catName,
               label: item.catName,
@@ -592,20 +561,25 @@ export default {
     },
     handleArticleCateChange(value) {
       console.log(value)
+      if (value === 'all') {
+        delete this.queryParam.catId
+      } else {
+        this.queryParam.catId = value
+      }
       this.cateLabel = value
     },
     handleProductCateChange(value) {
-      console.log(`selected ${value}`)
-      // TODO 刷新数据
-    },
-    onArticleSearch(value) {
       console.log(value)
-      // TODO 刷新数据
+      if (value === 'all') {
+        delete this.queryParam.catId
+      } else {
+        this.queryParam.catId = value
+      }
+      this.$refs.table.refresh(true)
     },
     onProductSearch(value) {
-      console.log(value)
       this.queryParam.keyWords = value
-      // TODO 刷新数据
+      this.$refs.table.refresh(true)
     },
     getObjectURL(file) {
       console.log(file)
@@ -645,7 +619,7 @@ export default {
         type: 1
       }
       await getUploadSign(param)
-        .then((res) => {
+        .then(res => {
           if (res.code === 200) {
             this.picToken = res.data.token
             this.fileName = res.data.fileName
@@ -653,7 +627,7 @@ export default {
             throw res
           }
         })
-        .catch((err) => {
+        .catch(err => {
           this.$message.error(err.msg)
         })
     },
@@ -671,7 +645,7 @@ export default {
     },
     initSkuData() {
       if (this.form.sku.attr.length > 0) {
-        this.form.sku.attr.forEach((item) => {
+        this.form.sku.attr.forEach(item => {
           const key = `${item.name}Stock`
           this.skuColumns.push({
             title: item.name,
@@ -691,18 +665,18 @@ export default {
       getKeyword({
         pageIndex: 1,
         pageSize: 100
-      }).then((res) => {
+      }).then(res => {
         this.keywordListLoading = false
         this.keywordList = res.data.datas
       })
     },
     // 加载分类数据
     loadCategory() {
-      getProductCate(this.queryProductCate).then((res) => {
-        res.data.datas.forEach((item) => {
+      getProductCate(this.queryProductCate).then(res => {
+        res.data.datas.forEach(item => {
           this.categoryOptions.push({
             label: item.catName,
-            value: item.catName,
+            value: item.id,
             id: item.id
           })
         })
@@ -735,7 +709,7 @@ export default {
     },
     // sku 选择
     handleSkuChange(value, index) {
-      const isKeyExisted = this.form.sku.attr.filter((item) => {
+      const isKeyExisted = this.form.sku.attr.filter(item => {
         return item.name === value
       })
       if (isKeyExisted.length > 0) {
@@ -785,7 +759,7 @@ export default {
       return true
     },
     handleSkuInputBlur(item, val, index) {
-      const isExist = item.vals.filter((i) => {
+      const isExist = item.vals.filter(i => {
         return i.value === val
       })
       console.log(isExist)
@@ -806,7 +780,7 @@ export default {
       const titleId = titleArr.reduce((acc, cur) => `${acc}-${cur}`)
       const params = {
         articleUrl: form.urlValue === 'a' ? `/${titleId}-${new Date().valueOf()}.html` : form.articleUrl, // 产品分类URL
-        articleKeys: form.keyword.words.map((item) => item.keyword),
+        articleKeys: form.keyword.words.map(item => item.keyword),
         seoKeyWords: form.keyword.pageKeyword,
         seoTitle: form.keyword.pageTitle,
         seoDescription: form.keyword.pageDesc,
@@ -830,7 +804,7 @@ export default {
       if (this.$route.params.id) {
         params.id = this.$route.params.id
       }
-      this.$refs.form.validate(async (valid) => {
+      this.$refs.form.validate(async valid => {
         if (valid) {
           console.log(params)
           this.submitLoading = true

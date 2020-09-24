@@ -12,7 +12,9 @@ const enquiryApi = {
   Restore: '/enquiry/restore', // 恢复询单
   RestoreEnquirys: '/enquiry/restores', // 批量恢复询单
   AddEnquiryLog: '/enquirylog/push', // 新增询单日志
-  GetEnquiryLog: '/enquirylog/getList' // 获取询单日志
+  GetEnquiryLog: '/enquirylog/getList', // 获取询单日志
+  GetEnquirySetting: '/userset/getEnquiryRule', // 获取询盘收发规则
+  SaveEnquirySetting: '/userset/saveEnquiryRule' // 设置询盘收发规则
 }
 
 // 新增询单日志
@@ -199,5 +201,22 @@ export function restoreEnquirys(param) {
     url: enquiryApi.RestoreEnquirys,
     method: 'post',
     data: param
+  })
+}
+
+// 设置询盘收发规则
+export function saveEnquirySetting(param) {
+  return request({
+    url: enquiryApi.SaveEnquirySetting,
+    method: 'post',
+    params: param
+  })
+}
+
+// 获取询盘收发规则
+export function getEnquirySetting() {
+  return request({
+    url: enquiryApi.GetEnquirySetting,
+    method: 'post'
   })
 }

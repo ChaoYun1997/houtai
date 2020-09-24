@@ -165,14 +165,13 @@ export const asyncRouterMap = [
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
             component: () => import('@/views/keyword/KeywordList'),
             meta: { title: '我的关键词', keepAlive: true }
+          },
+          {
+            path: '/keyword/setting',
+            name: 'keywordSetting',
+            component: () => import('@/views/keyword/KeywordSetting'),
+            meta: { title: '关键词设置', keepAlive: true }
           }
-          // ,
-          // {
-          //   path: '/keyword/setting',
-          //   name: 'keywordSetting',
-          //   component: () => import('@/views/list/BasicList'),
-          //   meta: { title: '关键词设置', keepAlive: true }
-          // }
         ]
       },
       // 询盘
@@ -197,6 +196,12 @@ export const asyncRouterMap = [
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
             component: () => import('@/views/enquiry/EnquiryDetail'),
             meta: { title: '询单详情', keepAlive: true }
+          },
+          {
+            path: '/enquiry/setting',
+            name: 'EnquirySetting',
+            component: () => import('@/views/enquiry/EnquirySetting'),
+            meta: { title: '询盘收发设置', keepAlive: true }
           },
           {
             path: '/enquiry/recycle-bin',

@@ -85,6 +85,7 @@
               <a-select-option :value="item.path" :key="item.name">{{ item.name }}</a-select-option>
             </template>
           </a-select>
+          <a-button style="margin-left: 10px;" @click="showAddNewPage = true">新建页面</a-button>
         </p>
         <h3 class="title">搜索引擎优化</h3>
         <a-divider style="margin: 4px 0 20px 0;" />

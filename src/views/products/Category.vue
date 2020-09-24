@@ -22,18 +22,15 @@
         :data="loadCateData"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
-        <div
-          slot="catname"
-          slot-scope="text, record"
-        >
-          <a @click="$router.push({path:'/products/product-list',query: { catId: record.id }})" >
+        <div slot="catname" slot-scope="text, record">
+          <a @click="$router.push({ path: '/products/product-list', query: { catId: record.id } })">
             {{ text }}
           </a>
         </div>
         <div class="action" slot="action" slot-scope="text, record">
           <a-button type="primary" icon="edit" size="small" @click="edit(record.id)" />
           <a-button type="danger" icon="delete" size="small" @click="del(record.id)" />
-          <a-button icon="eye" size="small" @click="preview(record.catUrl)" />
+          <a-button icon="eye" size="small" @click="preview(record.id)" />
         </div>
       </s-table>
 
@@ -92,8 +89,9 @@
 <script>
 import STable from '@/components/Table'
 // import { getProductCategory } from '@/api/products'
-import { getProductCate } from '@/api/category'
+import { getProductCate, delCate } from '@/api/category'
 import * as XLSX from 'xlsx'
+import { mapState } from 'vuex'
 
 const cateColumns = [
   {
@@ -150,6 +148,15 @@ export default {
         size: 'small'
       }
     }
+  },
+  computed: {
+    ...mapState({
+      website: (state) => {
+        return /^http/.test(state.user.website)
+          ? state.user.website
+          : process.env.VUE_APP_PROTOCAL_HEAD + state.user.website
+      }
+    })
   },
   methods: {
     downloadXls() {
@@ -236,9 +243,32 @@ export default {
     edit(id) {
       this.$router.push(`/products/add-category/${id}`)
     },
-    del() {},
-    preview(url) {
-      window.open(url)
+    del(id) {
+      this.$confirm({
+        content: '你确定要删除该分类吗？',
+        centered: true,
+        onOk: () => {
+          const params = {
+            id: id
+          }
+          delCate(params)
+            .then(res => {
+              if (res.code === 200) {
+                this.$message.success('操作成功')
+                this.$refs.table.refresh(true)
+              } else {
+                throw res
+              }
+            })
+            .catch(err => {
+              this.$message.error(err.msg || '操作失败')
+            })
+        }
+      })
+    },
+    preview(id) {
+      const link = this.website + '/Products/1/100/' + id
+      window.open(link, '_blank')
     }
   }
 }

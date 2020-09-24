@@ -37,6 +37,6 @@ export default {
       }
       document.head.appendChild(shareScript)
     }
-    return <div class="sharethis-inline-share-buttons"></div>
+    return <div style="text-align:left;" class="sharethis-inline-share-buttons"></div>
   }
 }

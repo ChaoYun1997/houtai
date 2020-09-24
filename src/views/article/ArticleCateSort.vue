@@ -18,7 +18,7 @@
 
 <script>
 import sortableJS from 'sortablejs'
-import { getArticleCate, updateCateSort } from '@/api/category'
+import { updateCateSort, getArticleCateSort } from '@/api/category'
 export default {
   name: 'ArticleCateSort',
   data() {
@@ -49,14 +49,14 @@ export default {
         animation: 300,
         onEnd: function(evt) {
           // 拖拽结束发生该事件
-          that.products.splice(evt.newIndex, 0, that.products.splice(evt.oldIndex, 1)[0])
-          var newArray = that.products.slice(0)
-          that.products = []
+          that.category.splice(evt.newIndex, 0, that.category.splice(evt.oldIndex, 1)[0])
+          var newArray = that.category.slice(0)
+          that.category = []
           that.$nextTick(function() {
-            this.products = newArray.map((item, index) => {
+            this.category = newArray.map((item, index) => {
               return Object.assign(item, { sort: index })
             })
-            console.log(that.products)
+            console.log(that.category)
           })
         }
       })
@@ -66,10 +66,10 @@ export default {
         pageIndex: 1,
         pageSize: 50
       }
-      getArticleCate(params).then(res => {
+      getArticleCateSort(params).then(res => {
         res.data.datas.forEach((item, index) => {
           this.category.push({
-            label: item.catName,
+            label: item.catTitle,
             sort: index,
             id: item.id
           })

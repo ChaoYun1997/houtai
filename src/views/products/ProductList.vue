@@ -93,18 +93,17 @@
         <div slot="shelve" slot-scope="text, record">
           <a-switch :checked="checkIsShelve(record.isShelve)" @change="checked => onSwitchChange(checked, record.id)" />
         </div>
+        <!--        <div slot="link" slot-scope="text, record">-->
+        <!--          <a-button type="link">{{ website + '/Details/' + record.id }}</a-button>-->
+        <!--        </div>-->
         <span slot="cate" slot-scope="catId">
           <template v-for="(item, index) in getCateName(catId)">
             <span :key="index">{{ item }}<br /></span>
           </template>
         </span>
         <span slot="shopTags" slot-scope="shopTags">
-          <a-tag
-            v-for="tag in shopTags"
-            :key="tag"
-            :color="tag === '热点产品' ? 'pink' : tag === '新产品' ? 'green' : 'orange'"
-          >
-            {{ tag }}
+          <a-tag v-for="tag in shopTags" :key="tag" :color="tag === 'Hot' ? 'red' : tag === 'New' ? 'green' : 'orange'">
+            {{ tags[tag] }}
           </a-tag>
         </span>
         <div class="action" slot="action" slot-scope="text, record">
@@ -200,7 +199,12 @@ import { saveAs } from 'file-saver'
 import qrcode from 'qrcode'
 import ShareThis from '@/components/ShareThis'
 
-const tagOptions = ['热点产品', '新产品', '推荐产品']
+const tagOptions = ['热销产品', '新产品', '推荐产品']
+const tags = {
+  Hot: '热销产品',
+  New: '新产品',
+  Recommend: '推荐产品'
+}
 const columns = [
   {
     title: '产品图片',
@@ -238,10 +242,13 @@ const columns = [
       customRender: 'shelve'
     }
   },
-  {
-    title: '产品链接',
-    dataIndex: 'shopUrl'
-  },
+  // {
+  //   title: '产品链接',
+  //   dataIndex: 'shopUrl',
+  //   scopedSlots: {
+  //     customRender: 'link'
+  //   }
+  // },
   {
     title: '标签',
     dataIndex: 'shopTags',
@@ -265,6 +272,7 @@ export default {
   },
   data() {
     this.columns = columns
+    this.tags = tags
     return {
       shareUrl: process.env.VUE_APP_SHARE_THIS,
       visibleShare: false,
@@ -552,7 +560,7 @@ export default {
     },
     clearTagParams() {
       const tagObj = {
-        热点产品: 'isHot',
+        热销产品: 'isHot',
         新产品: 'isNew',
         推荐产品: 'isRecommend'
       }
@@ -562,7 +570,7 @@ export default {
     },
     handleTagFilter() {
       const tagObj = {
-        热点产品: 'isHot',
+        热销产品: 'isHot',
         新产品: 'isNew',
         推荐产品: 'isRecommend'
       }

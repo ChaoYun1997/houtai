@@ -51,22 +51,38 @@
           :default-checked="text"
           @change="handleChecked(record.id)"
         ></a-checkbox>
-        <span slot="status" slot-scope="text">
-          {{ text === 0 ? '正常' : text === 1 ? '草稿' : '定时发布' }}
-        </span>
-        <span slot="author" slot-scope="text">
-          {{ text || '本站编辑' }}
-        </span>
+        <span slot="status" slot-scope="text">{{ text === 0 ? '正常' : text === 1 ? '草稿' : '定时发布' }}</span>
+        <span slot="author" slot-scope="text">{{ text || '本站编辑' }}</span>
         <div class="action" slot="action" slot-scope="text, record">
           <a-button type="primary" icon="edit" size="small" @click="edit(record.id)" />
           <a-popconfirm title="你确定要删除该文章吗?" @confirm="del(record.id)">
             <a-button type="danger" icon="delete" size="small" />
           </a-popconfirm>
-          <a-button icon="share-alt" size="small" @click="share(record.id)" />
-          <a-button icon="eye" size="small" @click="preview(record.shopUrl)" />
+          <a-button icon="share-alt" size="small" @click="handleShare(record)" />
+          <a-button icon="eye" size="small" @click="preview(record.id)" />
         </div>
       </s-table>
     </a-card>
+
+    <a-modal v-model="visibleShare" title="分享">
+      <a-row :gutter="[10, 20]">
+        <a-col :span="4">产品名称</a-col>
+        <a-col :span="20">{{ share.name }}</a-col>
+        <a-col :span="4">产品链接</a-col>
+        <a-col :span="20">{{ share.link }}</a-col>
+        <a-col :span="4">产品二维码</a-col>
+        <a-col :span="20">
+          <img :src="share.linkBase64" alt />
+        </a-col>
+        <a-col :span="4">分享到</a-col>
+        <a-col :span="20">
+          <share-this :shareThisEmbedUrl="shareUrl" :url="share.link"></share-this>
+        </a-col>
+      </a-row>
+      <div slot="footer" class="model-footer">
+        <a-button @click="hideShare">关闭</a-button>
+      </div>
+    </a-modal>
   </div>
 </template>
 
@@ -74,6 +90,9 @@
 import STable from '@/components/Table'
 import { getArticles, delArticle } from '@/api/article'
 import { getArticleCate } from '@/api/category'
+import { mapState } from 'vuex'
+import ShareThis from '@/components/ShareThis'
+import qrcode from 'qrcode'
 
 const columns = [
   {
@@ -136,12 +155,20 @@ const columns = [
 export default {
   name: 'List',
   components: {
-    STable
+    STable,
+    ShareThis
   },
   data() {
     this.columns = columns
     return {
-      loadData: parameter => {
+      shareUrl: process.env.VUE_APP_SHARE_THIS,
+      visibleShare: false,
+      share: {
+        name: '',
+        link: '',
+        linkBase64: ''
+      },
+      loadData: (parameter) => {
         return getArticles(Object.assign(parameter, this.queryParam))
       },
       category: [],
@@ -153,6 +180,13 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      website: (state) => {
+        return /^http/.test(state.user.website)
+          ? state.user.website
+          : process.env.VUE_APP_PROTOCAL_HEAD + state.user.website
+      }
+    }),
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,
@@ -166,8 +200,8 @@ export default {
         pageIndex: 1,
         pageSize: 50
       }
-      getArticleCate(params).then(res => {
-        res.data.datas.forEach(item => {
+      getArticleCate(params).then((res) => {
+        res.data.datas.forEach((item) => {
           console.log(item)
           this.category.push({
             label: item.catName,
@@ -197,19 +231,39 @@ export default {
     // 删除文章
     del(id) {
       console.log(id)
-      delArticle({ id: id }).then(res => {
+      delArticle({ id: id }).then((res) => {
         if (res.code === 200) this.$message.success('操作成功')
         this.$refs.table.refresh(true)
       })
     },
     // 预览文章
-    preview(url) {
-      const host = process.env.VUE_APP_WEBSITE
-      window.open(`${host}/${url}`)
+    preview(id) {
+      const link = this.website + '/NewsDetails/' + id
+      window.open(link, '_blank')
     },
     // 分享文章
-    share(result) {
-      console.log(result)
+    async handleShare(result) {
+      this.share.name = result.articleTitle
+      this.share.link = this.website + '/NewsDetails/' + result.id
+      this.share.linkBase64 = await this.getLinkQrcode(this.share.link)
+      this.visibleShare = true
+    },
+    hideShare() {
+      this.share.name = ''
+      this.share.link = ''
+      this.share.linkBase64 = ''
+      this.visibleShare = false
+    },
+    getLinkQrcode(link) {
+      return new Promise((resolve, reject) => {
+        qrcode.toDataURL(link, (err, url) => {
+          if (err) {
+            reject(err)
+            return false
+          }
+          resolve(url)
+        })
+      })
     },
     // 修改文章置顶
     handleChecked(id) {

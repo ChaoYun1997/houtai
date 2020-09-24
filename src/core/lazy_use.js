@@ -2,6 +2,7 @@ import Vue from 'vue'
 
 // base library
 import {
+  Affix,
   ConfigProvider,
   Layout,
   Input,
@@ -62,6 +63,7 @@ import PageLoading from '@/components/PageLoading'
 import PermissionHelper from '@/utils/helper/permission'
 import './directives/action'
 
+Vue.use(Affix)
 Vue.use(ConfigProvider)
 Vue.use(Layout)
 Vue.use(Input)

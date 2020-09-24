@@ -6,7 +6,9 @@ const keywordApi = {
   AddKeyword: '/keyword/addKeys', // 新增关键词
   AppendKeywordTo: '/keyword/appendKey', // 添加关键词到对象
   UpdateKeyword: '/keyword/updateKey', // 更新关键词
-  DelKeyword: '/keyword/delKey' // 删除关键词 TODO
+  DelKeyword: '/keyword/delKey', // 删除关键词
+  GetKeywordSetting: '/userset/getKeyRule', // 获取关键词内链设置
+  SaveKeywordSetting: '/userset/saveKeyRule' // 保存关键词内链设置
 }
 
 // 获取关键词列表
@@ -68,5 +70,22 @@ export function delKeyword(param) {
     url: keywordApi.DelKeyword,
     method: 'get',
     params: param
+  })
+}
+
+// 关键词设置
+export function saveKeywordSetting(param) {
+  return request({
+    url: keywordApi.SaveKeywordSetting,
+    method: 'post',
+    params: param
+  })
+}
+
+// 获取关键词设置
+export function getKeywordSetting() {
+  return request({
+    url: keywordApi.GetKeywordSetting,
+    method: 'post'
   })
 }

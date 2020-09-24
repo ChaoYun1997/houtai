@@ -6,6 +6,7 @@ const categoryApi = {
   UpdateCate: '/cat/updateCat', // 更新分类信息
   CateDetial: '/cat/cat', // 获取分类详情
   DelCate: '/cat/delCat', // 删除分类
+  GetSortCats: '/cat/sortCats', // 获取分类排序列表
   UpdateSort: '/cat/updateSort', // 更新分类排序
   UpdatePage: '/cat/updatePage' // 更新分类指向页面
 }
@@ -157,6 +158,38 @@ export function updateCateSort(params) {
     url: categoryApi.UpdateSort,
     method: 'post',
     data: params
+  })
+}
+
+/**
+ * 获取产品分类排序
+ * @returns {*}
+ */
+export function getPropCateSort(params) {
+  return request({
+    url: categoryApi.GetSortCats,
+    method: 'post',
+    data: {
+      pageIndex: 1,
+      pageSize: 100,
+      catType: 0
+    }
+  })
+}
+
+/**
+ * 获取文章分类排序
+ * @returns {*}
+ */
+export function getArticleCateSort(params) {
+  return request({
+    url: categoryApi.GetSortCats,
+    method: 'post',
+    data: {
+      pageIndex: 1,
+      pageSize: 100,
+      catType: 1
+    }
   })
 }
 

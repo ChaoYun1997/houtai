@@ -8,11 +8,11 @@ const findPage = (state, page) => {
 const pages = {
   state: {
     page: [
-      { name: '首页', path: '/home' },
-      { name: '产品', path: '/products' },
-      { name: '文章', path: '/articles' },
-      { name: '关于', path: '/about' },
-      { name: '联系', path: '/contact' }
+      { name: '首页', path: '/Index' },
+      { name: '产品', path: '/Products' },
+      { name: '新闻', path: '/News' },
+      { name: '关于', path: '/About' },
+      { name: '联系', path: '/Contact' }
     ]
   },
   mutations: {

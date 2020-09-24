@@ -68,14 +68,11 @@
                     </a-row>
                   </a-form-model-item>
                   <a-form-model-item label="水印位置">
-                    <a-radio-group :options="plainOptions" v-model="positionVal" @change="onPositionChange" />
+                    <a-radio-group :options="plainOptions" v-model="positionVal" />
                   </a-form-model-item>
                   <a-form-model-item :wrapper-col="{ span: 12, offset: 4 }">
-                    <a-button type="primary" @click="handlePicSubmit">
-                      <template v-if="picLoading">
-                        <a-icon type="loading"></a-icon>
-                      </template>
-                      <span v-else>提交</span>
+                    <a-button type="primary" @click="handlePicSubmit" :loading="picLoading">
+                      提交
                     </a-button>
                   </a-form-model-item>
                 </a-form-model>
@@ -90,7 +87,7 @@
                   ref="previewBox"
                   :style="`font-family:${fontFamily};font-size:${fontSize}px;color:${fontColor};${previewBg}`"
                 >
-                  <span class="watermark" ref="text">{{ textWatermark }}</span>
+                  <span class="watermark" ref="text" :style="`opacity:${fontOpacity / 100};`">{{ textWatermark }}</span>
                 </div>
               </a-col>
               <a-col :span="14">
@@ -103,6 +100,10 @@
                       <a-select-option value="SimSun">宋体</a-select-option>
                       <a-select-option value="SimHei">黑体</a-select-option>
                       <a-select-option value="Microsoft Yahei">微软雅黑</a-select-option>
+                      <a-select-option value="Arial">Arial</a-select-option>
+                      <a-select-option value="Consolas">Consolas</a-select-option>
+                      <a-select-option value="Impact">Impact</a-select-option>
+                      <a-select-option value="Tahoma">Tahoma</a-select-option>
                     </a-select>
                   </a-form-model-item>
                   <a-form-model-item label="文字颜色">
@@ -118,15 +119,22 @@
                       </a-col>
                     </a-row>
                   </a-form-model-item>
+                  <a-form-model-item label="透明度">
+                    <a-row :gutter="20">
+                      <a-col :span="18">
+                        <a-slider v-model="fontOpacity" :min="1" :max="100" />
+                      </a-col>
+                      <a-col :span="4">
+                        <a-input-number v-model="fontOpacity" :min="1" :max="100" style="width: 70px;" />
+                      </a-col>
+                    </a-row>
+                  </a-form-model-item>
                   <a-form-model-item label="水印位置">
-                    <a-radio-group :options="plainOptions" v-model="positionVal" @change="onPositionChange" />
+                    <a-radio-group :options="plainOptions" v-model="positionVal" />
                   </a-form-model-item>
                   <a-form-model-item :wrapper-col="{ span: 12, offset: 4 }">
-                    <a-button type="primary" @click="handleFontSubmit">
-                      <template v-if="fontLoading">
-                        <a-icon type="loading"></a-icon>
-                      </template>
-                      <span v-else>提交</span>
+                    <a-button type="primary" @click="handleFontSubmit" :loading="picLoading">
+                      提交
                     </a-button>
                   </a-form-model-item>
                 </a-form-model>
@@ -153,10 +161,12 @@ const plainOptions = [
   { label: '左下角', value: 4, position: 'lb' },
   { label: '右下角', value: 5, position: 'rb' }
 ]
+const positions = ['左上角', '右上角', '中间', '左下角', '右下角']
 export default {
   name: 'Watermark',
   data() {
     this.plainOptions = plainOptions
+    this.positions = positions
     return {
       fontLoading: false,
       picLoading: false,
@@ -166,6 +176,7 @@ export default {
       defaultTabKey: '1',
       watermark: {},
       picOpacity: 70,
+      fontOpacity: 100,
       fontSize: 32,
       textWatermark: '',
       fontFamily: 'SimHei',
@@ -185,13 +196,17 @@ export default {
       positionVal: 2
     }
   },
-  watch: {
-    fileList(val) {
-      console.log(val)
-    }
-  },
   mounted() {
     this.loadWatermark()
+  },
+  watch: {
+    positionVal(newVal) {
+      const position = plainOptions[newVal - 1].position.toString()
+      console.log(newVal, position)
+      this.$refs.previewBox.classList = this.$refs.previewBox1.classList = []
+      this.$refs.previewBox.classList.add(position)
+      this.$refs.previewBox1.classList.add(position)
+    }
   },
   methods: {
     watermarkImg() {
@@ -201,6 +216,7 @@ export default {
       return require('@/assets/watermark.png')
     },
     loadWatermark() {
+      const fonts = ['SimSun', 'SimHei', 'Microsoft Yahei', 'Arial', 'Consolas', 'Impact', 'Tahoma']
       getWatermark().then(res => {
         if (res.code === 200) {
           this.watermark = res.data
@@ -209,8 +225,11 @@ export default {
           }
           this.defaultTabKey = this.watermark.watermarkType ? this.watermark.watermarkType.toString() : '1'
           this.textWatermark = this.watermark.watemarkText
-          this.fontFamily =
-            this.watermark.fontFamily === 1 ? 'SimSun' : this.watermark.fontFamily === 2 ? 'SimHei' : 'Microsoft Yahei'
+          this.fontOpacity = this.watermark.fontOpacity
+          this.fontColor = this.watermark.fontColor
+          this.positionVal = this.watermark.imgPosition
+          this.fontSize = this.watermark.fontSize
+          this.fontFamily = fonts[this.watermark.fontFamily - 1]
         }
       })
     },
@@ -334,13 +353,19 @@ export default {
         this.watermark.isOpen = !this.watermark.isOpen
       })
     },
-    onPositionChange(e) {
-      console.log(this.positionVal)
-      const position = plainOptions[e.target.value - 1].position.toString()
-      this.$refs.previewBox.classList = this.$refs.previewBox1.classList = []
-      this.$refs.previewBox.classList.add(position)
-      this.$refs.previewBox1.classList.add(position)
-    },
+    // onPositionChange(e) {
+    //   console.log(this.positionVal)
+    //   const position = plainOptions[e.target.value - 1].position.toString()
+    //   this.$refs.previewBox.classList = this.$refs.previewBox1.classList = []
+    //   this.$refs.previewBox.classList.add(position)
+    //   this.$refs.previewBox1.classList.add(position)
+    // },
+    // setPosition() {
+    //   const position = plainOptions[this.positionVal].position.toString()
+    //   this.$refs.previewBox.classList = this.$refs.previewBox1.classList = []
+    //   this.$refs.previewBox.classList.add(position)
+    //   this.$refs.previewBox1.classList.add(position)
+    // },
     handleOpacity(value) {
       console.log(value)
       this.picOpacity = value
@@ -352,7 +377,11 @@ export default {
       const fonts = {
         SimSun: 1,
         SimHei: 2,
-        'Microsoft Yahei': 3
+        'Microsoft Yahei': 3,
+        Arial: 4,
+        Consolas: 5,
+        Impact: 6,
+        Tahoma: 7
       }
       const param = {
         isOpen: true,
@@ -361,6 +390,7 @@ export default {
         imgPosition: this.positionVal,
         fontFamily: fonts[this.fontFamily],
         fontSize: this.fontSize,
+        fontOpacity: this.fontOpacity,
         fontStyles: '',
         fontColor: this.fontColor,
         watermarkType: type === 'pic' ? 1 : 2,

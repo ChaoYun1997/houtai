@@ -133,6 +133,7 @@
               <a-select-option :value="item.path" :key="index">{{ item.name }}</a-select-option>
             </template>
           </a-select>
+          <a-button style="margin-left: 10px;" @click="showAddNewPage = true">新建页面</a-button>
         </p>
         <a-form-model-item>
           <a-button type="primary" @click="handleSubmit" :loading="submitLoading">提交</a-button>

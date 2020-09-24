@@ -18,7 +18,8 @@
 
 <script>
 import sortableJS from 'sortablejs'
-import { getProductCate, updateCateSort } from '@/api/category'
+// eslint-disable-next-line no-unused-vars
+import { getProductCate, updateCateSort, getPropCateSort } from '@/api/category'
 export default {
   name: 'ProductCateSort',
   data() {
@@ -29,7 +30,6 @@ export default {
         pageSize: 20,
         pageIndex: 1
       },
-      products: [],
       current: 1,
       total: 0
     }
@@ -49,14 +49,14 @@ export default {
         animation: 300,
         onEnd: function(evt) {
           // 拖拽结束发生该事件
-          that.products.splice(evt.newIndex, 0, that.products.splice(evt.oldIndex, 1)[0])
-          var newArray = that.products.slice(0)
-          that.products = []
+          that.category.splice(evt.newIndex, 0, that.category.splice(evt.oldIndex, 1)[0])
+          var newArray = that.category.slice(0)
+          that.category = []
           that.$nextTick(function() {
-            this.products = newArray.map((item, index) => {
+            this.category = newArray.map((item, index) => {
               return Object.assign(item, { sort: index })
             })
-            console.log(that.products)
+            console.log(that.category)
           })
         }
       })
@@ -66,10 +66,11 @@ export default {
         pageIndex: 1,
         pageSize: 50
       }
-      getProductCate(params).then(res => {
+      getPropCateSort(params).then(res => {
+        console.log(res)
         res.data.datas.forEach((item, index) => {
           this.category.push({
-            label: item.catName,
+            label: item.catTitle,
             sort: index,
             id: item.id
           })

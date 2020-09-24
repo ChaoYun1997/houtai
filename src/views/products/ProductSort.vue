@@ -171,15 +171,21 @@ export default {
       this.loadProducts()
     },
     recoverDefaultSort() {
-      recoverSort()
-        .then(res => {
-          if (res.code === 200) {
-            this.$message.success('操作成功')
-          } else throw res
-        })
-        .catch(err => {
-          this.$message.error(err.msg || '操作失败')
-        })
+      this.$confirm({
+        content: '你确认要恢复产品的默认排序吗?',
+        onOk: () => {
+          recoverSort()
+            .then(res => {
+              if (res.code === 200) {
+                this.$message.success('操作成功')
+                this.loadProducts()
+              } else throw res
+            })
+            .catch(err => {
+              this.$message.error(err.msg || '操作失败')
+            })
+        }
+      })
     },
     handleNumSort(current, index) {
       const temp = this.products[current]
@@ -202,7 +208,7 @@ export default {
 
 <style scoped lang="less">
 @import '~ant-design-vue/lib/style/themes/default.less';
-.content-right{
+.content-right {
   display: flex;
   justify-content: flex-end;
 }
