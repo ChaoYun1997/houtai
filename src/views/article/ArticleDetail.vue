@@ -155,7 +155,7 @@
         </a-form-model-item>
         <a-form-model-item label="文章内容">
           <!--          <k-editor v-model="form.desc"></k-editor>-->
-          <kind-editor @uploadImg="handleEditorUploadPic" :content="form.desc" ref="kindeditor"></kind-editor>
+          <kind-editor @uploadImg="handleEditorUploadPic" :content="form.desc" :html="form.desc" ref="kindeditor"></kind-editor>
         </a-form-model-item>
         <a-form-model-item ref="intro" label="文章摘要" prop="intro">
           <a-textarea v-model="form.intro" placeholder="请输入文章简介" :auto-size="{ minRows: 2, maxRows: 6 }" />
@@ -381,6 +381,7 @@ export default {
             }
           ]
         },
+        contentimgs: [],
         desc: '',
         status: 0,
         articles: [],
@@ -501,6 +502,7 @@ export default {
       const d = await this.$http.post(this.uploadUrl, formData)
       let imgUrl = process.env.VUE_APP_HOST
       if (d.name) {
+        this.form.contentimgs.push(d.name)
         imgUrl = imgUrl + '/' + d.name
       } else {
         this.$message.error('上传图片出错')
@@ -788,6 +790,7 @@ export default {
         browseCount: form.realReading,
         articleImg: form.coverName,
         articleContent: this.$refs.kindeditor.outContent,
+        contentImgs: form.contentimgs,
         articleAbstract: form.intro,
         articleAuthor: form.info.author,
         articleFrom: form.info.source,

@@ -31,6 +31,44 @@ export const asyncRouterMap = [
           }
         ]
       },
+      // 网站配置
+      {
+        path: '/configuration',
+        name: 'configuration',
+        component: RouteView,
+        redirect: '/configuration/pageManage',
+        meta: { title: '网站信息', icon: comment },
+        children: [
+          {
+            path: '/configuration/pageManage',
+            name: 'configurationPageManage',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/configuration/PageManage'),
+            meta: { title: '页面管理', keepAlive: true }
+          },
+          {
+            path: '/configuration/sitemap',
+            name: 'configurationSitemap',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/configuration/Sitemap'),
+            meta: { title: '网站地图', keepAlive: true }
+          },
+          {
+            path: '/configuration/robots',
+            name: 'configurationRobots',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/configuration/Robots'),
+            meta: { title: 'Robots配置', keepAlive: true }
+          },
+          {
+            path: '/configuration/analysis',
+            name: 'configurationAnalysis',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/configuration/Analysis'),
+            meta: { title: '第三方统计', keepAlive: true }
+          }
+        ]
+      },
       // 产品
       {
         path: '/products',

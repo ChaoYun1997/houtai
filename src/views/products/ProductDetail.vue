@@ -339,6 +339,7 @@
             <kind-editor
               @uploadImg="handleEditorUploadPic"
               :content="form.desc"
+              :html="form.desc"
               id="k-editor"
               ref="kindeditor"
             ></kind-editor>
