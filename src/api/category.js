@@ -6,6 +6,7 @@ const categoryApi = {
   UpdateCate: '/cat/updateCat', // 更新分类信息
   CateDetial: '/cat/cat', // 获取分类详情
   DelCate: '/cat/delCat', // 删除分类
+  DelCates: '/cat/delCats', // 批量删除分类
   GetSortCats: '/cat/sortCats', // 获取分类排序列表
   UpdateSort: '/cat/updateSort', // 更新分类排序
   UpdatePage: '/cat/updatePage' // 更新分类指向页面
@@ -139,6 +140,13 @@ export function delCate(params) {
     url: categoryApi.DelCate,
     method: 'get',
     params: params
+  })
+}
+export function delCates(params) {
+  return request({
+    url: categoryApi.DelCates,
+    method: 'post',
+    data: params
   })
 }
 

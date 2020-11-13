@@ -1,6 +1,7 @@
 // eslint-disable-next-line
 import { UserLayout, BasicLayout, BlankLayout } from '@/layouts'
-import { bxAnaalyse, appStore, comment } from '@/core/icons'
+// eslint-disable-next-line no-unused-vars
+import { bxAnaalyse, appStore, comment, database } from '@/core/icons'
 
 const RouteView = {
   name: 'RouteView',
@@ -21,7 +22,7 @@ export const asyncRouterMap = [
         name: 'dashboard',
         redirect: '/dashboard/home',
         component: RouteView,
-        meta: { title: '首页', keepAlive: true, icon: bxAnaalyse },
+        meta: { title: '网站信息', keepAlive: true, icon: bxAnaalyse },
         children: [
           {
             path: '/dashboard/home',
@@ -32,43 +33,36 @@ export const asyncRouterMap = [
         ]
       },
       // 网站配置
-      {
-        path: '/configuration',
-        name: 'configuration',
-        component: RouteView,
-        redirect: '/configuration/pageManage',
-        meta: { title: '网站信息', icon: comment },
-        children: [
-          {
-            path: '/configuration/pageManage',
-            name: 'configurationPageManage',
-            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
-            component: () => import('@/views/configuration/PageManage'),
-            meta: { title: '页面管理', keepAlive: true }
-          },
-          {
-            path: '/configuration/sitemap',
-            name: 'configurationSitemap',
-            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
-            component: () => import('@/views/configuration/Sitemap'),
-            meta: { title: '网站地图', keepAlive: true }
-          },
-          {
-            path: '/configuration/robots',
-            name: 'configurationRobots',
-            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
-            component: () => import('@/views/configuration/Robots'),
-            meta: { title: 'Robots配置', keepAlive: true }
-          },
-          {
-            path: '/configuration/analysis',
-            name: 'configurationAnalysis',
-            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
-            component: () => import('@/views/configuration/Analysis'),
-            meta: { title: '第三方统计', keepAlive: true }
-          }
-        ]
-      },
+      // {
+      //   path: '/configuration',
+      //   name: 'configuration',
+      //   component: RouteView,
+      //   redirect: '/configuration/pageManage',
+      //   meta: { title: '网站管理', icon: comment },
+      //   children: [
+      //     {
+      //       path: '/configuration/pageManage',
+      //       name: 'configurationPageManage',
+      //       hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+      //       component: () => import('@/views/configuration/PageManage'),
+      //       meta: { title: '页面管理', keepAlive: true }
+      //     },
+      //     {
+      //       path: '/configuration/pageDetails/:id?',
+      //       name: 'configurationPageDetails',
+      //       hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+      //       component: () => import('@/views/configuration/PageDetails'),
+      //       meta: { title: '新增页面', keepAlive: true }
+      //     },
+      //     {
+      //       path: '/configuration/functionManage',
+      //       name: 'configurationFunction',
+      //       hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+      //       component: () => import('@/views/configuration/FunctoinManage'),
+      //       meta: { title: '功能管理', keepAlive: true }
+      //     }
+      //   ]
+      // },
       // 产品
       {
         path: '/products',
@@ -212,6 +206,25 @@ export const asyncRouterMap = [
           }
         ]
       },
+      // 文件银行
+      // {
+      //   path: '/fileBank',
+      //   name: 'fileBank',
+      //   component: RouteView,
+      //   meta: { title: '文件银行', icon: database },
+      //   redirect: '/fileBank/list',
+      //   hideChildrenInMenu: true,
+      //   children: [
+      //     {
+      //       path: '/fileBank/list',
+      //       name: 'filiBankList',
+      //       hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+      //       component: () => import('@/views/fileBank/FileBank'),
+      //       meta: { title: '文件银行', keepAlive: true },
+      //       hidden: true
+      //     }
+      //   ]
+      // },
       // 询盘
       {
         path: '/enquiry',

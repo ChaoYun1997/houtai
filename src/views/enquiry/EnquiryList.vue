@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-card :bordered="false">
+    <a-card title="" class="list" :bordered="false">
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
@@ -48,7 +48,7 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="更新日期">
-                <a-range-picker @change="onDateChange" />
+                <a-range-picker v-model="datePick" />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
@@ -58,11 +58,10 @@
           </a-row>
         </a-form>
       </div>
-
       <div class="table-operator">
-        <a-button @click="handleDel">删除</a-button>
-        <a-button @click="handleReaded">设为已读</a-button>
-        <a-button @click="handleUnread">设为未读</a-button>
+        <a-button @click="handleDel" type="danger">删除</a-button>
+        <a-button @click="handleReaded" type="primary">设为已读</a-button>
+        <a-button @click="handleUnread" type="primary">设为未读</a-button>
       </div>
       <s-table
         ref="table"
@@ -80,12 +79,17 @@
           <img class="country-flag" :src="flags[text]" alt="" />
         </template>
         <template slot="action" slot-scope="text, record">
-          <a-button type="link" size="small" @click="$router.push(`/enquiry/detail/${record.id}`)">查看</a-button>
+          <span class="link-btn" @click="$router.push(`/enquiry/detail/${record.id}`)">查看</span>
           <a-popconfirm title="确定要删除该数据吗?" @confirm="del(record.id)">
-            <a-button type="link" size="small">删除</a-button>
+            <span class="link-btn red-text">删除</span>
           </a-popconfirm>
         </template>
       </s-table>
+      <div class="table-operator list-footer">
+        <a-button @click="handleDel" type="danger">删除</a-button>
+        <a-button @click="handleReaded" type="primary">设为已读</a-button>
+        <a-button @click="handleUnread" type="primary">设为未读</a-button>
+      </div>
     </a-card>
   </div>
 </template>
@@ -93,7 +97,9 @@
 import STable from '@/components/Table'
 import { country } from '@/utils/country'
 import { getEnquiry, delEnquiry, delEnquirys, setEnquirysIsReaded, setEnquirysIsUnRead } from '../../api/enquiry'
+// eslint-disable-next-line no-unused-vars
 import moment from 'moment'
+
 const columns = [
   {
     title: '询盘单号',
@@ -149,10 +155,12 @@ export default {
     this.columns = columns
     this.flags = flags
     return {
+        datePick: undefined,
       contactRegion: 'all',
       state: 'all',
       equipment: 'all',
       enquirySource: 'all',
+      enquiryType: 'all',
       queryParam: {},
       selectedRowKeys: [],
       loadData: parameter => {
@@ -250,6 +258,14 @@ export default {
       if (this.enquirySource !== 'all') {
         this.queryParam.enquirySource = this.enquirySource
       } else delete this.queryParam.enquirySource
+      if (this.datePick) {
+        this.queryParam.startDate = moment(this.datePick[0]._d, 'YY-MM-DD hh:mm:ss').format()
+        this.queryParam.endDate = moment(this.datePick[1]._d, 'YY-MM-DD hh:mm:ss').format()
+      } else {
+        delete this.queryParam.startDate
+        delete this.queryParam.endDate
+      }
+      console.log(moment(this.datePick[0]._d, 'YY-MM-DD hh:mm:ss').format())
       this.$refs.table.refresh(true)
     },
     handleReset() {
@@ -258,17 +274,17 @@ export default {
       this.equipment = 'all'
       this.state = 'all'
       this.contactRegion = 'all'
-      this.$refs.datap.value = null
+      this.datePick = undefined
+      // this.$refs.datap.value = null
       this.$refs.table.refresh(true)
     },
     onProductSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
-    onDateChange() {
-      console.log(this.$refs.datap)
-      this.queryParam.startDate = moment(this.dates[0]._d, 'YY-MM-DD hh:mm:ss').format()
-      this.queryParam.endDate = moment(this.dates[1]._d, 'YY-MM-DD hh:mm:ss').format()
+    onDateChange(date, dateString) {
+      this.queryParam.startDate = dateString[0]
+      this.queryParam.endDate = dateString[1]
     }
   }
 }
@@ -276,7 +292,18 @@ export default {
 
 <style scoped lang="less">
 @import '~ant-design-vue/lib/style/themes/default.less';
+
 .country-flag {
   width: 25px;
+}
+.list {
+  position: relative;
+
+  .list-footer {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 10;
+  }
 }
 </style>

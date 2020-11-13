@@ -61,6 +61,7 @@ export default {
       position: relative;
       overflow: hidden;
       width: 100%;
+      min-height: ;
       color: rgba(0, 0, 0, .45);
       font-size: 14px;
       line-height: 22px;

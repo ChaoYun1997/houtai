@@ -20,7 +20,8 @@ const getters = {
   phone: state => state.user.phone,
   openDate: state => state.user.openDate,
   expDate: state => state.user.expDate,
-  nick: state => state.user.nick
+  nick: state => state.user.nick,
+  userinfo: state => state.user.userinfo
 }
 
 export default getters

@@ -10,5 +10,6 @@ import bxAnaalyse from '@/assets/icons/bx-analyse.svg?inline' // path to your '*
 import appStore from '@/assets/icons/app store.svg?inline'
 import accountBook from '@/assets/icons/account-book.svg?inline'
 import comment from '@/assets/icons/comment-alt.svg?inline'
+import database from '@/assets/icons/database.svg?inline'
 
-export { bxAnaalyse, appStore, accountBook, comment }
+export { bxAnaalyse, appStore, accountBook, comment, database }

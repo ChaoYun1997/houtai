@@ -10,6 +10,7 @@ import Radar from '@/components/Charts/Radar'
 import RankList from '@/components/Charts/RankList'
 import TransferBar from '@/components/Charts/TransferBar'
 import TagCloud from '@/components/Charts/TagCloud'
+import SmoothLine from '@/components/Charts/SmoothLine'
 
 // pro components
 import AvatarList from '@/components/AvatarList'
@@ -34,6 +35,7 @@ export {
   Liquid,
   MiniArea,
   MiniSmoothArea,
+  SmoothLine,
   MiniBar,
   MiniProgress,
   Radar,

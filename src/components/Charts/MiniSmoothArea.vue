@@ -1,10 +1,13 @@
 <template>
   <div :class="prefixCls">
-    <div class="chart-wrapper" :style="{ height: 46 }">
-      <v-chart :force-fit="true" :height="100" :data="dataSource" :scale="scale" :padding="[36, 0, 18, 0]">
+    <div class="chart-wrapper" :style="{ height: 346 }">
+      <v-chart :force-fit="true" :height="300" :data="dataSource" :scale="scale" :padding="[36, 30, 20, 40]">
         <v-tooltip />
+        <v-axis />
+        <v-legend />
         <v-smooth-line position="x*y" :size="2" />
-        <v-smooth-area position="x*y" />
+        <!--        <v-smooth-area position="x*y" color="rgba(234,243,248,.5)"/>-->
+        <v-point position="x*y" shape="circle" />
       </v-chart>
     </div>
   </div>
@@ -27,7 +30,7 @@ export default {
       required: true
     }
   },
-  data () {
+  data() {
     return {
       height: 100
     }
@@ -36,5 +39,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  @import "smooth.area.less";
+@import 'smooth.area.less';
 </style>

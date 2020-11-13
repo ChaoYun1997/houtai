@@ -8,6 +8,7 @@ module.exports = {
     '@vue/standard'
   ],
   rules: {
+    'no-irregular-whitespace': 'off',
     'eol-last': 0,
     'space-before-function-paren': 0,
     'no-console': 'off',

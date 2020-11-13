@@ -7,7 +7,8 @@ const articlesApi = {
   ArticleDetail: '/article/article', // 文章详情
   GetArticleCate: '/article/getNames', // 获取文章分类列表
   UpdateArticleCategory: '/article/updateCatid', // 更新、移动文章分类
-  DelArticle: '/article/delArticle' // 彻底删除文章
+  DelArticle: '/article/delArticle', // 彻底删除文章
+  DelArticles: '/article/delArticles' // 彻底删除文章
 }
 
 // 获取文章列表
@@ -43,6 +44,15 @@ export function delArticle(param) {
     url: articlesApi.DelArticle,
     method: 'get',
     params: param
+  })
+}
+
+// 批量彻底删除文章
+export function delArticles(param) {
+  return request({
+    url: articlesApi.DelArticles,
+    method: 'post',
+    data: param
   })
 }
 

@@ -186,8 +186,10 @@ export default {
               Object.assign({}, this.localPagination, {
                 current: r.pageIndex, // 返回结果中的当前分页数
                 total: r.totalCount, // 返回结果中的总记录数
+                showQuickJumper: true,
                 showSizeChanger: this.showSizeChanger,
-                pageSize: (pagination && pagination.pageSize) || this.localPagination.pageSize
+                pageSize: (pagination && pagination.pageSize) || this.localPagination.pageSize,
+                showTotal: total => `共${total}条记录,共${Math.ceil(total / this.localPagination.pageSize)}页`
               })) ||
             false
           // 为防止删除数据后导致页面当前页面数据长度为 0 ,自动翻页到上一页
@@ -204,7 +206,7 @@ export default {
               ['auto', true].includes(this.showPagination) &&
               r.totalCount <= r.pageIndex * this.localPagination.pageSize
             ) {
-              this.localPagination.hideOnSinglePage = true
+              this.localPagination.hideOnSinglePage = false
             }
           } catch (e) {
             this.localPagination = false

@@ -1,51 +1,42 @@
 <template>
   <div>
-    <a-card class="list">
-      <div class="table-operator">
-        <a-button type="primary" @click="$router.push('/articles/add-category')">
-          新增
+    <a-card :bordered="false">
+      <div slot="title">
+        <a-button type="primary" icon="plus" @click="$router.push('/products/add-category')">
+          新增产品分类
         </a-button>
-        <a-button type="primary" @click="handleSort">
-          排序
+        <a-button :style="{ marginLeft: '8px' }" icon="plus" @click="visibleUploadXls = true">
+          批量编辑TKD
         </a-button>
-        <a-button type="danger" @click="handleDel">
-          删除
-        </a-button>
-        <!--      <a-button :disabled="selectedRowKeys.length === 0">设置指向页面</a-button>-->
       </div>
+      <div slot="action" class="batch-content">
+        <a-button :disabled="selectedRowKeys.length === 0">设置指向页面</a-button>
+      </div>
+    </a-card>
+    <a-card>
       <s-table
         ref="table"
         size="default"
         :rowKey="record => record.id"
-        :columns="columns"
+        :columns="cateColumns"
         :data="loadCateData"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
-<!--        <div slot="sort" slot-scope="text, record">-->
-<!--          <a-input v-model="record.id" size="small" style="width: 60px"></a-input>-->
-<!--        </div>-->
-        <a slot="catname" slot-scope="text">{{ text }}</a>
+        <div slot="sort" slot-scope="text, record">
+          <!--          TODO id改为sort -->
+          <a-input v-model="record.id" style="width: 80px"></a-input>
+        </div>
+        <div slot="catname" slot-scope="text, record">
+          <a @click="$router.push({ path: '/products/product-list', query: { catId: record.id } })">
+            {{ text }}
+          </a>
+        </div>
         <div class="action" slot="action" slot-scope="text, record">
-          <span class="link-btn right-split" @click="edit(record.id)">编辑</span>
-          <span class="link-btn right-split" @click="preview(record.catUrl)">预览</span>
-          <a-popconfirm title="你确定要删除该产品吗?" @confirm="del(record.id)">
-            <span class="link-btn red-text">删除</span>
-          </a-popconfirm>
+          <a-button type="primary" icon="edit" size="small" @click="edit(record.id)"/>
+          <a-button type="danger" icon="delete" size="small" @click="del(record.id)"/>
+          <a-button icon="eye" size="small" @click="preview(record.id)"/>
         </div>
       </s-table>
-
-      <div class="table-operator list-footer">
-        <a-button type="primary" @click="$router.push('/articles/add-category')">
-          新增
-        </a-button>
-        <a-button type="primary" @click="handleSort">
-          排序
-        </a-button>
-        <a-button type="danger" @click="handleDel">
-          删除
-        </a-button>
-        <!--      <a-button :disabled="selectedRowKeys.length === 0">设置指向页面</a-button>-->
-      </div>
     </a-card>
     <a-modal v-model="visibleUploadXls" title="导入产品">
       <p>
@@ -88,28 +79,28 @@
 
 <script>
   import STable from '@/components/Table'
-
-  import { getArticleCate, delCate } from '@/api/category'
+  // import { getProductCategory } from '@/api/products'
+  import { getProductCate, delCate } from '@/api/category'
   import * as XLSX from 'xlsx'
-  import { delCates } from '../../api/category'
+  import { mapState } from 'vuex'
 
-  const columns = [
-    // {
-    //   title: '排序',
-    //   dataIndex: 'ｉｄ',
-    //   scopedSlots: {
-    //     customRender: 'sort'
-    //   }
-    // },
+  const cateColumns = [
     {
-      title: '文章分类名称',
+      title: '序号',
+      dataIndex: 'sort',
+      scopedSlots: {
+        customRender: 'sort'
+      }
+    },
+    {
+      title: '分类名称',
       dataIndex: 'catName',
       scopedSlots: {
         customRender: 'catname'
       }
     },
     {
-      title: '文章数量',
+      title: '产品数',
       dataIndex: 'itemCount'
     },
     {
@@ -138,13 +129,14 @@
       STable
     },
     data() {
-      this.columns = columns
+      this.cateColumns = cateColumns
       return {
         visibleUploadXls: false,
         fileList: [],
         selectedRowKeys: [],
+        category: [],
         loadCateData: parameter => {
-          return getArticleCate(Object.assign(parameter, this.queryParam))
+          return getProductCate(Object.assign(parameter, this.queryParam))
         },
         queryParam: {
           pageIndex: 1,
@@ -155,35 +147,61 @@
         }
       }
     },
-    methods: {
-      // 排序
-      handleSort() {
-      },
-      checkSelected() {
-        if (this.selectedRowKeys.length === 0) {
-          this.$message.warning('请选择至少一条数据')
-          return false
+    computed: {
+      ...mapState({
+        website: (state) => {
+          return /^http/.test(state.user.website)
+            ? state.user.website
+            : process.env.VUE_APP_PROTOCAL_HEAD + state.user.website
         }
-        return true
-      },
-      // 批量删除
-      handleDel() {
-        if (!this.checkSelected()) return
-        this.$confirm({
-          content: '你确定要删除这些数据吗？',
-          onOk: () => {
-            delCates(this.selectedRowKeys).then(res => {
-              if (res.code === 200) this.$message.success('操作成功')
-              this.$refs.table.refresh()
-            }).catch(err => {
-              this.$message.error(err.msg)
+      })
+    },
+    methods: {
+      treeTransfer(data, id) {
+        function tree(pid) {
+          const arr = []
+          data
+            .filter(item => item.catPid === pid)
+            .forEach(item => {
+              const obj = {
+                title: item.catName,
+                key: `0-${pid}-${item.id}`
+              }
+              const child = tree(item.id)
+              if (child.length) {
+                obj.children = child
+              }
+              arr.push(obj)
             })
-          }
-        })
+          return arr
+        }
+        return tree(id)
       },
       downloadXls() {
-        const host = window.location.host
-        window.open(host + '/files/productTemplate.xls')
+        if (!this.category.length) {
+          this.$message.error('没有分类信息')
+          return false
+        }
+        var data = this.category.map(item => {
+          console.log(item)
+          return {
+            ID: item.id,
+            产品分类名称: item.catName,
+            '页面标题/Title': item.seoTitle,
+            '页面关键词/Keywords': item.seoKeyWord,
+            '页面描述/Description': item.seoDescription
+          }
+        })
+
+        /* make the worksheet */
+        var ws = XLSX.utils.json_to_sheet(data)
+
+        /* add to workbook */
+        var wb = XLSX.utils.book_new()
+        XLSX.utils.book_append_sheet(wb, ws, 'sheet1')
+
+        /* generate an XLSX file */
+        XLSX.writeFile(wb, 'categoryTemplate.xlsx')
       },
       handleRemove(file) {
         const index = this.fileList.indexOf(file)
@@ -222,7 +240,6 @@
             // 最终获取到并且格式化后的 json 数据
             const uploadData = data.map((item, index) => {
               return {
-                id: index,
                 catName: item['产品分类名称'],
                 catTitle: item['页面标题/Title'],
                 catKeyword: item['页面关键词/Keywords'],
@@ -240,25 +257,37 @@
         // 以二进制方式打开文件
         fileReader.readAsBinaryString(files[0])
       },
-      onSelectChange(selectedRowKeys, selectedRows) {
-        console.log(selectedRowKeys)
-        this.selectedRowKeys = selectedRowKeys
-        this.selectedRows = selectedRows
+      onSelectChange() {
       },
       edit(id) {
-        this.$router.push(`/articles/add-category/${id}`)
+        this.$router.push(`/products/add-category/${id}`)
       },
       del(id) {
-        delCate({ id: id }).then(res => {
-          if (res.code === 200) {
-            this.$message.success('操作成功')
-            this.$refs.table.refresh()
+        this.$confirm({
+          content: '你确定要删除该分类吗？',
+          centered: true,
+          onOk: () => {
+            const params = {
+              id: id
+            }
+            delCate(params)
+              .then(res => {
+                if (res.code === 200) {
+                  this.$message.success('操作成功')
+                  this.$refs.table.refresh(true)
+                } else {
+                  throw res
+                }
+              })
+              .catch(err => {
+                this.$message.error(err.msg || '操作失败')
+              })
           }
         })
       },
-      preview(url) {
-        const host = process.env.VUE_APP_WEBSITE
-        window.open(`${host}/${url}`)
+      preview(id) {
+        const link = this.website + '/Products/1/100/' + id
+        window.open(link, '_blank')
       }
     }
   }
@@ -268,17 +297,6 @@
   .action {
     button {
       margin-right: 5px;
-    }
-  }
-
-  .list {
-    position: relative;
-
-    .list-footer {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      z-index: 10;
     }
   }
 </style>

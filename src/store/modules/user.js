@@ -30,10 +30,14 @@ const user = {
     websiteName: '',
     phone: '',
     openDate: '',
-    expDate: ''
+    expDate: '',
+    userinfo: {}
   },
 
   mutations: {
+    SET_USERINFO(state, userinfo) {
+      state.userinfo = userinfo
+    },
     SET_NICK(state, nick) {
       state.nick = nick
     },
@@ -144,6 +148,7 @@ const user = {
               reject(res)
             }
             const { data } = res
+            commit('SET_USERINFO', data)
             commit('SET_NAME', data.userName)
             commit('SET_NICK', data.userNick)
             commit('SET_UID', data.id)
