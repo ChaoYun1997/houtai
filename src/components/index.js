@@ -26,6 +26,8 @@ import TagSelect from '@/components/TagSelect'
 import StandardFormRow from '@/components/StandardFormRow'
 import ArticleListContent from '@/components/ArticleListContent'
 
+import Tinymce from '@/components/Tinymce'
+
 import Dialog from '@/components/Dialog'
 
 export {
@@ -53,6 +55,6 @@ export {
   TagSelect,
   StandardFormRow,
   ArticleListContent,
-
-  Dialog
+  Dialog,
+  Tinymce
 }

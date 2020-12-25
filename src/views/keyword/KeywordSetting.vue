@@ -1,13 +1,13 @@
 <template>
   <div>
     <a-card :body-style="{ padding: '0 32px 24px' }" :bordered="false">
-      <h3>选择关键词内链的生成规则</h3>
-
+      <h3 slot="title">选择关键词内链的生成规则</h3>
       <a-radio-group v-model="value">
         <a-radio :style="radioStyle" :value="0">每个关键词都生成关键词内链</a-radio>
         <a-radio :style="radioStyle" :value="1">只有当关联的产品/文章数大于3个才生成关键词内链</a-radio>
         <a-radio :style="radioStyle" :value="2">只有当关联的产品/文章数大于5个才生成关键词内链</a-radio>
         <a-radio :style="radioStyle" :value="3">只有当关联的产品/文章数大于8个才生成关键词内链</a-radio>
+        <a-radio :style="radioStyle" :value="4">不生成内链</a-radio>
       </a-radio-group>
       <br />
       <a-button style="margin-top:10px" type="primary" @click="handleKeywordSetting" :loading="loading">保存</a-button>
@@ -72,17 +72,6 @@ export default {
 
 <style scoped lang="less">
 @import '~ant-design-vue/es/style/themes/default.less';
-h3 {
-  margin-top: 40px;
-  font-weight: bold;
-  &:before {
-    display: inline;
-    content: '';
-    border-left: 5px solid @primary-color;
-    padding-left: 10px;
-    height: 24px;
-  }
-}
 .kLayout {
   position: relative;
 }

@@ -1,6 +1,7 @@
 <template>
   <div>
-    <a-card :bordered="false" title="产品查询" class="margin-bottom">
+    <a-card :bordered="false"  class="margin-bottom">
+      <h3 slot="title">产品查询</h3>
       <a-form layout="inline">
         <a-form-item>
           <a-select placeholder="请选择产品类目" style="width: 260px;" v-model="cateParam">
@@ -19,7 +20,8 @@
         </a-form-item>
       </a-form>
     </a-card>
-    <a-card class="list">
+    <a-card class="list" >
+      <h3 slot="title">产品列表</h3>
       <s-table
         ref="table"
         size="default"
@@ -45,16 +47,17 @@
           </a-tag>
         </span>
         <div class="action" slot="action" slot-scope="text, record">
-          <span class="link-btn right-split" @click="restore(record.id)">恢复产品</span>
+          <span class="link-btn right-split" @click="restore(record.id)">恢复</span>
           <span class="link-btn" style="color: red" @click="remove(record.id)">彻底删除</span>
         </div>
       </s-table>
       <div class="table-operator list-footer">
-        <a-button type="primary" @click="handleRestore">
+        <a-checkbox :indeterminate="indeterminate" :checked="checkAll" @change="handleSelectedAll">全选</a-checkbox>
+        <a-button :style="{ marginLeft: '8px' }" type="primary" @click="handleRestore">
           恢复产品
         </a-button>
-        <a-button :style="{ marginLeft: '8px' }" @click="handleRemove">
-          彻底删除
+        <a-button :style="{ marginLeft: '8px' }" @click="handleRemove" type="danger">
+          批量彻底删除
         </a-button>
       </div>
     </a-card>
@@ -69,51 +72,42 @@
 
   const columns = [
     {
-      title: '#',
-      dataIndex: 'id'
-    },
-    {
       title: '产品图片',
       dataIndex: 'shopImg',
       scopedSlots: {
         customRender: 'shopImg'
-      }
+      },
+      align: 'center'
     },
     {
       title: '产品名称',
       dataIndex: 'shopTitle',
-      sorter: true
+      sorter: true,
+      align: 'center'
     },
     {
       title: '产品型号',
-      dataIndex: 'shopModel'
+      dataIndex: 'shopModel',
+      align: 'center'
     },
     {
-      title: '产品类目',
-      dataIndex: 'catName'
+      title: '所属类目',
+      dataIndex: 'catName',
+      align: 'center'
     },
     {
-      title: '更新时间',
+      title: '删除时间',
       dataIndex: 'updateDate',
-      sorter: true
-    },
-    {
-      title: '产品链接',
-      dataIndex: 'shopUrl'
-    },
-    {
-      title: '标签',
-      dataIndex: 'shopTags',
-      scopedSlots: {
-        customRender: 'shopTags'
-      }
+      sorter: true,
+      align: 'center'
     },
     {
       title: '操作',
       dataIndex: 'action',
       scopedSlots: {
         customRender: 'action'
-      }
+      },
+      align: 'center'
     }
   ]
   export default {
@@ -124,6 +118,8 @@
     data() {
       this.columns = columns
       return {
+        checkAll: false,
+        indeterminate: false,
         loadData: parameter => {
           return getRecycleBin(Object.assign(parameter, this.queryParam))
         },
@@ -146,6 +142,15 @@
       this.loadCateData()
     },
     methods: {
+      handleSelectedAll(e) {
+        const items = this.$refs.table.localDataSource
+        this.selectedRows = e.target.checked ? items : []
+        this.$refs.table.selectedRows = e.target.checked ? items : []
+        this.selectedRowKeys = e.target.checked ? items.map(item => item.id) : []
+        this.$refs.table.selectedRowKeys = e.target.checked ? items.map(item => item.id) : []
+        this.indeterminate = false
+        this.checkAll = e.target.checked
+      },
       // 查询
       handleQuery() {
         if (this.cateParam !== 'all') {
@@ -185,8 +190,11 @@
         return name
       },
       onSelectChange(selectedRowKeys, selectedRows) {
+        const items = this.$refs.table.localDataSource
         this.selectedRowKeys = selectedRowKeys
         this.selectedRows = selectedRows
+        this.checkAll = items.length === this.selectedRowKeys.length
+        this.indeterminate = !!this.selectedRowKeys.length && this.selectedRowKeys.length < items.length
       },
       getImg(name) {
         console.log(name)
@@ -280,6 +288,7 @@
 
     .list-footer {
       position: absolute;
+      margin-left: 25px;
       bottom: 20px;
       left: 20px;
       z-index: 10;

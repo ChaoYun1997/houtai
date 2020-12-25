@@ -7,7 +7,25 @@ const userApi = {
   LoginStatus: '/user/check',
   Updatepwd: '/user/updatepwd',
   UserInfo: '/user/info',
-  UpdateWebsite: '/user/updateWeb'
+  UpdateWebsite: '/user/updateWeb',
+  UpdateConfig: '/user/updateUser',
+  SiteData: '/user/siteData'
+}
+// 获取网站统计信息
+export function getStatistics() {
+  return request({
+    url: userApi.SiteData,
+    method: 'get'
+  })
+}
+
+// 更新用户设置
+export function updateConfig(params) {
+  return request({
+    url: userApi.UpdateConfig,
+    method: 'post',
+    data: params
+  })
 }
 
 // 登陆

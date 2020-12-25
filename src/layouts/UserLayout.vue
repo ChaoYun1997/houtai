@@ -5,11 +5,10 @@
         <div class="header">
           <a href="/">
             <img src="~@/assets/logo.svg" class="logo" alt="logo" />
-            <span class="title">Saas Admin</span>
+            <span class="title">大鱼品牌化营销建站系统</span>
           </a>
         </div>
         <div class="desc">
-          Saas Admin control panel
         </div>
       </div>
 
@@ -22,7 +21,7 @@
         <!--          <a href="_self">条款</a>-->
         <!--        </div>-->
         <div class="copyright">
-          Copyright &copy; 2020 Saas
+          Copyright &copy; 2020 大鱼
         </div>
       </div>
     </div>

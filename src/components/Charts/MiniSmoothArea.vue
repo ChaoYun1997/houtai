@@ -1,7 +1,7 @@
 <template>
   <div :class="prefixCls">
     <div class="chart-wrapper" :style="{ height: 346 }">
-      <v-chart :force-fit="true" :height="300" :data="dataSource" :scale="scale" :padding="[36, 30, 20, 40]">
+      <v-chart :force-fit="true" :height="300" :data="dataSource" :scale="scale" :padding="[36, 30, 50, 40]">
         <v-tooltip />
         <v-axis />
         <v-legend />

@@ -41,23 +41,42 @@
           </a-tree>
         </a-form-model-item>
         <a-form-model-item label="文章分类图片">
-          <a-upload
-            name="avatar"
-            list-type="picture-card"
-            class="cover-uploader"
-            accept="image/*"
-            :show-upload-list="false"
-            :data="getUploadData"
-            :action="uploadUrl"
-            :before-upload="getUploadToken"
-            @change="handleArticlePicUpload"
-          >
-            <img v-if="coverImg" :src="coverImg" alt="cover" />
-            <div v-else>
-              <a-icon :type="uploading ? 'loading' : 'plus'" />
-              <div class="ant-upload-text">上传</div>
-            </div>
-          </a-upload>
+          <p>
+            <span
+              v-if="!coverImg"
+              :class="{ 'link-btn': true }"
+              @click="showFileBank(0)"
+            >
+              从文件银行选取
+            </span>
+            <template v-if="coverImg">
+              <span class="link-btn" @click="clearFile(0)">删除</span>
+              <a-popconfirm placement="right">
+                <template slot="title">
+                  删除对象不会影响文件银行内容
+                </template>
+                <a-icon type="question-circle" />
+              </a-popconfirm>
+            </template>
+          </p>
+          <img v-if="coverImg" class="cover-preview" :src="coverImg" alt="cover" />
+<!--          <a-upload-->
+<!--            name="avatar"-->
+<!--            list-type="picture-card"-->
+<!--            class="cover-uploader"-->
+<!--            accept="image/*"-->
+<!--            :show-upload-list="false"-->
+<!--            :data="getUploadData"-->
+<!--            :action="uploadUrl"-->
+<!--            :before-upload="getUploadToken"-->
+<!--            @change="handleArticlePicUpload"-->
+<!--          >-->
+<!--            <img v-if="coverImg" :src="coverImg" alt="cover" />-->
+<!--            <div v-else>-->
+<!--              <a-icon :type="uploading ? 'loading' : 'plus'" />-->
+<!--              <div class="ant-upload-text">上传</div>-->
+<!--            </div>-->
+<!--          </a-upload>-->
         </a-form-model-item>
         <h3 class="title">指向页面</h3>
         <a-divider style="margin: 4px 0 20px 0;" />
@@ -117,6 +136,13 @@
       </a-form-model>
     </a-card>
 
+    <a-modal v-model="visibleFileBank" title="文件银行" :width="1000" centered @cancel="hideFileBank">
+      <iframe :src="src" ref="iframe" width="950" height="600"></iframe>
+      <div slot="footer">
+        <a-button type="primary" @click="addFilesTo">确 定</a-button>
+        <a-button @click="hideFileBank">取 消</a-button>
+      </div>
+    </a-modal>
     <a-modal v-model="showAddNewPage" title="添加新页面">
       <a-row :gutter="[16, 24]">
         <a-col :span="4">页面名称</a-col>
@@ -150,6 +176,12 @@ export default {
   name: 'CatetoryDetail',
   data() {
     return {
+      src: '',
+      iframeWin: {},
+      queryType: null,
+      visibleFileBank: false,
+      recervingItems: [],
+
       submitLoading: false,
       showAddNewPage: false,
       newPageName: '',
@@ -189,7 +221,10 @@ export default {
         cate: [{ required: true, message: '请输入文章分类名称', trigger: 'blur' }],
         keyword: [{ required: true, message: '请输入分类关键词', trigger: 'blur' }]
       },
-      queryCate: {}
+      queryCate: {
+        pageSize: 100,
+        pageIndex: 1
+      }
     }
   },
   computed: {
@@ -205,8 +240,73 @@ export default {
     }
     this.loadProductCate()
   },
+  destroyed() {
+    window.removeEventListener('message', this.handleMessage)
+  },
+  mounted() {
+    this.$nextTick(() => {
+      // 在外部 Vue 的 window 上添加 postMessage 的监听，并且绑定处理函数 handleMessage
+      window.addEventListener('message', this.handleMessage)
+    })
+  },
   methods: {
     ...mapMutations(['SET_PAGE']),
+    hideFileBank() {
+      this.src = ''
+      this.visibleFileBank = false
+    },
+    addFilesTo() {
+      console.log(this.recervingItems)
+      this.visibleFileBank = false
+      this.src = ''
+      if (this.queryType === 0) {
+        const host = process.env.VUE_APP_HOST
+        this.coverImg = host + '/' + this.recervingItems[0].fileDownloadName
+        this.form.coverName = this.recervingItems[0].fileDownloadName
+      }
+    },
+    sendMessage(type) {
+      // 外部vue向iframe内部传数据
+      console.log(this.$refs.iframe)
+      this.iframeWin = this.$refs.iframe.contentWindow
+      this.iframeWin.postMessage(
+        {
+          cmd: 'doSomething',
+          params: {
+            type: type
+          }
+        },
+        '*'
+      )
+    },
+    handleMessage(event) {
+      // 根据上面制定的结构来解析 iframe 内部发回来的数据
+      const data = event.data
+      switch (data.cmd) {
+        case 'ready-for-receiving':
+          // 业务逻辑
+          break
+        case 'recerving-item':
+          console.log(data.item)
+          this.recervingItems = data.item
+          break
+      }
+    },
+    clearFile(type) {
+      console.log(type)
+      if (type === 0) {
+        this.coverImg = ''
+      }
+    },
+    showFileBank(type) {
+      const files = ['img', 'video', 'pdf']
+      this.src = '/fileBank/list/' + files[type]
+      this.visibleFileBank = true
+      this.queryType = type
+      this.$nextTick(() => {
+        this.sendMessage(type)
+      })
+    },
     handleArticlePicUpload(info) {
       if (info.file.status === 'uploading') {
         this.uploading = true
@@ -455,5 +555,21 @@ export default {
 }
 .slideToggle-enter, .slideToggle-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+
+.cover-preview {
+  display: block;
+  width: 100px;
+  height: 100px;
+  position: relative;
+  border: 1px solid @border-color-base;
+  border-radius: @border-radius-base;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 </style>

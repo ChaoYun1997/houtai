@@ -94,6 +94,7 @@ const user = {
         }
         getUploadSign(param)
           .then(res => {
+            if (res.code !== 200) throw res
             commit('SET_QINIUPIC', res.data)
             resolve(res)
           })

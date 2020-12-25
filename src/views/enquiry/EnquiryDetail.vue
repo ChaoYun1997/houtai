@@ -1,19 +1,20 @@
 <template>
   <div>
     <a-button v-print="'#print-content'" type="primary" style="margin-bottom: 20px;">打印</a-button>
-    <a-card :bordered="false">
-      <div id="print-content">
-        <a-descriptions bordered>
+    <div id="print-content">
+      <a-card :bordered="false">
+        <h3 slot="title">询盘信息</h3>
+        <a-descriptions bordered :column="{xs: 2, md: 2, lg: 2}" style="width: 1300px">
           <a-descriptions-item label="询盘单号">
             {{ detail.orderNumber }}
           </a-descriptions-item>
           <a-descriptions-item label="发送时间">
             {{ detail.createDate }}
           </a-descriptions-item>
-          <a-descriptions-item label="联系人IP">
+          <a-descriptions-item label="询盘IP">
             {{ detail.contactIP }}
           </a-descriptions-item>
-          <a-descriptions-item label="国家/地区">
+          <a-descriptions-item label="来源国家">
             {{ detail.contactRegion }}
           </a-descriptions-item>
           <a-descriptions-item label="询盘来源">
@@ -22,104 +23,97 @@
           <a-descriptions-item label="来源网页">
             {{ detail.sourceUrl }}
           </a-descriptions-item>
-        </a-descriptions>
-        <br />
-        <h3 class="title">询盘信息</h3>
-        <a-descriptions layout="vertical" :column="4" bordered>
-          <a-descriptions-item label="产品图片">
-            <a-icon type="picture" style="font-size: 32px; opacity: .3" v-if="!detail.shopImgUrl"></a-icon>
-            <img v-else :src="imgUrl" alt="" class="cover" />
-          </a-descriptions-item>
-          <a-descriptions-item label="产品名称">
-            {{ detail.shopName }}
-          </a-descriptions-item>
-          <a-descriptions-item label="产品属性">
-            {{ detail.shopSku }}
-          </a-descriptions-item>
-          <a-descriptions-item label="数量">
-            {{ detail.quantity }}
+          <a-descriptions-item label="来源终端">
+            {{ `${detail.equipment} | ${detail.browser} | ${detail.language} | ${detail.systemName} | ${detail.browserUa}` }}
           </a-descriptions-item>
         </a-descriptions>
-        <ul class="table-list">
-          <li>
-            <b>Name</b>
-            <span>
-              {{ detail.contactName }}
-            </span>
-          </li>
-          <li>
-            <b>E-mail</b>
-            <span>
-              {{ detail.contactEMail }}
-            </span>
-          </li>
-          <li>
-            <b>Company Name</b>
-            <span>
-              {{ detail.contactCompany }}
-            </span>
-          </li>
-          <li>
-            <b>Tell</b>
-            <span>
-              {{ detail.contactTel }}
-            </span>
-          </li>
-          <li>
-            <b>Message</b>
-            <span>
-              {{ detail.message }}
-            </span>
-          </li>
-        </ul>
-        <h3 class="title">设备信息</h3>
-        <ul class="table-list">
-          <li>
-            <b>访问终端</b>
-            <span>
-              {{ detail.equipment }}
-            </span>
-          </li>
-          <li>
-            <b>浏览器</b>
-            <span>
-              {{ detail.browser }}
-            </span>
-          </li>
-          <li>
-            <b>语言</b>
-            <span>
-              {{ detail.language }}
-            </span>
-          </li>
-          <li>
-            <b>操作系统</b>
-            <span>
-              {{ detail.systemName }}
-            </span>
-          </li>
-          <li>
-            <b>客户端</b>
-            <span>
-              {{ detail.browserUa }}
-            </span>
-          </li>
-        </ul>
-        <h3 class="title">跟进记录</h3>
-        <a-timeline style="margin-top: 20px;">
-          <template v-for="(item, index) in progressingLog">
-            <a-timeline-item :key="index">
-              <a-row>
-                <a-col :span="4"> 意向：{{ intentions[item.intentionType] }} </a-col>
-                <a-col :span="12"> 进展：{{ progressingText[item.progressType] }} </a-col>
-              </a-row>
-              <p>备注：{{ item.note }}</p>
-            </a-timeline-item>
-          </template>
-        </a-timeline>
-      </div>
-
-      <h3 class="title">操作</h3>
+      </a-card>
+      <br>
+      <a-card :bordered="false">
+        <h3 slot="title">询盘内容</h3>
+        <a-descriptions bordered :column="{xs: 2, md: 2, lg: 2}" style="width: 1300px">
+          <a-descriptions-item label="姓名">
+            {{ detail.contactName }}
+          </a-descriptions-item>
+          <a-descriptions-item label="公司">
+            {{ detail.contactCompany }}
+          </a-descriptions-item>
+          <a-descriptions-item label="职位">
+          </a-descriptions-item>
+          <a-descriptions-item label="邮箱">
+            {{ detail.contactEMail }}
+          </a-descriptions-item>
+          <a-descriptions-item label="国家">
+            {{ detail.contactRegion }}
+          </a-descriptions-item>
+          <a-descriptions-item label="电话">
+            {{ detail.contactTel }}
+          </a-descriptions-item>
+          <a-descriptions-item label="询盘内容">
+            {{ detail.message }}
+          </a-descriptions-item>
+        </a-descriptions>
+      </a-card>
+      <br>
+      <a-card :bordered="false" title="产品信息">
+<!--        <a-descriptions layout="vertical" :column="4" bordered>-->
+<!--          <a-descriptions-item label="产品图片">-->
+<!--            <a-icon type="picture" style="font-size: 32px; opacity: .3" v-if="!detail.shopImgUrl"></a-icon>-->
+<!--            <img v-else :src="imgUrl" alt="" class="cover" />-->
+<!--          </a-descriptions-item>-->
+<!--          <a-descriptions-item label="产品名称">-->
+<!--            {{ detail.shopName }}-->
+<!--          </a-descriptions-item>-->
+<!--          <a-descriptions-item label="产品属性">-->
+<!--            {{ detail.shopSku }}-->
+<!--          </a-descriptions-item>-->
+<!--          <a-descriptions-item label="数量">-->
+<!--            {{ detail.quantity }}-->
+<!--          </a-descriptions-item>-->
+<!--        </a-descriptions>-->
+        <table width="1200" class="product-list">
+          <tr>
+            <th style="text-align:center">图片</th>
+            <th style="text-align:center">产品名称</th>
+            <th style="text-align:center">产品型号</th>
+            <th style="text-align:center">产品链接</th>
+            <th style="text-align:center">需求数量</th>
+          </tr>
+          <tr>
+            <td style="text-align:center">
+              <a-icon type="picture" style="font-size: 32px; opacity: .3" v-if="!detail.shopImgUrl"></a-icon>
+              <img v-else :src="imgUrl" alt="" class="cover" />
+            </td>
+            <td style="text-align:center">
+              <span class="link-btn">{{ detail.shopName }}</span>
+            </td>
+            <td style="text-align:center">
+              {{ detail.shopSku }}
+            </td>
+            <td style="text-align:center"></td>
+            <td style="text-align:center">
+              {{ detail.quantity }}
+            </td>
+          </tr>
+        </table>
+      </a-card>
+    </div>
+    <br>
+    <a-card :bordered="false" title="跟进记录">
+      <a-timeline style="margin-top: 20px;">
+        <template v-for="(item, index) in progressingLog">
+          <a-timeline-item :key="index">
+            <a-row>
+              <a-col :span="4"> 意向：{{ intentions[item.intentionType] }} </a-col>
+              <a-col :span="12"> 进展：{{ progressingText[item.progressType] }} </a-col>
+            </a-row>
+            <p>备注：{{ item.note }}</p>
+          </a-timeline-item>
+        </template>
+      </a-timeline>
+    </a-card>
+    <br>
+    <a-card :bordered="false">
       <a-card>
         <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" :form="form" ref="form">
           <a-form-item label="意向">
@@ -309,5 +303,12 @@ export default {
   .cover{
     width: 100px;
     height: auto;
+  }
+  .product-list{
+    td{
+      padding: 10px;
+      height: 100px;
+      line-height: 80px;
+    }
   }
 </style>

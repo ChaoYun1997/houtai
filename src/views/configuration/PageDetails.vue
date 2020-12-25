@@ -1,6 +1,7 @@
 <template>
   <div>
-    <a-card :bordered="false" title="页面编辑">
+    <a-card :bordered="false">
+      <h3 slot="title">页面编辑</h3>
       <a-row :gutter="[10, 10]" style="width: 1024px">
         <a-col :span="2">
           <span class="required">页面类型</span>
@@ -32,21 +33,22 @@
       </a-row>
     </a-card>
 
-    <a-card style="margin-top: 10px" :bordered="false" title="SEO设置">
+    <a-card style="margin-top: 10px" :bordered="false">
+      <h3 slot="title">SEO设置</h3>
       <a-row :gutter="[10, 10]" style="width: 1024px">
         <a-col :span="3">
           <span class="">自定义URL</span>
         </a-col>
         <a-col :span="16">
-          <a-input v-model="seoUrl" placeholder="请输入自定义URL" />
+          <a-input v-model="seoUrl" placeholder="请输入自定义URL,例如 /contact" />
         </a-col>
         <a-col :span="3">
-          <a-button block type="primary">推荐</a-button>
+          <a-button block type="primary" @click="handleRecommand">系统推荐</a-button>
         </a-col>
       </a-row>
       <a-row :gutter="[10, 10]" style="width: 1024px">
         <a-col :span="3">
-          <span class="">标题Title</span>
+          <span class="">标题 Title</span>
         </a-col>
         <a-col :span="19">
           <a-input v-model="seoTitle" placeholder="请输入标题Title" />
@@ -54,18 +56,18 @@
       </a-row>
       <a-row :gutter="[10, 10]" style="width: 1024px">
         <a-col :span="3">
-          <span class="">关键词Keyword</span>
+          <span class="">关键词 Keyword</span>
         </a-col>
         <a-col :span="16">
           <a-input v-model="seoKeyWords" placeholder="请输入关键词Keyword" />
         </a-col>
         <a-col :span="3">
-          <a-button block type="primary">系统添加</a-button>
+          <a-button block type="primary" @click="handleAddKeyword">系统添加</a-button>
         </a-col>
       </a-row>
       <a-row :gutter="[10, 10]" style="width: 1024px">
         <a-col :span="3">
-          <span class="">描述Describe</span>
+          <span class="">描述 Description</span>
         </a-col>
         <a-col :span="19">
           <a-textarea v-model="seoDesc" placeholder="请输入描述Describe" :auto-size="{ minRows: 3, maxRows: 5 }" />
@@ -81,20 +83,21 @@
 </template>
 
 <script>
-  import { updatePage, addPage, getPageList } from '../../api/configuration'
+import { updatePage, addPage, getPageList } from '../../api/configuration'
 
 export default {
   name: 'PageDetails',
   data() {
     return {
-      type: '1',
+      type: '0',
       pageDesc: '',
       pageName: '',
       loading: false,
       seoTitle: '',
       seoKeyWords: '',
       seoDesc: '',
-      seoUrl: ''
+      seoUrl: '',
+      originUrl: ''
     }
   },
   created() {
@@ -104,6 +107,20 @@ export default {
     }
   },
   methods: {
+    handleAddKeyword() {
+      if (!this.pageName || !this.seoTitle) {
+        this.$message.error('内容根据名称、标题等生成，请先填写')
+        return
+      }
+      this.seoKeyWords = this.pageName + ' ' + this.seoTitle
+    },
+    handleRecommand() {
+      if (!this.pageName) {
+        this.$message.error('内容根据名称生成，请先填写名称')
+        return
+      }
+      this.seoUrl = '/' + this.pageName
+    },
     fetchDetails(id) {
       getPageList()
         .then(res => {
@@ -115,6 +132,7 @@ export default {
           this.type = target.pageType
           this.pageDesc = target.pageDesc
           this.seoUrl = target.pageUrl
+          this.originUrl = target.pageUrl
           this.seoKeyWords = target.pageKeywords
           this.seoTitle = target.pageTitle
           this.seoDesc = target.pageDescription
@@ -137,6 +155,7 @@ export default {
         return false
       }
       this.loading = true
+      const { id } = this.$route.params
       const params = {
         pageName: this.pageName,
         pageType: this.type,
@@ -146,11 +165,12 @@ export default {
         pageDescription: this.seoDesc,
         pageKeywords: this.seoKeyWords
       }
-      const { id } = this.$route.params
       if (id) {
+        params.id = id
+        // if (this.originUrl === params.pageUrl) delete params.pageUrl
         updatePage(params)
           .then(res => {
-            this.$message.success('提交成功')
+            this.$message.success(res.msg || '提交成功')
           })
           .catch(err => {
             this.$message.error(err.msg || '提交失败')

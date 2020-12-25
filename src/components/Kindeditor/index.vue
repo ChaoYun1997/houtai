@@ -175,7 +175,6 @@
       // 选择好文件
       selectedFile($event) {
         const file = $event.target.files[0]
-        // console.log(file)
 
         this.$emit('uploadImg', file)
         // 把图片上传到后端服务器 拿到url  uploadImage 是自己后端上传图片的接口

@@ -14,7 +14,7 @@ const request = axios.create({
 })
 
 // 异常拦截处理器
-const errorHandler = (error) => {
+const errorHandler = error => {
   if (error.response) {
     const data = error.response.data
     // 从 localstorage 获取 token
@@ -26,19 +26,19 @@ const errorHandler = (error) => {
         description: data.message
       })
     }
-    // if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
-    //   notification.error({
-    //     message: 'Unauthorized',
-    //     description: 'Authorization verification failed'
-    //   })
-    //   if (token) {
-    //     store.dispatch('Logout').then(() => {
-    //       setTimeout(() => {
-    //         window.location.reload()
-    //       }, 1500)
-    //     })
-    //   }
-    // }
+    if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
+      notification.error({
+        message: 'Unauthorized',
+        description: '未授权，请重新登录'
+      })
+      if (token) {
+        store.dispatch('Logout').then(() => {
+          setTimeout(() => {
+            window.location.reload()
+          }, 1500)
+        })
+      }
+    }
   }
   return Promise.reject(error)
 }
@@ -55,20 +55,17 @@ request.interceptors.request.use(config => {
 }, errorHandler)
 
 // response interceptor
-request.interceptors.response.use((response) => {
+request.interceptors.response.use(response => {
   return response.data
 }, errorHandler)
 
 const installer = {
   vm: {},
-  install (Vue) {
+  install(Vue) {
     Vue.use(VueAxios, request)
   }
 }
 
 export default request
 
-export {
-  installer as VueAxios,
-  request as axios
-}
+export { installer as VueAxios, request as axios }

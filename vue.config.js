@@ -130,7 +130,7 @@ const vueConfig = {
         pathRewrite: {
           '^/sys': '/sys'
         }
-          // ws: false,
+        // ws: false,
         // changeOrigin: true
       }
     }
@@ -138,9 +138,7 @@ const vueConfig = {
 
   // disable source map in production
   productionSourceMap: false,
-  lintOnSave: undefined,
-  // babel-loader no-ignore node_modules/*
-  transpileDependencies: []
+  lintOnSave: undefined
 }
 
 // preview.pro.loacg.com only do not use in your production;

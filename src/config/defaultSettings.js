@@ -22,7 +22,7 @@ export default {
   menu: {
     locale: true
   },
-  title: 'Saas Admin',
+  title: '大鱼',
   pwa: false,
   iconfontUrl: '',
   production: process.env.NODE_ENV === 'production' && process.env.VUE_APP_PREVIEW !== 'true'

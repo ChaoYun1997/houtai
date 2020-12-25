@@ -209,7 +209,7 @@ export function saveEnquirySetting(param) {
   return request({
     url: enquiryApi.SaveEnquirySetting,
     method: 'post',
-    params: param
+    data: param
   })
 }
 

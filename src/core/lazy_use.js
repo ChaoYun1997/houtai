@@ -53,7 +53,8 @@ import {
   message,
   notification
 } from 'ant-design-vue'
-import Viser from 'viser-vue'
+import Viser, { Global } from 'viser-vue'
+import theme from './viserTheme'
 
 // ext library
 import VueCropper from 'vue-cropper'
@@ -121,6 +122,7 @@ Vue.prototype.$error = Modal.error
 Vue.prototype.$warning = Modal.warning
 
 Vue.use(Viser)
+Global.setTheme(theme)
 Vue.use(Dialog) // this.$dialog func
 Vue.use(MultiTab)
 Vue.use(PageLoading)

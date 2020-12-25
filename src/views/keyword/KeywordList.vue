@@ -82,7 +82,7 @@
         bordered
       >
         <template slot="keyword" slot-scope="text, record">
-          <editable-cell :text="text" @change="val => edit(val, record.id)" @delete="del(record.id)" />
+          <editable-cell :showDel="true" :text="text" @change="val => edit(val, record.id)" @delete="del(record.id)" />
         </template>
         <!--        <div slot="keyword" slot-scope="text, record">-->
         <!--          <a-row type="flex" justify="space-between">-->
@@ -273,18 +273,16 @@ const productColumns = [
 ]
 const columns = [
   {
-    title: '#',
-    dataIndex: 'id'
-  },
-  {
     title: '关键词',
     dataIndex: 'keyWord',
     scopedSlots: { customRender: 'keyword' },
-    width: 320
+    width: 320,
+    align: 'center'
   },
   {
     title: '更新时间',
-    dataIndex: 'modifyDate'
+    dataIndex: 'modifyDate',
+    align: 'center'
   },
 
   {
@@ -307,7 +305,8 @@ const columns = [
   {
     title: '添加关键词',
     dataIndex: 'action',
-    scopedSlots: { customRender: 'action' }
+    scopedSlots: { customRender: 'action' },
+    align: 'center'
   }
 ]
 export default {
@@ -343,8 +342,10 @@ export default {
         return getKeyword(param)
       },
 
-      queryArticleCate: {},
-      queryProductCate: {},
+      queryArticleCate: {
+        pageIndex: 1,
+        pageSize: 100
+      },
       selectedArticles: [], // 已关联文章列表
       selectedProducts: [], // 已关联产品列表
       selectedCate: [], // 已选择产品分类

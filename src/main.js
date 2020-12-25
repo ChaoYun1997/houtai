@@ -11,6 +11,7 @@ import { VueAxios } from './utils/request'
 import ProLayout, { PageHeaderWrapper } from '@ant-design-vue/pro-layout'
 import themePluginConfig from '../config/themePluginConfig'
 import Print from 'vue-print-nb'
+import VueClipboard from 'vue-clipboard2'
 
 // mock
 // WARNING: `mockjs` NOT SUPPORT `IE` PLEASE DO NOT USE IN `production` ENV.
@@ -22,6 +23,8 @@ import './permission' // permission control
 import './utils/filter' // global filter
 import './global.less'
 
+VueClipboard.config.autoSetContainer = true
+Vue.use(VueClipboard)
 Vue.config.productionTip = false
 Vue.use(Print)
 
@@ -33,7 +36,7 @@ Vue.component('page-header-wrapper', PageHeaderWrapper)
 window.umi_plugin_ant_themeVar = themePluginConfig.theme
 
 Vue.directive('loaded-callback', {
-  inserted: function (el, binding, vnode) {
+  inserted: function(el, binding, vnode) {
     binding.value(el, binding, vnode)
   }
 })

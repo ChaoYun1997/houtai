@@ -1,6 +1,7 @@
 <template>
   <div>
-    <a-card :bordered="false" title="产品查询" class="margin-bottom">
+    <a-card :bordered="false" class="margin-bottom">
+      <h3 slot="title">产品查询</h3>
       <a-form layout="inline">
         <a-form-item>
           <a-select placeholder="请选择" style="width: 260px;" v-model="cateParam">
@@ -23,6 +24,7 @@
             placeholder="请选择产品标签"
             :default-value="shopTag"
             style="width: 300px"
+            showArrow
             @change="handleTagSelect"
           >
             <a-select-option v-for="tag in tagOptions" :key="tag">
@@ -43,34 +45,35 @@
       </a-form>
     </a-card>
 
-    <a-card class="list" :bordered="false" title="产品列表">
-      <div class="table-operator">
-        <a-button type="primary" @click="$router.push('/products/add-product')">新增</a-button>
-        <a-button @click="visibleUploadXls = true">批量导入</a-button>
-        <a-button type="danger" @click="handleDel">删除</a-button>
-        <a-button type="primary" @click="handleShelve(1)">上架</a-button>
-        <a-button type="primary" @click="handleShelve(0)">下架</a-button>
-        <a-dropdown>
-          <a-menu slot="overlay" @click="handleMenuClick">
-            <!--            <a-menu-item key="上架">上架</a-menu-item>-->
-            <!--            <a-menu-item key="下架">下架</a-menu-item>-->
-            <!--            <a-menu-divider />-->
-            <a-menu-item key="设为最新">设为最新</a-menu-item>
-            <a-menu-item key="取消最新">取消最新</a-menu-item>
-            <a-menu-item key="设为推荐">设为推荐</a-menu-item>
-            <a-menu-item key="取消推荐">取消推荐</a-menu-item>
-            <a-menu-item key="设为热销">设为热销</a-menu-item>
-            <a-menu-item key="取消热销">取消热销</a-menu-item>
-          </a-menu>
-          <a-button>
-            批量设置
-            <a-icon type="down"/>
-          </a-button>
-        </a-dropdown>
-        <a-button @click="updateCategory">移动到</a-button>
-        <a-button @click="setCategory">添加到</a-button>
-        <!--        <a-button @click="handleDownload">下载产品链接二维码</a-button>-->
-      </div>
+    <a-card class="list" :bordered="false">
+      <h3 slot="title">产品列表</h3>
+      <!--      <div class="table-operator">-->
+      <!--        <a-button type="primary" @click="$router.push('/products/add-product')">新增</a-button>-->
+      <!--        <a-button @click="visibleUploadXls = true">批量导入</a-button>-->
+      <!--        <a-button type="danger" @click="handleDel">删除</a-button>-->
+      <!--        <a-button type="primary" @click="handleShelve(1)">上架</a-button>-->
+      <!--        <a-button type="primary" @click="handleShelve(0)">下架</a-button>-->
+      <!--        <a-dropdown>-->
+      <!--          <a-menu slot="overlay" @click="handleMenuClick">-->
+      <!--            &lt;!&ndash;            <a-menu-item key="上架">上架</a-menu-item>&ndash;&gt;-->
+      <!--            &lt;!&ndash;            <a-menu-item key="下架">下架</a-menu-item>&ndash;&gt;-->
+      <!--            &lt;!&ndash;            <a-menu-divider />&ndash;&gt;-->
+      <!--            <a-menu-item key="设为最新">设为最新</a-menu-item>-->
+      <!--            <a-menu-item key="取消最新">取消最新</a-menu-item>-->
+      <!--            <a-menu-item key="设为推荐">设为推荐</a-menu-item>-->
+      <!--            <a-menu-item key="取消推荐">取消推荐</a-menu-item>-->
+      <!--            <a-menu-item key="设为热销">设为热销</a-menu-item>-->
+      <!--            <a-menu-item key="取消热销">取消热销</a-menu-item>-->
+      <!--          </a-menu>-->
+      <!--          <a-button>-->
+      <!--            批量设置-->
+      <!--            <a-icon type="down"/>-->
+      <!--          </a-button>-->
+      <!--        </a-dropdown>-->
+      <!--        <a-button @click="updateCategory">移动到</a-button>-->
+      <!--        <a-button @click="setCategory">添加到</a-button>-->
+      <!--        &lt;!&ndash;        <a-button @click="handleDownload">下载产品链接二维码</a-button>&ndash;&gt;-->
+      <!--      </div>-->
       <s-table
         ref="table"
         size="default"
@@ -81,9 +84,9 @@
         :getSortField="returnSortFile"
         :rowSelection="rowSelection"
       >
-<!--        <div slot="sort" slot-scope="text, record">-->
-<!--          <a-input v-model="record.id" size="small" style="width: 60px"></a-input>-->
-<!--        </div>-->
+        <div slot="sort" slot-scope="text, record">
+          <a-input type="number" v-model="record.sort" size="small" style="width: 60px;text-align: center"></a-input>
+        </div>
         <div class="cover" slot="shopImg" slot-scope="shopImg">
           <template v-if="!shopImg">
             <a-icon type="picture" style="font-size:32px;opacity: .3;"></a-icon>
@@ -124,8 +127,10 @@
       </s-table>
 
       <div class="table-operator list-footer">
+        <a-checkbox :indeterminate="indeterminate" :checked="checkAll" @change="handleSelectedAll">全选</a-checkbox>
         <a-button type="primary" @click="$router.push('/products/add-product')">新增</a-button>
-        <a-button @click="visibleUploadXls = true">批量导入</a-button>
+        <a-button type="primary" @click="handleSort">排序</a-button>
+        <!--        <a-button @click="visibleUploadXls = true">批量导入</a-button>-->
         <a-button type="danger" @click="handleDel">删除</a-button>
         <a-button type="primary" @click="handleShelve(1)">上架</a-button>
         <a-button type="primary" @click="handleShelve(0)">下架</a-button>
@@ -146,8 +151,46 @@
             <a-icon type="down"/>
           </a-button>
         </a-dropdown>
-        <a-button @click="updateCategory">移动到</a-button>
-        <a-button @click="setCategory">添加到</a-button>
+        <a-dropdown v-model="cateDropdownVisible">
+          <div slot="overlay" class="category-check">
+            <ul>
+              <li
+                v-for="item in category"
+                :class="{ checked: categoryCheckList.includes(item.id) }"
+                :key="item.id"
+                @click.stop="handleSelectedCate(item.id)"
+              >
+                {{ item.label }}
+              </li>
+            </ul>
+            <div class="s-flex s-flex-end">
+              <a-button @click.stop="updateCategory" style="margin-right: 10px" type="primary" size="small">确定
+              </a-button>
+              <a-button @click.stop="cancelUpdateCategory" size="small">取消</a-button>
+            </div>
+          </div>
+          <a-button>移动到</a-button>
+        </a-dropdown>
+        <a-dropdown v-model="cateDropdownVisible2">
+          <div slot="overlay" class="category-check">
+            <ul>
+              <li
+                v-for="item in category"
+                :class="{ checked: categoryCheckList.includes(item.id) }"
+                :key="item.id"
+                @click.stop="handleSelectedCate(item.id)"
+              >
+                {{ item.label }}
+              </li>
+            </ul>
+            <div class="s-flex s-flex-end">
+              <a-button @click.stop="setCategory" style="margin-right: 10px" type="primary" size="small">确定</a-button>
+              <a-button @click.stop="cancelSetCategory" size="small">取消</a-button>
+            </div>
+          </div>
+          <a-button>复制到</a-button>
+        </a-dropdown>
+        <!--        <a-button @click="setCategory">复制到</a-button>-->
         <!--        <a-button @click="handleDownload">下载产品链接二维码</a-button>-->
       </div>
     </a-card>
@@ -235,6 +278,7 @@
   import { saveAs } from 'file-saver'
   import qrcode from 'qrcode'
   import ShareThis from '@/components/ShareThis'
+  import { updateSort } from '../../api/products'
 
   const tagOptions = ['热销产品', '新产品', '推荐产品']
   const tags = {
@@ -243,40 +287,46 @@
     Recommend: '推荐产品'
   }
   const columns = [
-    // {
-    //   title: '排序',
-    //   dataIndex: 'id',
-    //   scopedSlots: {
-    //     customRender: 'sort'
-    //   }
-    // },
+    {
+      title: '排序',
+      dataIndex: 'sort',
+      scopedSlots: {
+        customRender: 'sort'
+      },
+      align: 'center'
+    },
     {
       title: '主图展示',
       dataIndex: 'shopImg',
       scopedSlots: {
         customRender: 'shopImg'
-      }
+      },
+      align: 'center'
     },
     {
       title: '产品名称',
       dataIndex: 'shopTitle',
-      sorter: true
+      sorter: true,
+      align: 'center'
     },
     {
       title: '产品型号',
-      dataIndex: 'shopModel'
+      dataIndex: 'shopModel',
+      align: 'center'
     },
     {
       title: '所属类目',
       dataIndex: 'catId',
       scopedSlots: {
         customRender: 'cate'
-      }
+      },
+      align: 'center'
     },
     {
       title: '发布时间',
       dataIndex: 'updateDate',
-      sorter: true
+      sorter: true,
+      align: 'center'
     },
     {
       title: '上架',
@@ -284,7 +334,8 @@
       sorter: true,
       scopedSlots: {
         customRender: 'shelve'
-      }
+      },
+      align: 'center'
     },
     // {
     //   title: '产品链接',
@@ -305,7 +356,8 @@
       dataIndex: 'action',
       scopedSlots: {
         customRender: 'action'
-      }
+      },
+      align: 'center'
     }
   ]
   export default {
@@ -330,6 +382,8 @@
 
         category: [],
         categoryCheckList: [],
+        cateDropdownVisible: false,
+        cateDropdownVisible2: false,
         isUpdateCate: false, // true 新增到分类  false 移动、更新分类
         showCategory: false,
         shelved: 'all',
@@ -344,6 +398,8 @@
         listLoading: true,
         selectedRowKeys: [],
         selectedRows: [],
+        checkAll: false,
+        indeterminate: false,
         tagOptions,
         value: [],
         fileList: [],
@@ -522,9 +578,12 @@
         fileReader.readAsBinaryString(files[0])
       },
       onSelectChange(selectedRowKeys, selectedRows) {
-        console.log(selectedRowKeys)
+        console.log(selectedRowKeys, selectedRows)
+        const items = this.$refs.table.localDataSource
         this.selectedRowKeys = selectedRowKeys
         this.selectedRows = selectedRows
+        this.checkAll = items.length === this.selectedRowKeys.length
+        this.indeterminate = !!this.selectedRowKeys.length && this.selectedRowKeys.length < items.length
       },
       // 上下架操作
       onSwitchChange(checked, id) {
@@ -715,12 +774,27 @@
       setCategory() {
         if (!this.checkSelected()) return
         this.isUpdateCate = false
-        this.showCategory = true
+        this.handleSetCategory()
+      },
+      handleSelectedCate(id) {
+        if (this.categoryCheckList.includes(id)) {
+          this.categoryCheckList.splice(this.categoryCheckList.findIndex(item => item === id), 1)
+        } else {
+          this.categoryCheckList.push(id)
+        }
       },
       updateCategory() {
         if (!this.checkSelected()) return
         this.isUpdateCate = true
-        this.showCategory = true
+        this.handleSetCategory()
+      },
+      cancelUpdateCategory() {
+        this.categoryCheckList = []
+        this.cateDropdownVisible = false
+      },
+      cancelSetCategory() {
+        this.categoryCheckList = []
+        this.cateDropdownVisible2 = false
       },
       // 批量设置分类
       handleSetCategory() {
@@ -780,6 +854,45 @@
             this.showCategory = false
           })
       },
+      handleSelectedAll(e) {
+        const items = this.$refs.table.localDataSource
+        this.selectedRows = e.target.checked ? items : []
+        this.$refs.table.selectedRows = e.target.checked ? items : []
+        this.selectedRowKeys = e.target.checked ? items.map(item => item.id) : []
+        this.$refs.table.selectedRowKeys = e.target.checked ? items.map(item => item.id) : []
+        this.indeterminate = false
+        this.checkAll = e.target.checked
+        // this.indeterminate = false
+        // if (this.selectedRows.length === items.length) {
+        //   this.$refs.table.selectedRows = this.selectedRows = []
+        //   this.$refs.table.selectedRowKeys = this.selectedRowKeys = []
+        //   return false
+        // }
+        // this.$refs.table.selectedRows = this.selectedRows = items
+        // this.$refs.table.selectedRowKeys = this.selectedRowKeys = items.map(item => {
+        //   return item.id
+        // })
+        // console.log(this.$refs.table.localDataSource)
+      },
+      handleSort() {
+        const items = this.$refs.table.localDataSource
+        const params = items.map(item => {
+          return {
+            id: item.id,
+            sort: Number(item.sort)
+          }
+        })
+        console.log(params)
+        updateSort(params)
+          .then(res => {
+            if (res.code === 200) {
+              this.$message.success('操作成功')
+            } else throw res
+          })
+          .catch(err => {
+            this.$message.error(err.msg || '操作失败')
+          })
+      },
       // 批量删除
       handleDel() {
         if (!this.checkSelected()) return
@@ -826,6 +939,36 @@
 </script>
 
 <style scoped lang="less">
+  .category-check {
+    background: white;
+    padding: 5px;
+    width: 160px;
+    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.15);
+    border-radius: 2px;
+
+    ul,
+    li {
+      margin: 0;
+      padding: 0;
+    }
+
+    li {
+      display: flex;
+      height: 24px;
+      margin: 5px 0;
+      cursor: pointer;
+      justify-content: space-between;
+      align-items: center;
+
+      &.checked {
+        &:after {
+          content: '✓';
+          display: block;
+        }
+      }
+    }
+  }
+
   .table-page-search-wrapper {
     margin-bottom: 20px;
   }
@@ -859,6 +1002,7 @@
 
     .list-footer {
       position: absolute;
+      margin-left: 25px;
       bottom: 20px;
       left: 20px;
       z-index: 10;

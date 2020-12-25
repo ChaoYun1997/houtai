@@ -16,7 +16,26 @@ const productsApi = {
   UpdateCate: '/shop/updateCatid', // 更新分类、移动分类
   GetUploadSign: '/shop/getUploadSign', // 获取七牛上传凭证
   GetProductCate: '/shop/getNames', // 获取产品分类列表
-  ImportProducts: '/shop/ImportShops' // 批量导入产品
+  ImportProducts: '/shop/ImportShops', // 批量导入产品
+  RelativeArticles: '/shop/getSomeArticlesById', // 根据产品iD获取相关文章
+  RelativeProducts: '/shop/getSomeShopsById' // 根据产品iD获取相关产品
+
+}
+// 根据产品iD获取相关产品
+export function getRelativeProducts(param) {
+  return request({
+    url: productsApi.RelativeProducts,
+    method: 'get',
+    params: param
+  })
+}
+// 根据产品iD获取相关文章
+export function getRelativeArticles(param) {
+  return request({
+    url: productsApi.RelativeArticles,
+    method: 'get',
+    params: param
+  })
 }
 
 // 获取产品列表
