@@ -10,10 +10,8 @@
     >
       <a-card :body-style="{ padding: '24px 32px' }" :bordered="false" class="margin-bottom">
         <h3 slot="title">基本信息</h3>
-        <a-form-model-item style="margin-bottom: 0!important;" labelAlign="left" :colon="false" prop="name">
-          <div slot="label" class=" pt10 required">
-            产品名称
-          </div>
+        <a-form-model-item style="margin-bottom: 0 !important" labelAlign="left" :colon="false" prop="name">
+          <div slot="label" class="pt10 required">产品名称</div>
           <a-input v-model="form.name" />
           <a-checkbox class="upper-checkbox" :checked="isUpperCase" @change="handleUpperCase">
             词首字母大写
@@ -21,13 +19,11 @@
           </a-checkbox>
         </a-form-model-item>
         <a-form-model-item class="label-col" labelAlign="left" :colon="false" prop="model">
-          <div slot="label" class=" pt10 required">
-            产品型号
-          </div>
+          <div slot="label" class="pt10 required">产品型号</div>
           <a-input v-model="form.model" placeholder="请输入产品型号" />
         </a-form-model-item>
         <a-form-model-item class="label-col" labelAlign="left" :colon="false" ref="category" prop="category">
-          <div slot="label" class=" pt10 required">产品类目</div>
+          <div slot="label" class="pt10 required">产品类目</div>
           <a-select
             mode="multiple"
             placeholder="请选择产品类目"
@@ -42,15 +38,11 @@
           </a-select>
         </a-form-model-item>
         <a-form-model-item class="label-col" labelAlign="left" :colon="false" prop="brand">
-          <div slot="label" class=" pt10">
-            产品品牌
-          </div>
+          <div slot="label" class="pt10">产品品牌</div>
           <a-input v-model="form.brand" placeholder="请输入产品品牌" />
         </a-form-model-item>
         <a-form-model-item class="label-col" labelAlign="left" :colon="false" prop="code">
-          <div slot="label" class=" pt10">
-            产品编码
-          </div>
+          <div slot="label" class="pt10">产品编码</div>
           <a-input v-model="form.code" placeholder="请输入产品编码" />
         </a-form-model-item>
         <a-form-model-item labelAlign="left" :colon="false" ref="intro" label="简要描述" prop="intro">
@@ -65,9 +57,7 @@
               :labelCol="{ span: 6 }"
               :wrapperCol="{ span: 16, offset: 2 }"
             >
-              <div slot="label" class=" pt10 required">
-                产品状态
-              </div>
+              <div slot="label" class="pt10 required">产品状态</div>
               <a-select v-model="form.shelved">
                 <a-select-option :value="1">上架</a-select-option>
                 <a-select-option :value="0">下架</a-select-option>
@@ -85,9 +75,7 @@
               :labelCol="{ span: 5 }"
               :wrapperCol="{ span: 16, offset: 2 }"
             >
-              <div slot="label" class=" pt10 required">
-                产品标签
-              </div>
+              <div slot="label" class="pt10 required">产品标签</div>
 
               <a-select placeholder="请选择" v-model="form.tags" style="width: 160px" @change="handleTagSelect">
                 <a-select-option v-for="tag in tags" :key="tag.id" :value="tag.id">
@@ -125,9 +113,7 @@
           </div>
         </a-form-model-item>
         <a-form-model-item class="label-col" labelAlign="left" :colon="false">
-          <div slot="label" class=" pt10">
-            标题 Title
-          </div>
+          <div slot="label" class="pt10">标题 Title</div>
           <a-row :gutter="10">
             <a-col :span="18">
               <a-input v-model="form.keyword.pageTitle" placeholder="请输入页面标题" />
@@ -135,7 +121,7 @@
           </a-row>
         </a-form-model-item>
         <a-form-model-item class="label-col" :colon="false" labelAlign="left">
-          <div slot="label" class=" pt3">
+          <div slot="label" class="pt3">
             <span>关键词 Keywords</span>
           </div>
           <a-row :gutter="10">
@@ -148,7 +134,7 @@
           </a-row>
         </a-form-model-item>
         <a-form-model-item class="label-col2" :colon="false" labelAlign="left">
-          <div slot="label" class=" pt3">
+          <div slot="label" class="pt3">
             <span>描述 Description</span>
           </div>
           <a-row :gutter="10">
@@ -237,9 +223,7 @@
       <a-card :bordered="false" class="margin-bottom">
         <h3 slot="title">产品信息</h3>
         <a-form-model-item class="img-list" labelAlign="left" :colon="false" ref="img" prop="cover">
-          <div slot="label" class="required">
-            产品主图
-          </div>
+          <div slot="label" class="required">产品主图</div>
           <p>
             <a-upload
               class="img-uploader"
@@ -263,9 +247,7 @@
             <template v-if="picList.length">
               <span class="link-btn" @click="clearFile(0)">全部删除</span>
               <a-popconfirm placement="right">
-                <template slot="title">
-                  删除对象不会影响文件银行内容
-                </template>
+                <template slot="title"> 删除对象不会影响文件银行内容 </template>
                 <a-icon type="question-circle" />
               </a-popconfirm>
             </template>
@@ -310,22 +292,14 @@
           </ul>
         </a-form-model-item>
         <a-form-model-item class="label-col" labelAlign="left" :colon="false">
-          <div slot="label">
-            添加水印
-          </div>
+          <div slot="label">添加水印</div>
           <a-radio-group v-model="watermarkOption" @change="onWatermarkChange">
-            <a-radio :value="1">
-              是
-            </a-radio>
-            <a-radio :value="0">
-              否
-            </a-radio>
+            <a-radio :value="1"> 是 </a-radio>
+            <a-radio :value="0"> 否 </a-radio>
           </a-radio-group>
         </a-form-model-item>
         <a-form-model-item labelAlign="left" class="label-col" :colon="false">
-          <div slot="label" class="required ">
-            产品视频
-          </div>
+          <div slot="label" class="required">产品视频</div>
 
           <div>
             <!--            <a-upload-->
@@ -361,15 +335,11 @@
           </div>
         </a-form-model-item>
         <a-form-model-item class="label-col" labelAlign="left" :colon="false" ref="video" prop="videoUrl">
-          <div slot="label" class="required">
-            视频链接
-          </div>
-          <a-input style="width: 600px;" v-model="form.videoUrl" placeholder="请输入产品视频连接"></a-input>
+          <div slot="label" class="required">视频链接</div>
+          <a-input style="width: 600px" v-model="form.videoUrl" placeholder="请输入产品视频连接"></a-input>
         </a-form-model-item>
         <a-form-model-item labelAlign="left" :colon="false" extra="属性名和属性值必须同时填写，如 Style: Luxury">
-          <div slot="label" class="required">
-            规格属性
-          </div>
+          <div slot="label" class="required">规格属性</div>
           <div class="addFieldBox" ref="attrList">
             <template v-for="(item, index) in form.customFields">
               <a-row :key="index" :gutter="10">
@@ -382,25 +352,26 @@
                     @click="handleSetFieldUp(index)"
                     type="up"
                     :class="{ isSide: index === 0, iconBtn: true }"
-                    style="margin-left: 20px;font-size: 16px"
+                    style="margin-left: 20px; font-size: 16px"
                   />
                   <a-icon
                     @click="handleSetFieldDown(index)"
                     type="down"
                     :class="{ isSide: index === form.customFields.length - 1, iconBtn: true }"
-                    style="margin-left: 20px;font-size: 16px"
+                    style="margin-left: 20px; font-size: 16px"
                   />
                   <a-icon
                     type="delete"
-                    style="margin-left: 20px;margin-left:20px;font-size: 16px"
+                    style="margin-left: 20px; margin-left: 20px; font-size: 16px"
                     @click="handleDelField(index)"
                   ></a-icon>
                   <span
                     v-if="index !== 0"
-                    style="margin-left: 20px;color: #40a9ff; cursor: pointer"
+                    style="margin-left: 20px; color: #40a9ff; cursor: pointer"
                     @click="handleSetFieldToTop(index)"
-                    >置顶</span
                   >
+                    置顶
+                  </span>
                   <!--                  <a-button type="danger" shape="circle" size="small" icon="delete" />-->
                 </a-col>
               </a-row>
@@ -461,7 +432,7 @@
         <!--        <a-alert message="选出5~20篇与该产品相关联的产品展示在前台产品详情。" banner closable />-->
         <a-table
           :columns="relativeProductColumns"
-          :row-key="record => record.id"
+          :row-key="(record) => record.id"
           :row-selection="relativeProductsSelection"
           :data-source="relativeProductsList"
         >
@@ -505,7 +476,7 @@
           :columns="relativeArticleColumns"
           :row-selection="relativeArticlesSelection"
           :data-source="relativeArticlesList"
-          :rowKey="record => record.id"
+          :rowKey="(record) => record.id"
         >
           <span slot="cate" slot-scope="text, record">
             <template v-for="(item, index) in record.catId">
@@ -539,7 +510,7 @@
         class="keyword-table"
         size="small"
         ref="keywordTable"
-        :rowKey="record => record.id"
+        :rowKey="(record) => record.id"
         :columns="keywordColumns"
         :data="loadKeywordData"
         :rowSelection="keywordRowSelection"
@@ -568,7 +539,7 @@
       <a-input-search
         placeholder="请输入文章标题"
         enter-button="搜索"
-        style="width:220px;margin-left: 10px;"
+        style="width: 220px; margin-left: 10px"
         @search="onArticleSearch"
       />
       <s-table
@@ -576,7 +547,7 @@
         size="small"
         ref="articleTable"
         :pageSize="100"
-        :rowKey="record => record.id"
+        :rowKey="(record) => record.id"
         :scroll="{ y: 380 }"
         :columns="articleColumns"
         :data="loadArticleData"
@@ -597,7 +568,7 @@
       <a-input-search
         placeholder="请输入产品标题"
         enter-button="搜索"
-        style="width:220px;margin-left: 10px;"
+        style="width: 220px; margin-left: 10px"
         @search="onProductSearch"
       />
       <s-table
@@ -605,7 +576,7 @@
         size="small"
         ref="productTable"
         :pageSize="100"
-        :rowKey="record => record.id"
+        :rowKey="(record) => record.id"
         :scroll="{ y: 380 }"
         :columns="productColumns"
         :data="loadProductData"
@@ -758,7 +729,7 @@ export default {
       keywordQuery: {},
       selectedKeywords: [],
       selectedKeywordRowKeys: [],
-      loadKeywordData: parameter => {
+      loadKeywordData: (parameter) => {
         parameter = Object.assign(parameter, this.keywordQuery)
         return getKeyword(parameter)
       },
@@ -781,7 +752,7 @@ export default {
       newSku: '',
       queryArticle: {},
       queryArticleCate: {},
-      loadArticleData: parameter => {
+      loadArticleData: (parameter) => {
         parameter = Object.assign(parameter, this.queryArticle)
         return getArticles(parameter)
       },
@@ -790,7 +761,7 @@ export default {
         pageSize: 100
       },
       queryProductCate: {},
-      loadProductData: parameter => {
+      loadProductData: (parameter) => {
         parameter = Object.assign(parameter, this.queryProduct)
         return getProducts(parameter)
       },
@@ -971,7 +942,7 @@ export default {
   },
   computed: {
     ...mapState({
-      website: state => {
+      website: (state) => {
         return /^http/.test(state.user.website)
           ? state.user.website
           : process.env.VUE_APP_PROTOCAL_HEAD + state.user.website
@@ -1040,12 +1011,12 @@ export default {
     const sortable = sortableJS.create(this.$refs.list, {
       sort: true,
       animation: 300,
-      onEnd: function(evt) {
+      onEnd: function (evt) {
         // 拖拽结束发生该事件
         that.form.keyword.words.splice(evt.newIndex, 0, that.form.keyword.words.splice(evt.oldIndex, 1)[0])
         var newArray = that.form.keyword.words.slice(0)
         that.form.keyword.words = []
-        that.$nextTick(function() {
+        that.$nextTick(function () {
           that.form.keyword.words = newArray
           console.log(that.form.keyword.words)
         })
@@ -1054,12 +1025,12 @@ export default {
     sortableJS.create(this.$refs.attrList, {
       sort: true,
       animation: 300,
-      onEnd: function(evt) {
+      onEnd: function (evt) {
         // 拖拽结束发生该事件
         that.form.customFields.splice(evt.newIndex, 0, that.form.customFields.splice(evt.oldIndex, 1)[0])
         var newArray = that.form.customFields.slice(0)
         that.form.customFields = []
-        that.$nextTick(function() {
+        that.$nextTick(function () {
           that.form.customFields = newArray
         })
       }
@@ -1069,12 +1040,12 @@ export default {
     const sortablePic = sortableJS.create(this.$refs.piclist, {
       sort: true,
       animation: 300,
-      onEnd: function(evt) {
+      onEnd: function (evt) {
         // 拖拽结束发生该事件
         that.picList.splice(evt.newIndex, 0, that.picList.splice(evt.oldIndex, 1)[0])
         const newArray = that.picList.slice(0)
         that.picList = []
-        that.$nextTick(function() {
+        that.$nextTick(function () {
           that.picList = newArray
           console.log(that.picList)
         })
@@ -1096,7 +1067,7 @@ export default {
       this.$refs.keywordTable.refresh(true)
     },
     handleAppendKeyword() {
-      this.form.keyword.words = this.form.keyword.words.filter(item => item.keyword !== '')
+      this.form.keyword.words = this.form.keyword.words.filter((item) => item.keyword !== '')
       console.log(this.form.keyword.words)
       const length = this.form.keyword.words.length
       if (length >= 8) return false
@@ -1232,7 +1203,7 @@ export default {
     },
     // sku 选择
     handleSkuChange(value, index) {
-      const isKeyExisted = this.shopSku.findIndex(item => {
+      const isKeyExisted = this.shopSku.findIndex((item) => {
         console.log(item.skuName, value)
         return item.skuName === value
       })
@@ -1251,7 +1222,7 @@ export default {
     },
     handleAddSku() {
       if (!this.newSku) {
-        const isKeyExisted = this.shopSku.findIndex(item => {
+        const isKeyExisted = this.shopSku.findIndex((item) => {
           return item.skuName === this.newSku
         })
         if (isKeyExisted !== -1) {
@@ -1296,7 +1267,7 @@ export default {
       return true
     },
     handleSkuInputBlur(item, val, index) {
-      const isExist = item.vals.filter(i => {
+      const isExist = item.vals.filter((i) => {
         return i.value === val
       })
       console.log(isExist)
@@ -1334,12 +1305,12 @@ export default {
       })
     },
     loadProductDetail(id) {
-      getProductDetail({ id }).then(res => {
+      getProductDetail({ id }).then((res) => {
         const { form } = this
         const { data } = res
         form.name = data.shopTitle
         form.productUrl = data.shopUrl
-        form.keyword.words = data.shopKeyWords.map(item => {
+        form.keyword.words = data.shopKeyWords.map((item) => {
           // 关键词
           return { keyword: item }
         })
@@ -1347,7 +1318,7 @@ export default {
         form.keyword.pageKeyword = data.seoKeyWords // seo关键词
         form.keyword.pageDesc = data.seoDescription // seo描述
         const host = process.env.VUE_APP_HOST
-        this.picList = data.shopImgList.map(item => {
+        this.picList = data.shopImgList.map((item) => {
           // 产品图片
           const name = item.split('/')
           return {
@@ -1425,10 +1396,10 @@ export default {
       getArticleCate({
         pageSize: 100,
         pageIndex: 1
-      }).then(res => {
+      }).then((res) => {
         const result = res.data.datas
         if (result.length > 0) {
-          result.forEach(item => {
+          result.forEach((item) => {
             this.articleCate.push({
               value: item.id,
               label: item.catName,
@@ -1439,7 +1410,7 @@ export default {
       })
     },
     loadProducts() {
-      getProducts().then(res => {
+      getProducts().then((res) => {
         this.productData = res.result.data
       })
     },
@@ -1508,21 +1479,21 @@ export default {
     },
     fetchRelativeArticles(id) {
       getRelativeArticles({ id })
-        .then(res => {
+        .then((res) => {
           this.relativeArticlesList = res.data
-          this.selectedArticleRowKeys = res.data.map(item => item.id)
+          this.selectedArticleRowKeys = res.data.map((item) => item.id)
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || '获取相关联文章失败')
         })
     },
     fetchRelativeProducts(id) {
       getRelativeProducts({ id })
-        .then(res => {
+        .then((res) => {
           this.relativeProductsList = res.data
-          this.selectedProductRowKeys = res.data.map(item => item.id)
+          this.selectedProductRowKeys = res.data.map((item) => item.id)
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || '获取相关联产品失败')
         })
     },
@@ -1535,25 +1506,25 @@ export default {
       })
     },
     cancelRelativeProducts() {
-      this.relativeProductRowKeys.forEach(key => {
-        this.selectedProductRowKeys = this.selectedProductRowKeys.filter(item => item !== key)
-        this.relativeProductsList = this.relativeProductsList.filter(item => item.id !== key)
+      this.relativeProductRowKeys.forEach((key) => {
+        this.selectedProductRowKeys = this.selectedProductRowKeys.filter((item) => item !== key)
+        this.relativeProductsList = this.relativeProductsList.filter((item) => item.id !== key)
       })
       this.selectedProducts = this.relativeProductsList
       this.relativeProductRowKeys = []
     },
     cancelRelativeArticles() {
       console.log(this.relativeArticleRowKeys)
-      this.relativeArticleRowKeys.forEach(key => {
-        this.selectedArticleRowKeys = this.selectedArticleRowKeys.filter(item => item !== key)
-        this.relativeArticlesList = this.relativeArticlesList.filter(item => item.id !== key)
+      this.relativeArticleRowKeys.forEach((key) => {
+        this.selectedArticleRowKeys = this.selectedArticleRowKeys.filter((item) => item !== key)
+        this.relativeArticlesList = this.relativeArticlesList.filter((item) => item.id !== key)
       })
       this.selectedArticles = this.relativeArticlesList
       this.relativeArticleRowKeys = []
     },
     handleTagChange(tag, checked) {
       const { selectedTags } = this
-      const nextSelectedTags = checked ? [...selectedTags, tag] : selectedTags.filter(t => t !== tag)
+      const nextSelectedTags = checked ? [...selectedTags, tag] : selectedTags.filter((t) => t !== tag)
       console.log('You are interested in: ', nextSelectedTags)
       this.selectedTags = nextSelectedTags
     },
@@ -1619,7 +1590,7 @@ export default {
       }
     },
     categoryLabel(id) {
-      const cate = this.categoryOptions.find(item => {
+      const cate = this.categoryOptions.find((item) => {
         return item.id === id
       })
       if (!cate) return
@@ -1627,7 +1598,7 @@ export default {
     },
     // 加载关键词数据
     loadKeyword() {
-      getKeyword({ pageIndex: 1, pageSize: 100 }).then(res => {
+      getKeyword({ pageIndex: 1, pageSize: 100 }).then((res) => {
         this.keywordListLoading = false
         this.keywordList = res.data.datas
       })
@@ -1635,8 +1606,8 @@ export default {
     getCateName(cate) {
       if (!cate.length) return ''
       const name = []
-      cate.forEach(item => {
-        const target = this.categoryOptions.find(i => i.id === item)
+      cate.forEach((item) => {
+        const target = this.categoryOptions.find((i) => i.id === item)
         if (!target) return
         name.push(target.label)
       })
@@ -1647,8 +1618,8 @@ export default {
       getProductCate({
         pageIndex: 1,
         pageSize: 100
-      }).then(res => {
-        res.data.datas.forEach(item => {
+      }).then((res) => {
+        res.data.datas.forEach((item) => {
           this.categoryOptions.push({
             label: item.catName,
             value: item.id,
@@ -1702,7 +1673,7 @@ export default {
     setFirstCharToLowerCase(name) {
       const nameArr = name.trim().split(' ')
       const result = []
-      nameArr.forEach(word => {
+      nameArr.forEach((word) => {
         let firstChar = word.substring(0, 1)
         if (/[A-Z]/.test(firstChar)) {
           firstChar = firstChar.toLowerCase()
@@ -1714,7 +1685,7 @@ export default {
     setFirstCharToUpperCase(name) {
       const nameArr = name.split(' ')
       const result = []
-      nameArr.forEach(word => {
+      nameArr.forEach((word) => {
         let firstChar = word.substring(0, 1)
         if (/[a-z]/.test(firstChar)) {
           firstChar = firstChar.toUpperCase()
@@ -1731,7 +1702,7 @@ export default {
       fd.append('key', this.fileName)
       fd.append('token', this.picToken)
       fd.append('file', info.file)
-      this.$http.post(this.uploadUrl, fd).then(res => {
+      this.$http.post(this.uploadUrl, fd).then((res) => {
         this.form.shopImg = res.name
         this.showImage = true
         this.coverLoading = false
@@ -1744,7 +1715,7 @@ export default {
         type: 2
       }
       await getUploadSign(param)
-        .then(res => {
+        .then((res) => {
           if (res.code === 200) {
             this.videoToken = res.data.token
             this.videoFileName = res.data.fileName
@@ -1752,7 +1723,7 @@ export default {
             throw res
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg)
         })
     },
@@ -1763,7 +1734,7 @@ export default {
         type: 1
       }
       await getUploadSign(param)
-        .then(res => {
+        .then((res) => {
           if (res.code === 200) {
             this.picToken = res.data.token
             this.fileName = res.data.fileName
@@ -1771,7 +1742,7 @@ export default {
             throw res
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg)
           this.isUploading = false
         })
@@ -1851,7 +1822,7 @@ export default {
             h: img.height
           })
         }
-        img.onerror = err => reject(err)
+        img.onerror = (err) => reject(err)
       })
     },
     async handleListUploadChange(info) {
@@ -1929,8 +1900,8 @@ export default {
     // 提交产品表单
     handleSubmit() {
       const { form, picList, videoList } = this
-      const piclist = picList.map(item => item.name)
-      const keyword = form.keyword.words.filter(item => item.keyword !== '').map(item => item.keyword)
+      const piclist = picList.map((item) => item.name)
+      const keyword = form.keyword.words.filter((item) => item.keyword !== '').map((item) => item.keyword)
       // eslint-disable-next-line no-unused-vars
       // eslint-disable-next-line no-unreachable
       const host = process.env.VUE_APP_HOST
@@ -1967,7 +1938,7 @@ export default {
         params.id = detailId
       }
       console.log(params)
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
           console.log(params)
           this.submitLoading = true

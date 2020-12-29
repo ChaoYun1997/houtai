@@ -71,19 +71,16 @@
           <span slot="status" slot-scope="text">{{ text === 0 ? '正常' : text === 1 ? '草稿' : '定时发布' }}</span>
           <span slot="author" slot-scope="text">{{ text || '本站编辑' }}</span>
           <div class="action" slot="action" slot-scope="text, record">
-            <span class="link-btn right-split" @click="edit(record.id)">编辑</span>
-            <span class="link-btn right-split" @click="handleShare(record)">分享</span>
-            <a-popconfirm title="你确定要删除该文章吗?" @confirm="del(record.id)">
-              <span class="link-btn right-split red-text">删除</span>
+            <span class="link-btn right-split" @click="recovery(record.id)">恢复文章</span>
+            <a-popconfirm title="你确定要彻底删除该文章吗?" @confirm="del(record.id)">
+              <span class="link-btn right-split red-text">彻底删除</span>
             </a-popconfirm>
-            <span class="link-btn" @click="preview(record.id)">预览</span>
           </div>
         </s-table>
         <div class="table-operator list-footer">
           <a-checkbox :indeterminate="indeterminate" :checked="checkAll" @change="handleSelectedAll">全选</a-checkbox>
-          <a-button type="primary" @click="$router.push('/articles/add-article')">新增</a-button>
-          <a-button type="primary" @click="handleSort">排序</a-button>
-          <a-button @click="handleDel" type="danger">删除</a-button>
+          <a-button type="primary" @click="handleRecovery">恢复</a-button>
+          <a-button @click="handleDel" type="danger">彻底删除</a-button>
           <!--          <a-button @click="handleMoveTo">移动到</a-button>-->
         </div>
       </div>
@@ -113,7 +110,7 @@
 
 <script>
 import STable from '@/components/Table'
-import { getArticles, updateDel, updateArticleSort } from '@/api/article'
+import { delArticle, getRecycleBin, updateDel, delArticles } from '@/api/article'
 import { getArticleCate } from '@/api/category'
 import { mapState } from 'vuex'
 import ShareThis from '@/components/ShareThis'
@@ -196,7 +193,7 @@ export default {
       },
       queryParam: {},
       loadData: parameter => {
-        return getArticles(Object.assign(parameter, this.queryParam))
+        return getRecycleBin(Object.assign(parameter, this.queryParam))
       },
       category: [],
       selectedRowKeys: [],
@@ -274,13 +271,19 @@ export default {
       return sortObj[columnKey]
     },
     // 编辑文章
-    edit(id) {
-      console.log(id)
-      this.$router.push('/articles/add-article/' + id)
+    recovery(id) {
+      updateDel(false, [id])
+        .then(res => {
+          if (res.code === 200) this.$message.success('操作成功')
+          this.$refs.table.refresh(true)
+        })
+        .catch(err => {
+          this.$message.error(err.msg)
+        })
     },
     // 删除文章
     del(id) {
-      updateDel(true, [id])
+      delArticle({ id: id })
         .then(res => {
           if (res.code === 200) this.$message.success('操作成功')
           this.$refs.table.refresh(true)
@@ -358,18 +361,13 @@ export default {
       console.log(value)
       this.queryParam.catId = value
     },
-    handleSort() {
-      const items = this.$refs.table.localDataSource
-      const params = items.map(item => {
-        return {
-          id: item.id,
-          sort: item.sort
-        }
-      })
-      updateArticleSort(params)
+    handleRecovery() {
+      const id = this.selectedRowKeys
+      updateDel(false, id)
         .then(res => {
           if (res.code === 200) {
             this.$message.success('操作成功')
+            this.$refs.table.refresh(true)
           } else throw res
         })
         .catch(err => {
@@ -382,7 +380,7 @@ export default {
         content: '你确定要删除这些文章吗？',
         onOk: () => {
           const params = this.selectedRowKeys
-          updateDel(true, params)
+          delArticles(params)
             .then(res => {
               if (res.code === 200) this.$message.success('操作成功')
               this.$refs.table.refresh()

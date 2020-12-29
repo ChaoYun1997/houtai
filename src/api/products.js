@@ -47,7 +47,7 @@ export function getProducts(param) {
   })
 }
 
-// 获取产品列表
+// 获取回收站产品列表
 export function getRecycleBin(param) {
   return request({
     url: productsApi.List,

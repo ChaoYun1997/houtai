@@ -10,7 +10,38 @@ const articlesApi = {
   DelArticle: '/article/delArticle', // 彻底删除文章
   DelArticles: '/article/delArticles', // 彻底删除文章
   UpdateSort: '/article/updateSort', // 更新文章排序
-  RelativeProducts: '/article/articleItems' // 根据id获取相关联产品
+  RelativeProducts: '/article/articleItems', // 根据id获取相关联产品
+  UpdateDel: '/article/updateIsDelete' // 移入/恢复回收站
+}
+
+// 移入/恢复回收站
+export function updateDel(state, param) {
+  return request({
+    url: articlesApi.UpdateDel,
+    method: 'post',
+    params: {
+      isDelete: state
+    },
+    data: param
+  })
+}
+
+// 获取回收站列表
+export function getRecycleBin(param) {
+  return request({
+    url: articlesApi.Articles,
+    method: 'post',
+    data: {
+      pageIndex: param.pageIndex,
+      pageSize: param.pageSize,
+      catId: param.catId,
+      isShelve: param.isShelve,
+      updateDate: param.updateDate,
+      keyWords: param.keyWords,
+      status: param.status,
+      isDel: true
+    }
+  })
 }
 
 // 根据id获取相关联产品

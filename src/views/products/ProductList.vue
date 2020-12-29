@@ -439,7 +439,7 @@
         this.shopTag = value
       },
       getImg(name) {
-        return name ? process.env.VUE_APP_HOST + '/' + name : ''
+        return name ? process.env.VUE_APP_HOST + '/' + name + '?imageView2/2/w/80/h/80/q/75' : ''
       },
       returnSortFile(columnKey) {
         const sortObj = {

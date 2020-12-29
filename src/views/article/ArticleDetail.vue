@@ -38,7 +38,7 @@
           <a-input v-model="form.info.website" />
         </a-form-model-item>
         <a-form-model-item labelAlign="left" :colon="false" label="是否置顶">
-          <a-select v-model="form.isTop" style="width: 220px;">
+          <a-select v-model="form.isTop" style="width: 220px">
             <a-select-option :value="1">是</a-select-option>
             <a-select-option :value="0">否</a-select-option>
           </a-select>
@@ -47,7 +47,7 @@
           <a-date-picker v-model="form.releaseDate" :show-time="{ format: 'HH:mm:ss' }" style="width: 220px" />
         </a-form-model-item>
         <a-form-model-item labelAlign="left" :colon="false" label="文章状态">
-          <a-select v-model="form.status" style="width: 220px;">
+          <a-select v-model="form.status" style="width: 220px">
             <a-select-option :value="0">正常</a-select-option>
             <a-select-option :value="1">草稿</a-select-option>
             <a-select-option :value="2">定时发布</a-select-option>
@@ -75,15 +75,11 @@
             >
               <a-button shape="round" type="primary" :loading="isUploading">浏览</a-button>
             </a-upload>
-            <span v-if="!coverImg" :class="{ 'link-btn': true }" @click="showFileBank(0)">
-              从文件银行选取
-            </span>
+            <span v-if="!coverImg" :class="{ 'link-btn': true }" @click="showFileBank(0)"> 从文件银行选取 </span>
             <template v-if="coverImg">
               <span class="link-btn" @click="clearFile(0)">删除</span>
               <a-popconfirm placement="right">
-                <template slot="title">
-                  删除对象不会影响文件银行内容
-                </template>
+                <template slot="title"> 删除对象不会影响文件银行内容 </template>
                 <a-icon type="question-circle" />
               </a-popconfirm>
             </template>
@@ -92,11 +88,11 @@
         </a-form-model-item>
         <a-form-model-item labelAlign="left" :colon="false" label="文章浏览次数">
           基数
-          <a-input-number id="inputNumber1" v-model="form.readingBase" style="width: 100px;" />
+          <a-input-number id="inputNumber1" v-model="form.readingBase" style="width: 100px" />
           + 实际浏览次数
-          <a-input-number id="inputNumber2" v-model="form.realReading" :disabled="true" style="width: 100px;" />
+          <a-input-number id="inputNumber2" v-model="form.realReading" :disabled="true" style="width: 100px" />
           = 前台显示浏览次数
-          <a-input-number id="inputNumber3" v-model="reading" :disabled="true" style="width: 100px;" />
+          <a-input-number id="inputNumber3" v-model="reading" :disabled="true" style="width: 100px" />
         </a-form-model-item>
         <a-form-model-item labelAlign="left" :colon="false" label="文章内容">
           <!--          <k-editor v-model="form.desc"></k-editor>-->
@@ -129,7 +125,7 @@
           </a-row>
         </a-form-model-item>
         <a-form-model-item class="label-col" :colon="false" labelAlign="left">
-          <div slot="label" class=" pt3">
+          <div slot="label" class="pt3">
             <span>关键词 Keywords</span>
           </div>
           <a-row :gutter="10">
@@ -142,7 +138,7 @@
           </a-row>
         </a-form-model-item>
         <a-form-model-item class="" :colon="false" labelAlign="left">
-          <div slot="label" class=" pt3">
+          <div slot="label" class="pt3">
             <span>描述 Description</span>
           </div>
           <a-row :gutter="10">
@@ -182,44 +178,44 @@
                 新增关键词
               </a-button>
             </a-col>
-<!--            <a-col :span="8">-->
-<!--              <a-card class="keyword-list" size="small">-->
-<!--                <div-->
-<!--                  style="cursor: pointer"-->
-<!--                  class="s-flex s-flex-between s-flex-align-center"-->
-<!--                  slot="title"-->
-<!--                  @click="showKeyword = !showKeyword"-->
-<!--                >-->
-<!--                  关键词列表-->
-<!--                  <a-icon v-if="showKeyword" type="eye"></a-icon>-->
-<!--                  <a-icon v-else type="eye-invisible" />-->
-<!--                </div>-->
-<!--                <template v-if="showKeyword">-->
-<!--                  <a-list-->
-<!--                    class="list-box"-->
-<!--                    item-layout="horizontal"-->
-<!--                    :data-source="keywordList"-->
-<!--                    :loading="keywordListLoading"-->
-<!--                  >-->
-<!--                    <a-list-item-->
-<!--                      class="list-content"-->
-<!--                      slot="renderItem"-->
-<!--                      key="item.id"-->
-<!--                      slot-scope="item"-->
-<!--                      @click="handleKeywordList(item.keyWord)"-->
-<!--                    >-->
-<!--                      <a-list-item-meta>-->
-<!--                        <span slot="title">{{ item.keyWord }}</span>-->
-<!--                      </a-list-item-meta>-->
-<!--                      <span slot="extra">{{ `(${item.associatedArticleCount})` }}</span>-->
-<!--                    </a-list-item>-->
-<!--                  </a-list>-->
-<!--                  <span slot="actions">-->
-<!--                    <a-button type="link" @click="goToKeywords">管理关键词</a-button>-->
-<!--                  </span>-->
-<!--                </template>-->
-<!--              </a-card>-->
-<!--            </a-col>-->
+            <!--            <a-col :span="8">-->
+            <!--              <a-card class="keyword-list" size="small">-->
+            <!--                <div-->
+            <!--                  style="cursor: pointer"-->
+            <!--                  class="s-flex s-flex-between s-flex-align-center"-->
+            <!--                  slot="title"-->
+            <!--                  @click="showKeyword = !showKeyword"-->
+            <!--                >-->
+            <!--                  关键词列表-->
+            <!--                  <a-icon v-if="showKeyword" type="eye"></a-icon>-->
+            <!--                  <a-icon v-else type="eye-invisible" />-->
+            <!--                </div>-->
+            <!--                <template v-if="showKeyword">-->
+            <!--                  <a-list-->
+            <!--                    class="list-box"-->
+            <!--                    item-layout="horizontal"-->
+            <!--                    :data-source="keywordList"-->
+            <!--                    :loading="keywordListLoading"-->
+            <!--                  >-->
+            <!--                    <a-list-item-->
+            <!--                      class="list-content"-->
+            <!--                      slot="renderItem"-->
+            <!--                      key="item.id"-->
+            <!--                      slot-scope="item"-->
+            <!--                      @click="handleKeywordList(item.keyWord)"-->
+            <!--                    >-->
+            <!--                      <a-list-item-meta>-->
+            <!--                        <span slot="title">{{ item.keyWord }}</span>-->
+            <!--                      </a-list-item-meta>-->
+            <!--                      <span slot="extra">{{ `(${item.associatedArticleCount})` }}</span>-->
+            <!--                    </a-list-item>-->
+            <!--                  </a-list>-->
+            <!--                  <span slot="actions">-->
+            <!--                    <a-button type="link" @click="goToKeywords">管理关键词</a-button>-->
+            <!--                  </span>-->
+            <!--                </template>-->
+            <!--              </a-card>-->
+            <!--            </a-col>-->
           </a-row>
           <p class="info">
             -请填写3个以上的关键词，每个关键词的长度≤5个单词，长度不得超过100字符，单词之间不需要增加任何符号，直接空格表示。
@@ -232,7 +228,7 @@
         <a-alert message="选出5~20篇与该产品相关联的产品展示在前台产品详情。" banner closable />
         <a-table
           :columns="relativeProductColumns"
-          :rowKey="record => record.id"
+          :rowKey="(record) => record.id"
           :row-selection="relativeProductsSelection"
           :data-source="relativeProductsList"
         >
@@ -259,14 +255,14 @@
       </a-form-model-item>
     </a-form-model>
     <a-modal v-model="visibleKeywordChoose" title="关键词库" :width="600" centered>
-      <a-input v-model="keywordSearch" style="width: 260px; margin-right: 10px;margin-bottom: 10px"></a-input>
+      <a-input v-model="keywordSearch" style="width: 260px; margin-right: 10px; margin-bottom: 10px"></a-input>
       <a-button @click="handleKeywordSearch" type="primary" style="margin-right: 10px">搜索</a-button>
       <a-button @click="handleResetKeywordSearch" type="">重置</a-button>
       <s-table
         class="keyword-table"
         size="small"
         ref="keywordTable"
-        :rowKey="record => record.id"
+        :rowKey="(record) => record.id"
         :columns="keywordColumns"
         :data="loadKeywordData"
         :rowSelection="keywordRowSelection"
@@ -295,15 +291,15 @@
       <a-input-search
         placeholder="请输入产品标题"
         enter-button="搜索"
-        style="width:220px;margin-left: 10px;"
+        style="width: 220px; margin-left: 10px"
         @search="onProductSearch"
       />
       <s-table
         ref="table"
-        style="margin-top: 10px;"
+        style="margin-top: 10px"
         size="small"
         :pageSize="100"
-        :rowKey="record => record.id"
+        :rowKey="(record) => record.id"
         :scroll="{ y: 380 }"
         :columns="productColumns"
         :data="loadProductData"
@@ -417,7 +413,7 @@ export default {
       keywordQuery: {},
       selectedKeywords: [],
       selectedKeywordRowKeys: [],
-      loadKeywordData: parameter => {
+      loadKeywordData: (parameter) => {
         parameter = Object.assign(parameter, this.keywordQuery)
         return getKeyword(parameter)
       },
@@ -429,7 +425,7 @@ export default {
       recervingItems: [],
 
       submitLoading: false,
-      loadProductData: parameter => {
+      loadProductData: (parameter) => {
         parameter = Object.assign(parameter, this.queryParam)
         return getProducts(parameter)
       },
@@ -603,12 +599,12 @@ export default {
     const sortable = sortableJS.create(this.$refs.list, {
       sort: true,
       animation: 300,
-      onEnd: function(evt) {
+      onEnd: function (evt) {
         // 拖拽结束发生该事件
         that.form.keyword.words.splice(evt.newIndex, 0, that.form.keyword.words.splice(evt.oldIndex, 1)[0])
         var newArray = that.form.keyword.words.slice(0)
         that.form.keyword.words = []
-        that.$nextTick(function() {
+        that.$nextTick(function () {
           that.form.keyword.words = newArray
           console.log(that.form.keyword.words)
         })
@@ -621,7 +617,7 @@ export default {
       this.visibleKeywordChoose = true
     },
     handleAppendKeyword() {
-      this.form.keyword.words = this.form.keyword.words.filter(item => item.keyword !== '')
+      this.form.keyword.words = this.form.keyword.words.filter((item) => item.keyword !== '')
       console.log(this.form.keyword.words)
       const length = this.form.keyword.words.length
       if (length >= 8) return false
@@ -721,8 +717,8 @@ export default {
     getCateName(cate) {
       if (!cate.length) return ''
       const name = []
-      cate.forEach(item => {
-        const target = this.categoryOptions.find(i => i.id === item)
+      cate.forEach((item) => {
+        const target = this.categoryOptions.find((i) => i.id === item)
         if (!target) return
         name.push(target.label)
       })
@@ -734,24 +730,24 @@ export default {
     },
     cancelRelativeProducts() {
       console.log(this.relativeProductRowKeys)
-      this.relativeProductRowKeys.forEach(key => {
-        this.selectedProductRowKeys = this.selectedProductRowKeys.filter(item => item !== key)
-        this.relativeProductsList = this.relativeProductsList.filter(item => item.id !== key)
+      this.relativeProductRowKeys.forEach((key) => {
+        this.selectedProductRowKeys = this.selectedProductRowKeys.filter((item) => item !== key)
+        this.relativeProductsList = this.relativeProductsList.filter((item) => item.id !== key)
       })
       this.selectedProducts = this.relativeProductsList
     },
     fetchRelativeProducts(id) {
       getRelativeProductsByAid({ id })
-        .then(res => {
+        .then((res) => {
           this.relativeProductsList = res.data
-          this.selectedProductRowKeys = res.data.map(item => item.id)
+          this.selectedProductRowKeys = res.data.map((item) => item.id)
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || '获取相关联产品失败')
         })
     },
     loadDetail(id) {
-      getArticleDetail({ id: id }).then(res => {
+      getArticleDetail({ id: id }).then((res) => {
         if (res.code === 200) {
           const { form } = this
           const { data } = res
@@ -764,7 +760,7 @@ export default {
           form.info.source = data.articleFrom
           form.coverName = data.articleImg
           this.coverImg = data.articleImg ? host + '/' + data.articleImg : ''
-          form.keyword.words = data.articleKeys.map(item => {
+          form.keyword.words = data.articleKeys.map((item) => {
             return {
               keyword: item
             }
@@ -863,10 +859,10 @@ export default {
       this.selectedKeywords = selectedRows
     },
     loadArticleCate() {
-      getArticleCate(this.queryArticleCate).then(res => {
+      getArticleCate(this.queryArticleCate).then((res) => {
         const result = res.data.datas
         if (result.length > 0) {
-          result.forEach(item => {
+          result.forEach((item) => {
             this.articleCate.push({
               value: item.catName,
               label: item.catName,
@@ -964,7 +960,7 @@ export default {
         type: 1
       }
       await getUploadSign(param)
-        .then(res => {
+        .then((res) => {
           if (res.code === 200) {
             this.picToken = res.data.token
             this.fileName = res.data.fileName
@@ -972,7 +968,7 @@ export default {
             throw res
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg)
           this.isUploading = false
         })
@@ -991,7 +987,7 @@ export default {
     },
     initSkuData() {
       if (this.form.sku.attr.length > 0) {
-        this.form.sku.attr.forEach(item => {
+        this.form.sku.attr.forEach((item) => {
           const key = `${item.name}Stock`
           this.skuColumns.push({
             title: item.name,
@@ -1011,15 +1007,15 @@ export default {
       getKeyword({
         pageIndex: 1,
         pageSize: 100
-      }).then(res => {
+      }).then((res) => {
         this.keywordListLoading = false
         this.keywordList = res.data.datas
       })
     },
     // 加载分类数据
     loadCategory() {
-      getProductCate(this.queryProductCate).then(res => {
-        res.data.datas.forEach(item => {
+      getProductCate(this.queryProductCate).then((res) => {
+        res.data.datas.forEach((item) => {
           this.categoryOptions.push({
             label: item.catName,
             value: item.id,
@@ -1055,7 +1051,7 @@ export default {
     },
     // sku 选择
     handleSkuChange(value, index) {
-      const isKeyExisted = this.form.sku.attr.filter(item => {
+      const isKeyExisted = this.form.sku.attr.filter((item) => {
         return item.name === value
       })
       if (isKeyExisted.length > 0) {
@@ -1105,7 +1101,7 @@ export default {
       return true
     },
     handleSkuInputBlur(item, val, index) {
-      const isExist = item.vals.filter(i => {
+      const isExist = item.vals.filter((i) => {
         return i.value === val
       })
       console.log(isExist)
@@ -1124,7 +1120,7 @@ export default {
       const { form } = this
       const params = {
         articleUrl: form.articleUrl,
-        articleKeys: form.keyword.words.map(item => item.keyword),
+        articleKeys: form.keyword.words.map((item) => item.keyword),
         seoKeyWords: form.keyword.pageKeyword,
         seoTitle: form.keyword.pageTitle,
         seoDescription: form.keyword.pageDesc,
@@ -1141,11 +1137,7 @@ export default {
         articleTitle: form.name,
         status: form.status,
         isTop: form.isTop === 1,
-        releaseDate: form.releaseDate
-          ? moment(form.releaseDate._d)
-              .utc()
-              .format()
-          : moment().format(),
+        releaseDate: form.releaseDate ? moment(form.releaseDate._d).utc().format() : moment().format(),
         catId: form.category,
         sort: 0
       }
@@ -1153,7 +1145,7 @@ export default {
         params.id = Number(this.$route.params.id)
       }
       console.log(params)
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
           try {
             this.submitLoading = true
@@ -1513,10 +1505,10 @@ div.ant-card-body {
   }
 }
 
-.list-group-item{
+.list-group-item {
   width: 320px;
 }
-.keyword-btn{
+.keyword-btn {
   margin-top: 5px;
 }
 </style>

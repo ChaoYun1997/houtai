@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-card :bordered="false"  class="margin-bottom">
+    <a-card :bordered="false" class="margin-bottom">
       <h3 slot="title">产品查询</h3>
       <a-form layout="inline">
         <a-form-item>
@@ -57,7 +57,7 @@
           恢复产品
         </a-button>
         <a-button :style="{ marginLeft: '8px' }" @click="handleRemove" type="danger">
-          批量彻底删除
+          彻底删除
         </a-button>
       </div>
     </a-card>

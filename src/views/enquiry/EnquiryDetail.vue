@@ -1,10 +1,10 @@
 <template>
   <div>
-    <a-button v-print="'#print-content'" type="primary" style="margin-bottom: 20px;">打印</a-button>
+    <a-button v-print="'#print-content'" type="primary" style="margin-bottom: 20px">打印</a-button>
     <div id="print-content">
       <a-card :bordered="false">
         <h3 slot="title">询盘信息</h3>
-        <a-descriptions bordered :column="{xs: 2, md: 2, lg: 2}" style="width: 1300px">
+        <a-descriptions bordered :column="{ xs: 2, md: 2, lg: 2 }" style="width: 1300px">
           <a-descriptions-item label="询盘单号">
             {{ detail.orderNumber }}
           </a-descriptions-item>
@@ -24,22 +24,23 @@
             {{ detail.sourceUrl }}
           </a-descriptions-item>
           <a-descriptions-item label="来源终端">
-            {{ `${detail.equipment} | ${detail.browser} | ${detail.language} | ${detail.systemName} | ${detail.browserUa}` }}
+            {{
+              `${detail.equipment} | ${detail.browser} | ${detail.language} | ${detail.systemName} | ${detail.browserUa}`
+            }}
           </a-descriptions-item>
         </a-descriptions>
       </a-card>
-      <br>
+      <br />
       <a-card :bordered="false">
         <h3 slot="title">询盘内容</h3>
-        <a-descriptions bordered :column="{xs: 2, md: 2, lg: 2}" style="width: 1300px">
+        <a-descriptions bordered :column="{ xs: 2, md: 2, lg: 2 }" style="width: 1300px">
           <a-descriptions-item label="姓名">
             {{ detail.contactName }}
           </a-descriptions-item>
           <a-descriptions-item label="公司">
             {{ detail.contactCompany }}
           </a-descriptions-item>
-          <a-descriptions-item label="职位">
-          </a-descriptions-item>
+          <a-descriptions-item label="职位"> </a-descriptions-item>
           <a-descriptions-item label="邮箱">
             {{ detail.contactEMail }}
           </a-descriptions-item>
@@ -54,53 +55,53 @@
           </a-descriptions-item>
         </a-descriptions>
       </a-card>
-      <br>
+      <br />
       <a-card :bordered="false" title="产品信息">
-<!--        <a-descriptions layout="vertical" :column="4" bordered>-->
-<!--          <a-descriptions-item label="产品图片">-->
-<!--            <a-icon type="picture" style="font-size: 32px; opacity: .3" v-if="!detail.shopImgUrl"></a-icon>-->
-<!--            <img v-else :src="imgUrl" alt="" class="cover" />-->
-<!--          </a-descriptions-item>-->
-<!--          <a-descriptions-item label="产品名称">-->
-<!--            {{ detail.shopName }}-->
-<!--          </a-descriptions-item>-->
-<!--          <a-descriptions-item label="产品属性">-->
-<!--            {{ detail.shopSku }}-->
-<!--          </a-descriptions-item>-->
-<!--          <a-descriptions-item label="数量">-->
-<!--            {{ detail.quantity }}-->
-<!--          </a-descriptions-item>-->
-<!--        </a-descriptions>-->
+        <!--        <a-descriptions layout="vertical" :column="4" bordered>-->
+        <!--          <a-descriptions-item label="产品图片">-->
+        <!--            <a-icon type="picture" style="font-size: 32px; opacity: .3" v-if="!detail.shopImgUrl"></a-icon>-->
+        <!--            <img v-else :src="imgUrl" alt="" class="cover" />-->
+        <!--          </a-descriptions-item>-->
+        <!--          <a-descriptions-item label="产品名称">-->
+        <!--            {{ detail.shopName }}-->
+        <!--          </a-descriptions-item>-->
+        <!--          <a-descriptions-item label="产品属性">-->
+        <!--            {{ detail.shopSku }}-->
+        <!--          </a-descriptions-item>-->
+        <!--          <a-descriptions-item label="数量">-->
+        <!--            {{ detail.quantity }}-->
+        <!--          </a-descriptions-item>-->
+        <!--        </a-descriptions>-->
         <table width="1200" class="product-list">
           <tr>
-            <th style="text-align:center">图片</th>
-            <th style="text-align:center">产品名称</th>
-            <th style="text-align:center">产品型号</th>
-            <th style="text-align:center">产品链接</th>
-            <th style="text-align:center">需求数量</th>
+            <th style="text-align: center">图片</th>
+            <th style="text-align: center">产品名称</th>
+            <th style="text-align: center">产品型号</th>
+            <th style="text-align: center">产品链接</th>
+            <th style="text-align: center">需求数量</th>
           </tr>
           <tr>
-            <td style="text-align:center">
-              <a-icon type="picture" style="font-size: 32px; opacity: .3" v-if="!detail.shopImgUrl"></a-icon>
+            <td style="text-align: center">
+              <a-icon type="picture" style="font-size: 32px; opacity: 0.3" v-if="!detail.shopImgUrl"></a-icon>
               <img v-else :src="imgUrl" alt="" class="cover" />
             </td>
-            <td style="text-align:center">
+            <td style="text-align: center">
               <span class="link-btn">{{ detail.shopName }}</span>
             </td>
-            <td style="text-align:center">
+            <td style="text-align: center">
               {{ detail.shopSku }}
             </td>
-            <td style="text-align:center"></td>
-            <td style="text-align:center">
+            <td style="text-align: center"></td>
+            <td style="text-align: center">
               {{ detail.quantity }}
             </td>
           </tr>
         </table>
       </a-card>
     </div>
-    <br>
+    <br />
     <a-card :bordered="false" title="跟进记录">
-      <a-timeline style="margin-top: 20px;">
+      <a-timeline style="margin-top: 20px">
         <template v-for="(item, index) in progressingLog">
           <a-timeline-item :key="index">
             <a-row>
@@ -112,7 +113,7 @@
         </template>
       </a-timeline>
     </a-card>
-    <br>
+    <br />
     <a-card :bordered="false">
       <a-card>
         <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" :form="form" ref="form">
@@ -228,7 +229,7 @@ export default {
   },
   methods: {
     loadEnquiryLog(id) {
-      getEnquiryLog({ enquiryId: id }).then(res => {
+      getEnquiryLog({ enquiryId: id }).then((res) => {
         console.log(res)
         this.progressingLog = res.data
       })
@@ -237,7 +238,7 @@ export default {
       window.print()
     },
     loadDetail(id) {
-      enquiryDetail({ id: id }).then(res => {
+      enquiryDetail({ id: id }).then((res) => {
         console.log(res.data)
         this.detail = res.data
       })
@@ -250,14 +251,14 @@ export default {
         note: this.note
       }
       addEnquiryLog(params)
-        .then(res => {
+        .then((res) => {
           if (res.code === 200) {
             this.$message.success('跟进成功')
           } else {
             throw res
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || 'fail')
         })
     }
@@ -300,15 +301,15 @@ export default {
     }
   }
 }
-  .cover{
-    width: 100px;
-    height: auto;
+.cover {
+  width: 100px;
+  height: auto;
+}
+.product-list {
+  td {
+    padding: 10px;
+    height: 100px;
+    line-height: 80px;
   }
-  .product-list{
-    td{
-      padding: 10px;
-      height: 100px;
-      line-height: 80px;
-    }
-  }
+}
 </style>

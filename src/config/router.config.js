@@ -221,6 +221,13 @@ export const asyncRouterMap = [
             name: 'addAriticleCategory',
             component: () => import('@/views/article/CategoryDetail'),
             meta: { title: '添加分类', keepAlive: true }
+          },
+          {
+            path: '/articles/recycle-bin',
+            name: 'articleRecycleBin',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/article/RecycleBin'),
+            meta: { title: '文章回收', keepAlive: true }
           }
         ]
       },

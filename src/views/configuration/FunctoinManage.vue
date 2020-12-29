@@ -7,7 +7,7 @@
         <a-col :span="18">
           <a-button v-if="!sitemapCreated" @click="createSitemap" :loading="creating">生成站点地图</a-button>
           <template v-else>
-            <a :href="siteHtml" class="link-btn ">html</a>
+            <a :href="siteHtml" class="link-btn">html</a>
             <a :href="siteXml" class="link-btn left-split">Xml</a>
             <a-button style="margin-right: 10px" type="primary" @click="handleSubmitSitemap(1)">提交到谷歌</a-button>
             <a-button type="primary" @click="handleSubmitSitemap(2)">提交到必应</a-button>
@@ -16,12 +16,12 @@
           <!--          <a-textarea v-model="sitemap" :auto-size="{ minRows: 3, maxRows: 5 }" />-->
         </a-col>
       </a-row>
-<!--      <a-row>-->
-<!--        <a-col :span="2">提交搜索引擎</a-col>-->
-<!--        <a-col :span="18">-->
-<!--          <a-textarea v-model="searchEngine" :auto-size="{ minRows: 3, maxRows: 5 }" />-->
-<!--        </a-col>-->
-<!--      </a-row>-->
+      <!--      <a-row>-->
+      <!--        <a-col :span="2">提交搜索引擎</a-col>-->
+      <!--        <a-col :span="18">-->
+      <!--          <a-textarea v-model="searchEngine" :auto-size="{ minRows: 3, maxRows: 5 }" />-->
+      <!--        </a-col>-->
+      <!--      </a-row>-->
       <a-row>
         <a-col :span="2">Robots文件配置</a-col>
         <a-col :span="18">
@@ -97,7 +97,7 @@ export default {
   methods: {
     fetchdata() {
       getUserInfo()
-        .then(res => {
+        .then((res) => {
           const { data } = res
           this.info = data
           this.robots = data.robots
@@ -110,7 +110,7 @@ export default {
           this.googleAds = data.googleAd
           this.deadlink = data.dieChain
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg)
         })
     },
@@ -123,25 +123,25 @@ export default {
         type: type
       }
       submitSitemap(params)
-        .then(res => {
+        .then((res) => {
           if (res.code !== 200) throw res
           this.$message.success('提交成功')
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || '提交失败')
         })
     },
     createSitemap() {
       this.creating = true
       getSitemap()
-        .then(res => {
+        .then((res) => {
           if (res.code !== 200) throw res
           this.$message.success(res.data.msg || '生成成功')
           this.sitemapCreated = true
           this.siteHtml = res.data.html
           this.siteXml = res.data.xml
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(JSON.stringify(err))
           this.$message.error(err.msg || '生成失败')
           this.sitemapCreated = false
@@ -163,11 +163,11 @@ export default {
       params.dieChain = this.deadlink
       console.log(params)
       updateConfig(params)
-        .then(res => {
+        .then((res) => {
           if (res.code !== 200) throw res
           this.$message.success('更新成功')
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || '更新失败')
         })
     }

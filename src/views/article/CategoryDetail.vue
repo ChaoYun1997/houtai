@@ -1,15 +1,9 @@
 <template>
   <div>
     <a-card :body-style="{ padding: '24px 32px' }" :bordered="false">
-      <a-form-model
-        ref="form"
-        :model="form"
-        :rules="rules"
-        :label-col="labelCol"
-        :wrapper-col="wrapperCol"
-      >
+      <a-form-model ref="form" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <h3 class="title">基本信息</h3>
-        <a-divider style="margin: 4px 0 20px 0;" />
+        <a-divider style="margin: 4px 0 20px 0" />
         <a-form-model-item label="文章分类名称" prop="cate">
           <a-input v-model="form.cate" />
           <p class="info negativeTop">-频繁修改文章名称直接影响SEO效果，请仔细斟酌后再提交。</p>
@@ -42,72 +36,56 @@
         </a-form-model-item>
         <a-form-model-item label="文章分类图片">
           <p>
-            <span
-              v-if="!coverImg"
-              :class="{ 'link-btn': true }"
-              @click="showFileBank(0)"
-            >
-              从文件银行选取
-            </span>
+            <span v-if="!coverImg" :class="{ 'link-btn': true }" @click="showFileBank(0)"> 从文件银行选取 </span>
             <template v-if="coverImg">
               <span class="link-btn" @click="clearFile(0)">删除</span>
               <a-popconfirm placement="right">
-                <template slot="title">
-                  删除对象不会影响文件银行内容
-                </template>
+                <template slot="title"> 删除对象不会影响文件银行内容 </template>
                 <a-icon type="question-circle" />
               </a-popconfirm>
             </template>
           </p>
           <img v-if="coverImg" class="cover-preview" :src="coverImg" alt="cover" />
-<!--          <a-upload-->
-<!--            name="avatar"-->
-<!--            list-type="picture-card"-->
-<!--            class="cover-uploader"-->
-<!--            accept="image/*"-->
-<!--            :show-upload-list="false"-->
-<!--            :data="getUploadData"-->
-<!--            :action="uploadUrl"-->
-<!--            :before-upload="getUploadToken"-->
-<!--            @change="handleArticlePicUpload"-->
-<!--          >-->
-<!--            <img v-if="coverImg" :src="coverImg" alt="cover" />-->
-<!--            <div v-else>-->
-<!--              <a-icon :type="uploading ? 'loading' : 'plus'" />-->
-<!--              <div class="ant-upload-text">上传</div>-->
-<!--            </div>-->
-<!--          </a-upload>-->
+          <!--          <a-upload-->
+          <!--            name="avatar"-->
+          <!--            list-type="picture-card"-->
+          <!--            class="cover-uploader"-->
+          <!--            accept="image/*"-->
+          <!--            :show-upload-list="false"-->
+          <!--            :data="getUploadData"-->
+          <!--            :action="uploadUrl"-->
+          <!--            :before-upload="getUploadToken"-->
+          <!--            @change="handleArticlePicUpload"-->
+          <!--          >-->
+          <!--            <img v-if="coverImg" :src="coverImg" alt="cover" />-->
+          <!--            <div v-else>-->
+          <!--              <a-icon :type="uploading ? 'loading' : 'plus'" />-->
+          <!--              <div class="ant-upload-text">上传</div>-->
+          <!--            </div>-->
+          <!--          </a-upload>-->
         </a-form-model-item>
         <h3 class="title">指向页面</h3>
-        <a-divider style="margin: 4px 0 20px 0;" />
+        <a-divider style="margin: 4px 0 20px 0" />
         <b>设置分类指向页面</b>
         <p>
-          <a-select
-            style="width: 120px"
-            :default-value="form.catWebUrl"
-            @change="handleCatePageChange"
-          >
+          <a-select style="width: 120px" :default-value="form.catWebUrl" @change="handleCatePageChange">
             <template v-for="item in page">
               <a-select-option :value="item.path" :key="item.name">{{ item.name }}</a-select-option>
             </template>
           </a-select>
-          <a-button style="margin-left: 10px;" @click="showAddNewPage = true">新建页面</a-button>
+          <a-button style="margin-left: 10px" @click="showAddNewPage = true">新建页面</a-button>
         </p>
         <b>设置详情指向页面</b>
         <p>
-          <a-select
-            style="width: 120px"
-            :default-value="form.catDescUrl"
-            @change="handleDetailPageChange"
-          >
+          <a-select style="width: 120px" :default-value="form.catDescUrl" @change="handleDetailPageChange">
             <template v-for="item in page">
               <a-select-option :value="item.path" :key="item.name">{{ item.name }}</a-select-option>
             </template>
           </a-select>
-          <a-button style="margin-left: 10px;" @click="showAddNewPage = true">新建页面</a-button>
+          <a-button style="margin-left: 10px" @click="showAddNewPage = true">新建页面</a-button>
         </p>
         <h3 class="title">搜索引擎优化</h3>
-        <a-divider style="margin: 4px 0 20px 0;" />
+        <a-divider style="margin: 4px 0 20px 0" />
         <div class="seo">
           <a-row :gutter="[16, 20]">
             <a-col :span="4" :push="1">
@@ -158,10 +136,12 @@
         <a-button @click="showAddNewPage = false">取消</a-button>
         <a-button
           type="primary"
-          style="margin-left: 10px;"
+          style="margin-left: 10px"
           @click="handleAddNewPage"
           :disabled="newPageName === '' || newPagePath === ''"
-        >确定</a-button>
+        >
+          确定
+        </a-button>
       </div>
     </a-modal>
   </div>
