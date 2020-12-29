@@ -16,7 +16,6 @@
             v-else
             show-line
             :autoExpandParent="true"
-            :defaultExpandAll="true"
             :tree-data="cateTree"
             show-icon
             :selectedKeys.sync="selectedK"

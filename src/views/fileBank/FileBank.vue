@@ -559,6 +559,10 @@ export default {
         })
     },
     handleDelTreeNode(item) {
+      if (item.children !== undefined) {
+        this.$message.error('不能直接删除拥有子分组的数据')
+        return false
+      }
       delFileGroup([item.id])
         .then(res => {
           if (res.code !== 200) throw res

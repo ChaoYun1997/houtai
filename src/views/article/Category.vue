@@ -20,6 +20,10 @@
         :rowKey="(record) => record.id"
         :columns="columns"
         :data="loadCateData"
+        :pageSize="40"
+        :pagination="{
+          pageSizeOptions: 	[ '20', '30', '40', '100']
+        }"
         :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       >
         <div style="display: inline-block" slot="sort" slot-scope="text, record">
@@ -29,7 +33,7 @@
         <div class="action" slot="action" slot-scope="text, record">
           <span class="link-btn right-split" @click="edit(record.id)">编辑</span>
           <span class="link-btn right-split" @click="preview(record.catUrl)">预览</span>
-          <a-popconfirm title="你确定要删除该产品吗?" @confirm="del(record.id)">
+          <a-popconfirm title="你确定要删除该产品吗?" @confirm="del(record)">
             <span class="link-btn red-text">删除</span>
           </a-popconfirm>
         </div>
@@ -342,8 +346,12 @@ export default {
     edit(id) {
       this.$router.push(`/articles/add-category/${id}`)
     },
-    del(id) {
-      delCate({ id: id }).then((res) => {
+    del(record) {
+      if (record.children !== undefined) {
+        this.$message.error('不能直接删除拥有子分类的数据')
+        return false
+      }
+      delCate({ id: record.id }).then((res) => {
         if (res.code === 200) {
           this.$message.success('操作成功')
           this.$refs.table.refresh()

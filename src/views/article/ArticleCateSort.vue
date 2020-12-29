@@ -25,10 +25,7 @@ export default {
     return {
       cateParam: 'all',
       category: [],
-      queryParam: {
-        pageSize: 20,
-        pageIndex: 1
-      },
+      queryParam: {},
       products: [],
       current: 1,
       total: 0

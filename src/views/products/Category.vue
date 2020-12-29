@@ -21,6 +21,10 @@
         :rowKey="record => record.id"
         :columns="cateColumns"
         :data="loadCateData"
+        :pageSize="40"
+        :pagination="{
+          pageSizeOptions: 	['20', '30', '40', '100']
+        }"
         :rowSelection="rowSelection"
       >
         <div style="display:inline-block;" slot="sort" slot-scope="text, record">
@@ -38,7 +42,7 @@
           <span class="link-btn " @click="addSub(record.id)">添加子分类</span>
           <span class="link-btn  left-split" @click="edit(record.id)">编辑</span>
           <!--          <span class="link-btn left-split" @click="preview(record.id)">预览</span>-->
-          <span class="link-btn del left-split" @click="del(record.id)">删除</span>
+          <span class="link-btn del left-split" @click="del(record)">删除</span>
         </div>
       </s-table>
       <div class="table-operator list-footer">
@@ -161,10 +165,7 @@ export default {
       selectedRowKeys: [],
       category: [],
       originCates: [],
-      queryParam: {
-        pageIndex: 1,
-        pageSize: 10
-      },
+      queryParam: {},
       pagination: {
         size: 'small'
       }
@@ -394,13 +395,17 @@ export default {
     addSub(id) {
       this.$router.push({ path: '/products/add-category', query: { parent: id } })
     },
-    del(id) {
+    del(record) {
+      if (record.children !== undefined) {
+        this.$message.error('不能直接删除拥有子分类的数据')
+        return false
+      }
       this.$confirm({
         content: '你确定要删除该分类吗？',
         centered: true,
         onOk: () => {
           const params = {
-            id: id
+            id: record.id
           }
           delCate(params)
             .then(res => {
