@@ -117,22 +117,26 @@ const cateColumns = [
     dataIndex: 'catName',
     scopedSlots: {
       customRender: 'catname'
-    }
+    },
+    align: 'center'
   },
   {
     title: '类目属性',
     dataIndex: 'catPid',
     scopedSlots: {
       customRender: 'catPid'
-    }
+    },
+    align: 'center'
   },
   {
     title: '产品数',
-    dataIndex: 'itemCount'
+    dataIndex: 'itemCount',
+    align: 'center'
   },
   {
     title: '分类URL',
-    dataIndex: 'catUrl'
+    dataIndex: 'catUrl',
+    align: 'center'
   },
   // {
   //   title: '分类指向页面',
@@ -147,7 +151,8 @@ const cateColumns = [
     dataIndex: 'action',
     scopedSlots: {
       customRender: 'action'
-    }
+    },
+    align: 'center'
   }
 ]
 export default {

@@ -2,7 +2,7 @@
   <div>
     <a-card :body-style="{ padding: '0 32px 24px' }" :bordered="false">
       <h3 slot="title">选择关键词内链的生成规则</h3>
-      <a-radio-group v-model="value">
+      <a-radio-group v-model="value" style="margin-top: 20px;">
         <a-radio :style="radioStyle" :value="0">每个关键词都生成关键词内链</a-radio>
         <a-radio :style="radioStyle" :value="1">只有当关联的产品/文章数大于3个才生成关键词内链</a-radio>
         <a-radio :style="radioStyle" :value="2">只有当关联的产品/文章数大于5个才生成关键词内链</a-radio>

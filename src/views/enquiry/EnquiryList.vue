@@ -92,37 +92,44 @@
   const columns = [
     {
       title: '询盘单号',
-      dataIndex: 'orderNumber'
+      dataIndex: 'orderNumber',
+      align: 'center'
     },
     {
       title: '姓名',
-      dataIndex: 'name'
+      dataIndex: 'name',
+      align: 'center'
     },
     {
       title: '邮箱',
-      dataIndex: 'email'
+      dataIndex: 'email',
+      align: 'center'
     },
     {
       title: '询盘类型',
       dataIndex: 'enquiryType',
       scopedSlots: {
         customRender: 'enquiryType'
-      }
+      },
+      align: 'center'
     },
     {
       title: '来源国家',
       dataIndex: 'contactRegion',
       scopedSlots: {
         customRender: 'country'
-      }
+      },
+      align: 'center'
     },
     {
       title: '询盘时间',
-      dataIndex: 'createDate'
+      dataIndex: 'createDate',
+      align: 'center'
     },
     {
       title: '跟进状态',
-      dataIndex: 'state'
+      dataIndex: 'state',
+      align: 'center'
     },
     {
       title: '操作',

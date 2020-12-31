@@ -14,7 +14,7 @@
         <div class="action" slot="action" slot-scope="text, record">
           <span @click="preview(record.pageUrl)" class="link-btn right-split">预览</span>
           <span @click="$router.push('/configuration/pageDetails/' + record.id)" class="link-btn">编辑</span>
-          <template v-if="record.pageType !== 0">
+          <template>
             <a-popconfirm title="你确定要删除该数据吗?" @confirm="del(record.id)">
               <span class="link-btn left-split">删除</span>
             </a-popconfirm>

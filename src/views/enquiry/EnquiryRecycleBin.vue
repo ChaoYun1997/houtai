@@ -1,6 +1,7 @@
 <template>
   <div>
-    <a-card :bordered="false" title="询盘查询">
+    <a-card :bordered="false">
+      <h3 slot="title">询盘查询</h3>
       <a-form layout="inline">
         <a-form-item>
           <a-select placeholder="请选择" v-model="enquiryType" style="width: 160px">
@@ -45,11 +46,12 @@
         </a-form-item>
       </a-form>
     </a-card>
-    <a-card class="lsit" title="询盘展示" :bordered="false" style="margin-top: 10px">
-      <div class="table-operator">
-        <a-button @click="handleRestore" type="primary">恢复询盘</a-button>
-        <a-button @click="handleRemove" type="danger">彻底删除</a-button>
-      </div>
+    <a-card class="list" :bordered="false" style="margin-top: 10px">
+      <h3 slot="title">询盘展示</h3>
+<!--      <div class="table-operator">-->
+<!--        <a-button @click="handleRestore" type="primary">恢复询盘</a-button>-->
+<!--        <a-button @click="handleRemove" type="danger">彻底删除</a-button>-->
+<!--      </div>-->
       <s-table
         ref="table"
         size="default"
@@ -101,47 +103,55 @@ import {
 const columns = [
   {
     title: '询盘单号',
-    dataIndex: 'orderNumber'
+    dataIndex: 'orderNumber',
+    align: 'center'
   },
   {
     title: '姓名',
-    dataIndex: 'name'
+    dataIndex: 'name',
+    align: 'center'
   },
   {
     title: '邮箱',
-    dataIndex: 'email'
+    dataIndex: 'email',
+    align: 'center'
   },
   {
     title: '询盘类型',
     dataIndex: 'enquiryType',
     scopedSlots: {
       customRender: 'enquiryType'
-    }
-  },
-  {
-    title: '询盘时间',
-    dataIndex: 'createDate'
+    },
+    align: 'center'
   },
   {
     title: '来源国家',
     dataIndex: 'contactRegion',
     scopedSlots: {
       customRender: 'country'
-    }
+    },
+    align: 'center'
+  },
+  {
+    title: '询盘时间',
+    dataIndex: 'createDate',
+    align: 'center'
   },
   {
     title: '跟进状态',
     dataIndex: 'state',
     scopedSlots: {
       customRender: 'state'
-    }
+    },
+    align: 'center'
   },
   {
     title: '操作',
     dataIndex: 'action',
     scopedSlots: {
       customRender: 'action'
-    }
+    },
+    align: 'center'
   }
 ]
 const flags = {
@@ -333,7 +343,7 @@ export default {
 
   .list-footer {
     position: absolute;
-    bottom: 0px;
+    bottom: 20px;
     left: 20px;
     z-index: 10;
   }
