@@ -15,6 +15,18 @@
         <a-form-item labelAlign="left" :colon="false" label="关键词过滤">
           <a-input v-model="keywordFilter" placeholder="多个关键词用英语逗号','隔开"></a-input>
         </a-form-item>
+        <a-form-item labelAlign="left" :colon="false" label="Stmp服务器">
+          <a-input v-model="stmpServer" placeholder="请输入stmp服务器"></a-input>
+        </a-form-item>
+        <a-form-item labelAlign="left" :colon="false" label="Stmp用户名">
+          <a-input v-model="stmpUsername" placeholder="请输入stmp用户名"></a-input>
+        </a-form-item>
+        <a-form-item labelAlign="left" :colon="false" label="Stmp密码">
+          <a-input v-model="stmpPsw" placeholder="请输入stmp密码"></a-input>
+        </a-form-item>
+        <a-form-item labelAlign="left" :colon="false" label="Stmp发件人邮箱">
+          <a-input v-model="stmpEmail" placeholder="请输入stmp发件人邮箱"></a-input>
+        </a-form-item>
         <a-form-item labelAlign="left" :colon="false" label="通知邮件编辑">
           <a-checkbox :checked="isNoticeOpened" class="mb-10 d-block" @change="e => handleChange(e, 0)">
             发送新询盘提醒邮件
@@ -76,6 +88,10 @@ export default {
       failTips: '',
       domainFilter: '',
       keywordFilter: '',
+      stmpServer: '',
+      stmpUsername: '',
+      stmpPsw: '',
+      stmpEmail: '',
       page: 'all',
       list: pageList,
       isNoticeOpened: false,
@@ -102,6 +118,10 @@ export default {
             this.domainFilter = res.data.enquiryUrlFilter
             this.keywordFilter = res.data.enquiryKeysfilter.join(' ')
             this.page = res.data.enquirySuccessUrl
+            this.stmpServer = res.data.stmpServer
+            this.stmpUsername = res.data.stmpUserName
+            this.stmpPsw = res.data.stmpUserPwd
+            this.stmpEmail = res.data.stmpEmail
           } else throw res
         })
         .catch(err => {
@@ -132,7 +152,11 @@ export default {
         enquiryKeysfilter: this.keywordFilter.split(','),
         isNewEnquiryRemind: this.isNoticeOpened,
         isCopySendEmail: this.isNoticeSendTo,
-        copySendEmail: this.email
+        copySendEmail: this.email,
+        stmpServer: this.stmpServer,
+        stmpUserName: this.stmpUsername,
+        stmpUserPwd: this.stmpPsw,
+        stmpEmail: this.stmpEmail
       }
       console.log(param)
       this.loading = true

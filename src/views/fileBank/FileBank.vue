@@ -183,8 +183,8 @@
                         }}
                       </div>
                       <span class="size" v-if="!item.isFolder && item.fileWidth">{{
-                        `${item.fileWidth}*${item.fileHeight}`
-                      }}</span>
+                          `${item.fileWidth}*${item.fileHeight}`
+                        }}</span>
                     </div>
                     <div v-if="!visibleRecycleBin" class="s-flex s-flex-end item-action">
                       <template v-if="!item.isFolder">
@@ -417,7 +417,7 @@ export default {
       visibleNewFolder: false,
       newFolder: '',
       newGroup: '',
-      total: 666,
+      total: 0,
       selectedVideo: '',
       folders: [],
 
@@ -440,10 +440,6 @@ export default {
       currentGroupId: 0,
       currentFolderId: null,
       queryParam: {
-        pageIndex: 1,
-        pageSize: 40
-      },
-      pagination: {
         pageSize: 40
       },
       fileType: 0,
@@ -463,7 +459,6 @@ export default {
             return item
           }
         })
-        console.log(newVal, checkedItem)
         window.parent.postMessage(
           {
             cmd: 'recerving-item',
@@ -489,7 +484,22 @@ export default {
           : process.env.VUE_APP_PROTOCAL_HEAD + state.user.website
       },
       userInfo: state => state.user.userinfo
-    })
+    }),
+
+    pagination() {
+      const vm = this
+      if (!this.loading) {
+        return {
+          pageSize: vm.queryParam.pageSize,
+          total: vm.total,
+          onChange(page, pageSize) {
+            vm.queryParam.pageIndex = page
+            vm.fetchFile()
+          }
+        }
+      }
+      return {}
+    }
   },
   beforeDestroy() {
     this.$nextTick(() => {
@@ -513,6 +523,8 @@ export default {
       if (this.queryType) {
         const sidebar = document.querySelector('.ant-layout-sider')
         const header = document.querySelector('.ant-layout-header')
+        const content = document.querySelector('.ant-pro-basicLayout-content')
+        content.style.margin = '0 0 0 -80px'
         sidebar.style.display = 'none'
         header.style.display = 'none'
         winHeight = document.body.clientHeight
@@ -864,6 +876,7 @@ export default {
       this.indeterminate = false
       this.loading = true
       if (this.queryType) this.queryParam.fileType = this.queryType === 'img' ? 0 : this.queryType === 'video' ? 1 : 2
+      console.log(this.queryParam)
       getFileList(this.queryParam)
         .then(res => {
           if (res.code !== 200) throw res
@@ -902,7 +915,6 @@ export default {
             return item
           })
           this.cateTree[0].children = this.treeTransfer(datas, 0)
-          console.log(this.cateTree[0].children)
         })
         .catch(err => {
           this.$message.error(err.msg || '获取分组数据失败')
@@ -1167,9 +1179,11 @@ export default {
   .ant-tree-switcher {
     background: transparent !important;
   }
+
   .icon-wrap {
     margin-left: 5px;
   }
+
   .tree-icon {
     margin-right: 5px;
   }
@@ -1221,6 +1235,8 @@ export default {
 .file-box {
   .title-box {
     padding: 5px 0;
+    height: 32px;
+    overflow-y: hidden;
 
     .size {
       color: #aaa;
@@ -1252,6 +1268,7 @@ export default {
     .item-img {
       display: block;
     }
+
     .item-img,
     .file-img,
     .file-video {

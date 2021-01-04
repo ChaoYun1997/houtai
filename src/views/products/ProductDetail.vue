@@ -152,7 +152,7 @@
             <a-col :span="10">
               <div ref="list" class="s-flex s-flex-start">
                 <div>
-                  <div class="list-group-item keyword-input" v-for="(item, index) in form.keyword.words" :key="index">
+                  <div ref="list" class="list-group-item keyword-input" v-for="(item, index) in form.keyword.words" :key="index">
                     <a-input v-model="item.keyword" placeholder="请输入关键词" />
                     <a-icon
                       v-show="form.keyword.words.length > 1"
@@ -377,7 +377,48 @@
               </a-row>
             </template>
           </div>
-          <a-button @click="handleAddField">新增字段</a-button>
+          <a-button @click="handleAddField">新增规格</a-button>
+        </a-form-model-item>
+        <a-form-model-item labelAlign="left" :colon="false" >
+          <div slot="label" class="required">自定义字段</div>
+          <div class="addFieldBox">
+            <template v-for="(item, index) in form.custom">
+              <a-row :key="index" :gutter="10">
+                <a-col :span="4">
+                  <a-input v-model="item.name" placeholder="key" style="width: 100%" />
+                </a-col>
+                <a-col :span="19">
+                  <a-input v-model="item.value" placeholder="value" style="width: 220px" />
+                  <a-icon
+                    @click="handleSetCustomUp(index)"
+                    type="up"
+                    :class="{ isSide: index === 0, iconBtn: true }"
+                    style="margin-left: 20px; font-size: 16px"
+                  />
+                  <a-icon
+                    @click="handleSetCustomDown(index)"
+                    type="down"
+                    :class="{ isSide: index === form.custom.length - 1, iconBtn: true }"
+                    style="margin-left: 20px; font-size: 16px"
+                  />
+                  <a-icon
+                    type="delete"
+                    style="margin-left: 20px; margin-left: 20px; font-size: 16px"
+                    @click="handleDelCustom(index)"
+                  ></a-icon>
+                  <span
+                    v-if="index !== 0"
+                    style="margin-left: 20px; color: #40a9ff; cursor: pointer"
+                    @click="handleSetCustomToTop(index)"
+                  >
+                    置顶
+                  </span>
+                  <!--                  <a-button type="danger" shape="circle" size="small" icon="delete" />-->
+                </a-col>
+              </a-row>
+            </template>
+          </div>
+          <a-button @click="handleAddCustom">新增字段</a-button>
         </a-form-model-item>
       </a-card>
       <a-card :bordered="false" class="margin-bottom">
@@ -894,6 +935,13 @@ export default {
             value: ''
           }
         ],
+        custom: [
+          {
+            name: '',
+            value: '',
+            sort: 0
+          }
+        ],
         sku: {
           stock: 10,
           pic: '',
@@ -1022,32 +1070,18 @@ export default {
         })
       }
     })
-    sortableJS.create(this.$refs.attrList, {
+
+    // eslint-disable-next-line no-unused-vars
+    const sortableAttr = sortableJS.create(this.$refs.attrList, {
       sort: true,
       animation: 300,
       onEnd: function (evt) {
-        // 拖拽结束发生该事件
+        // 拖拽结束发生该事件1
         that.form.customFields.splice(evt.newIndex, 0, that.form.customFields.splice(evt.oldIndex, 1)[0])
         var newArray = that.form.customFields.slice(0)
         that.form.customFields = []
         that.$nextTick(function () {
           that.form.customFields = newArray
-        })
-      }
-    })
-
-    // eslint-disable-next-line no-unused-vars
-    const sortablePic = sortableJS.create(this.$refs.piclist, {
-      sort: true,
-      animation: 300,
-      onEnd: function (evt) {
-        // 拖拽结束发生该事件
-        that.picList.splice(evt.newIndex, 0, that.picList.splice(evt.oldIndex, 1)[0])
-        const newArray = that.picList.slice(0)
-        that.picList = []
-        that.$nextTick(function () {
-          that.picList = newArray
-          console.log(that.picList)
         })
       }
     })
@@ -1176,30 +1210,74 @@ export default {
     handleAddField() {
       this.form.customFields.push({
         name: '',
-        value: ''
+        value: '',
+        sort: this.form.customFields.length
       })
       console.log(this.form.customFields)
     },
+    handleAddCustom() {
+      this.form.custom.push({
+        name: '',
+        value: '',
+        sort: this.form.custom.length
+      })
+      console.log(this.form.custom)
+    },
     handleDelField(index) {
       this.form.customFields.splice(index, 1)
+      this.formatCustomSort('customFields')
     },
     handleSetFieldUp(index) {
       if (index === 0) return false
       const temp = this.form.customFields[index]
       this.form.customFields.splice(index, 1)
       this.form.customFields.splice(index - 1, 0, temp)
+      this.formatCustomSort('customFields')
     },
     handleSetFieldDown(index) {
       if (index === this.form.customFields.length - 1) return false
       const temp = this.form.customFields[index]
       this.form.customFields.splice(index, 1)
       this.form.customFields.splice(index + 1, 0, temp)
+      this.formatCustomSort('customFields')
     },
     handleSetFieldToTop(index) {
       const temp = this.form.customFields[index]
       console.log(index, temp)
       this.form.customFields.splice(index, 1)
       this.form.customFields.unshift(temp)
+      this.formatCustomSort('customFields')
+    },
+    handleSetCustomUp(index) {
+      if (index === 0) return false
+      const temp = this.form.custom[index]
+      this.form.custom.splice(index, 1)
+      this.form.custom.splice(index - 1, 0, temp)
+      this.formatCustomSort('custom')
+    },
+    handleDelCustom(index) {
+      this.form.custom.splice(index, 1)
+      this.formatCustomSort('custom')
+    },
+    handleSetCustomDown(index) {
+      if (index === this.form.custom.length - 1) return false
+      const temp = this.form.custom[index]
+      this.form.custom.splice(index, 1)
+      this.form.custom.splice(index + 1, 0, temp)
+      this.formatCustomSort('custom')
+    },
+    handleSetCustomToTop(index) {
+      const temp = this.form.custom[index]
+      console.log(index, temp)
+      this.form.custom.splice(index, 1)
+      this.form.custom.unshift(temp)
+      this.formatCustomSort('custom')
+    },
+    formatCustomSort(field) {
+      this.form[field].forEach((item, index) => {
+        item.sort = index
+      })
+      console.log(this.form[field])
     },
     // sku 选择
     handleSkuChange(value, index) {
@@ -1329,7 +1407,7 @@ export default {
         // form.shopImg = data.shopImg
         form.category = data.catId
         if (data.shopVideoUrl) {
-          if (data.shopVideoUrl.match(host).index !== -1) {
+          if (data.shopVideoUrl.match(host)) {
             const videoArr = data.shopVideoUrl.split('/')
             this.videoList.push({
               path: data.shopVideoUrl,
@@ -1351,6 +1429,7 @@ export default {
         form.desc = data.shopDescribe[0].content
 
         form.customFields = data.shopAttribute
+        form.custom = data.shopCustomProp
         this.fetchRelativeArticles(data.id)
         this.fetchRelativeProducts(data.id)
         // this.selectedArticleRowKeys = data.relatedAids
@@ -1922,6 +2001,7 @@ export default {
         shopNumber: form.code, // 产品编码
         shopModel: form.model, // 产品型号
         shopAttribute: form.customFields,
+        shopCustomProp: form.custom,
         shopDescribe: form.descs, // 产品描述
         relatedAids: this.selectedArticleRowKeys, // 关联文章ID
         relatedShopIds: this.selectedProductRowKeys, // 关联产品ID
