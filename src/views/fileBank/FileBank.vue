@@ -182,9 +182,7 @@
                           item.fileName.length > 6 && mode === 0 ? item.fileName.substring(0, 6) + '...' : item.fileName
                         }}
                       </div>
-                      <span class="size" v-if="!item.isFolder && item.fileWidth">{{
-                          `${item.fileWidth}*${item.fileHeight}`
-                        }}</span>
+                      <span class="size" v-if="!item.isFolder && item.fileWidth">{{`${item.fileWidth}*${item.fileHeight}`}}</span>
                     </div>
                     <div v-if="!visibleRecycleBin" class="s-flex s-flex-end item-action">
                       <template v-if="!item.isFolder">

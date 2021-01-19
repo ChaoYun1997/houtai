@@ -298,7 +298,7 @@
             <a-radio :value="0"> 否 </a-radio>
           </a-radio-group>
         </a-form-model-item>
-        <a-form-model-item labelAlign="left" class="label-col" :colon="false">
+        <a-form-model-item labelAlign="left" class="label-col zscdiy1" :colon="false">
           <div slot="label" class="required">产品视频</div>
 
           <div>
@@ -325,7 +325,7 @@
               </span>
               <!--              <span class="link-btn" @click="useVideoLink = true">填写链接</span>-->
             </p>
-            <div v-if="videoList.length > 0">
+            <div v-if="videoList.length > 0" >
               <video class="video-preview" :src="videoList[0].path" controls />
               <div class="operate">
                 <span class="link-btn" @click="replaceVideo">替换</span> |
@@ -2056,6 +2056,9 @@ export default {
 </script>
 
 <style scoped lang="less">
+.zscdiy1{
+  height: auto !important;
+}
 @import './ProductDetail.less';
 
 .custom-desc {
@@ -2127,7 +2130,7 @@ export default {
 }
 
 .label-col {
-  height: 40px !important;
+  height: 40px ;
   overflow: hidden;
 }
 .label-col2 {

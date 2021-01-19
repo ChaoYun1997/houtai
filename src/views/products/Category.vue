@@ -23,7 +23,7 @@
         :data="loadCateData"
         :pageSize="40"
         :pagination="{
-          pageSizeOptions: 	['20', '30', '40', '100']
+          pageSizeOptions:['20', '30', '40', '100']
         }"
         :rowSelection="rowSelection"
       >
