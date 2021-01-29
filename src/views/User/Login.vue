@@ -123,7 +123,7 @@
           :loading="state.loginBtn"
           :disabled="state.loginBtn"
         >
-          确定
+          登陆
         </a-button>
       </a-form-item>
       <!--      <div class="user-login-other">-->
@@ -358,10 +358,13 @@ export default {
   }
 
   button.login-button {
+    background: #fad956;
     padding: 0 15px;
     font-size: 16px;
     height: 40px;
     width: 100%;
+    color: black;
+    border:none;
   }
 
   .user-login-other {

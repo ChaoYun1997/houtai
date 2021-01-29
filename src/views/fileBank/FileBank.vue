@@ -1,6 +1,6 @@
 <template>
   <div class="bank" id="bankbox">
-    <div style="padding: 20px;background: white;border-bottom: 1px solid #ccc">
+    <div style="padding: 20px; background: white; border-bottom: 1px solid #ccc">
       <h3>文件银行</h3>
     </div>
     <a-layout class="bank-layout">
@@ -56,7 +56,7 @@
               <a-col :span="16">
                 <a-form layout="inline">
                   <a-form-item>
-                    <a-select placeholder="文件分组" v-model="selectedGroup" style="width: 160px;margin-right:10px;">
+                    <a-select placeholder="文件分组" v-model="selectedGroup" style="width: 160px; margin-right: 10px">
                       <a-select-option value="all">全部分组</a-select-option>
                       <a-select-option v-for="item in fileGroup" :key="item.id" :value="item.key">
                         {{ item.label }}
@@ -64,7 +64,7 @@
                     </a-select>
                   </a-form-item>
                   <a-form-item v-if="!queryType">
-                    <a-select placeholder="文件分类" v-model="selectedCate" style="width: 160px;margin-right:10px;">
+                    <a-select placeholder="文件分类" v-model="selectedCate" style="width: 160px; margin-right: 10px">
                       <a-select-option value="all">全部分类</a-select-option>
                       <a-select-option v-for="item in fileCate" :key="item.id" :value="item.key">
                         {{ item.label }}
@@ -83,7 +83,7 @@
               <a-col v-if="!visibleRecycleBin" :span="8" class="s-flex s-flex-end">
                 <a-row class="progress-bar" :gutter="10">
                   <a-col :span="12">
-                    <p style="margin-bottom: 0;text-align: center">{{ `${usedSize}G/${totalSize}G` }}</p>
+                    <p style="margin-bottom: 0; text-align: center">{{ `${usedSize}G/${totalSize}G` }}</p>
                     <a-progress :percent="(usedSize / totalSize) * 100" :show-info="false" />
                   </a-col>
                   <a-col :span="12">
@@ -108,12 +108,8 @@
                   </span>
                 </div>
                 <template v-if="!visibleRecycleBin">
-                  <a-button class="action-btn" @click="visibleNewFolder = true" type="primary">
-                    新建文件夹
-                  </a-button>
-                  <a-button class="action-btn" @click="doDelete" type="danger">
-                    删除
-                  </a-button>
+                  <a-button class="action-btn" @click="visibleNewFolder = true" type="primary"> 新建文件夹 </a-button>
+                  <a-button class="action-btn" @click="doDelete" type="danger"> 删除 </a-button>
                 </template>
                 <template v-else>
                   <a-button class="action-btn" type="primary" @click="doRecovery" shape="round">恢复文件</a-button>
@@ -182,7 +178,9 @@
                           item.fileName.length > 6 && mode === 0 ? item.fileName.substring(0, 6) + '...' : item.fileName
                         }}
                       </div>
-                      <span class="size" v-if="!item.isFolder && item.fileWidth">{{`${item.fileWidth}*${item.fileHeight}`}}</span>
+                      <span class="size" v-if="!item.isFolder && item.fileWidth">{{
+                        `${item.fileWidth}*${item.fileHeight}`
+                      }}</span>
                     </div>
                     <div v-if="!visibleRecycleBin" class="s-flex s-flex-end item-action">
                       <template v-if="!item.isFolder">
@@ -245,7 +243,7 @@
     <a-modal v-model="visibleRenameGroup" :centered="true" title="重命名" :width="500">
       <p class="text-center" style="margin-bottom: 0">
         <a-input
-          style="width:280px;margin-right: 10px"
+          style="width: 280px; margin-right: 10px"
           placeholder="请输入分组名称"
           v-model="renameGroup.title"
         ></a-input>
@@ -257,7 +255,7 @@
     </a-modal>
     <a-modal v-model="visibleAddGroup" :centered="true" title="添加分组" :width="500">
       <p class="text-center" style="margin-bottom: 0">
-        <a-input style="width:280px;margin-right: 10px" placeholder="请输入新分组名称" v-model="newGroup"></a-input>
+        <a-input style="width: 280px; margin-right: 10px" placeholder="请输入新分组名称" v-model="newGroup"></a-input>
       </p>
       <!--      <s-table-->
       <!--        ref="table"-->
@@ -452,7 +450,7 @@ export default {
   watch: {
     checkedList(newVal, oldVal) {
       if (newVal !== oldVal) {
-        const checkedItem = this.fileData.filter(item => {
+        const checkedItem = this.fileData.filter((item) => {
           if (newVal.includes(item.id)) {
             return item
           }
@@ -476,12 +474,12 @@ export default {
   },
   computed: {
     ...mapState({
-      website: state => {
+      website: (state) => {
         return /^http/.test(state.user.website)
           ? state.user.website
           : process.env.VUE_APP_PROTOCAL_HEAD + state.user.website
       },
-      userInfo: state => state.user.userinfo
+      userInfo: (state) => state.user.userinfo
     }),
 
     pagination() {
@@ -558,7 +556,7 @@ export default {
         parentGroupId: this.renameGroup.parentGroupId
       }
       updateFileGroup(params)
-        .then(res => {
+        .then((res) => {
           console.log(res.code)
           if (res.code !== 200) throw res
           this.$message.success('修改成功')
@@ -574,12 +572,12 @@ export default {
         return false
       }
       delFileGroup([item.id])
-        .then(res => {
+        .then((res) => {
           if (res.code !== 200) throw res
           this.$message.success('删除成功')
           this.fetchGroup()
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || '删除失败')
         })
     },
@@ -593,12 +591,12 @@ export default {
     },
     delGroup(id) {
       delFileGroup([id])
-        .then(res => {
+        .then((res) => {
           if (res.code !== 200) throw res
           this.$message.success('删除成功')
           this.fetchGroup()
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || '删除失败')
         })
     },
@@ -610,12 +608,12 @@ export default {
         groupName: val
       }
       updateFileGroup(params)
-        .then(res => {
+        .then((res) => {
           if (res.code !== 200) throw res
           this.$message.success('修改成功')
           this.fetchGroup()
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || '修改失败')
         })
     },
@@ -623,10 +621,10 @@ export default {
       function tree(pid) {
         const arr = []
         data
-          .filter(item => {
+          .filter((item) => {
             return item.parentGroupId === pid
           })
-          .forEach(item => {
+          .forEach((item) => {
             const child = tree(item.id.toString())
             if (child.length) {
               item.children = child
@@ -696,7 +694,7 @@ export default {
             h: img.height
           })
         }
-        img.onerror = err => reject(err)
+        img.onerror = (err) => reject(err)
       })
     },
     hideUpload() {
@@ -729,14 +727,14 @@ export default {
           params.folderId = this.queryParam.folderId
         }
         addFile(params)
-          .then(res => {
+          .then((res) => {
             if (res.code !== 200) throw res
             console.log('添加成功：' + res)
             this.fetchFile()
             this.$message.success(`${info.file.name} 文件上传成功！`)
             this.GetInfo()
           })
-          .catch(err => {
+          .catch((err) => {
             this.$message.error(err.msg || '上传失败')
           })
         this.fileList.push({
@@ -756,7 +754,7 @@ export default {
         type: /image/.test(info.type) ? 1 : /video/.test(info.type) ? 2 : 4
       }
       await getUploadSign(param)
-        .then(res => {
+        .then((res) => {
           if (res.code === 200) {
             this.uploadToken = res.data.token
             this.uploadFileName = res.data.fileName
@@ -764,7 +762,7 @@ export default {
             throw res
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg)
         })
     },
@@ -800,7 +798,7 @@ export default {
       }
       console.log(params)
       addFileGroup(params)
-        .then(res => {
+        .then((res) => {
           if (res.code === 200) {
             this.$message.success('新增成功')
             this.fetchGroup()
@@ -808,7 +806,7 @@ export default {
             throw res
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg)
         })
         .finally(() => {
@@ -862,9 +860,9 @@ export default {
         pageIndex: 1,
         pageSize: 1000
       }
-      getFileList(params).then(res => {
+      getFileList(params).then((res) => {
         if (res.code !== 200) throw res
-        const folders = res.data.datas.filter(item => item.isFolder)
+        const folders = res.data.datas.filter((item) => item.isFolder)
         this.folderTree[0].children = this.folderTreeTransfer(folders, 0)
       })
     },
@@ -876,15 +874,15 @@ export default {
       if (this.queryType) this.queryParam.fileType = this.queryType === 'img' ? 0 : this.queryType === 'video' ? 1 : 2
       console.log(this.queryParam)
       getFileList(this.queryParam)
-        .then(res => {
+        .then((res) => {
           if (res.code !== 200) throw res
           this.fileData = res.data.datas
-          this.fileOptions = this.fileData.map(item => {
+          this.fileOptions = this.fileData.map((item) => {
             return item.id
           })
           this.total = res.data.totalCount
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || '获取文件列表失败')
         })
         .finally(() => {
@@ -898,23 +896,23 @@ export default {
         pageSize: 1000
       }
       getFileGroupList(params)
-        .then(res => {
+        .then((res) => {
           if (res.code !== 200) throw res
           let { datas } = res.data
-          this.fileGroup = datas.map(item => {
+          this.fileGroup = datas.map((item) => {
             return {
               key: item.id,
               label: item.groupName,
               id: item.id
             }
           })
-          datas = datas.map(item => {
+          datas = datas.map((item) => {
             if (!item.parentGroupId) item.parentGroupId = 0
             return item
           })
           this.cateTree[0].children = this.treeTransfer(datas, 0)
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || '获取分组数据失败')
         })
         .finally(() => {
@@ -925,8 +923,8 @@ export default {
       function tree(pid, tid) {
         const arr = []
         data
-          .filter(item => item.parentGroupId === pid)
-          .forEach(item => {
+          .filter((item) => item.parentGroupId === pid)
+          .forEach((item) => {
             const obj = {
               title: item.groupName,
               key: `${tid}-${item.id}`,
@@ -950,8 +948,8 @@ export default {
       function tree(pid, tid) {
         const arr = []
         data
-          .filter(item => item.folderId === pid)
-          .forEach(item => {
+          .filter((item) => item.folderId === pid)
+          .forEach((item) => {
             const obj = {
               title: item.fileName,
               key: `${tid}-${item.id}`,
@@ -971,11 +969,11 @@ export default {
     handleCopyLink(name) {
       const link = this.host + '/' + name
       this.$copyText(link).then(
-        e => {
+        (e) => {
           this.$message.success('复制成功')
           console.log(e)
         },
-        function(e) {
+        function (e) {
           this.$message.error('复制失败')
           console.log(e)
         }
@@ -992,14 +990,14 @@ export default {
       }
       const params = [this.selectedFileId]
       moveFile(query, params)
-        .then(res => {
+        .then((res) => {
           if (res.code !== 200) throw res
           console.log(res)
           this.$message.success('操作成功')
           this.fetchFile()
           this.visibleMoveFile = false
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || '操作失败')
         })
     },
@@ -1009,13 +1007,13 @@ export default {
         isDelete: true
       }
       updateDelState(query, params)
-        .then(res => {
+        .then((res) => {
           console.log(res)
           if (res.code !== 200) throw res
           this.$message.success('删除成功')
           this.fetchFile()
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || '删除失败')
         })
     },
@@ -1036,14 +1034,14 @@ export default {
             isDelete: false
           }
           updateDelState(query, this.checkedList)
-            .then(res => {
+            .then((res) => {
               console.log(res)
               if (res.code !== 200) throw res
               this.$message.success('恢复成功')
               this.checkedList = []
               this.showRecycleBin()
             })
-            .catch(err => {
+            .catch((err) => {
               this.$message.error(err.msg || '恢复成功')
             })
         }
@@ -1059,14 +1057,14 @@ export default {
         content: '你确定要彻底删除这些文件吗？彻底删除后将不可找回。',
         onOk: () => {
           removeFile(this.checkedList)
-            .then(res => {
+            .then((res) => {
               console.log(res)
               if (res.code !== 200) throw res
               this.$message.success('删除成功')
               this.checkedList = []
               this.showRecycleBin()
             })
-            .catch(err => {
+            .catch((err) => {
               this.$message.error(err.msg || '删除失败')
             })
         }
@@ -1085,14 +1083,14 @@ export default {
             isDelete: true
           }
           updateDelState(query, this.checkedList)
-            .then(res => {
+            .then((res) => {
               console.log(res)
               if (res.code !== 200) throw res
               this.$message.success('删除成功')
               this.checkedList = []
               this.fetchFile()
             })
-            .catch(err => {
+            .catch((err) => {
               this.$message.error(err.msg || '删除失败')
             })
         }
@@ -1107,14 +1105,14 @@ export default {
         isFolder: true
       }
       addFile(params)
-        .then(res => {
+        .then((res) => {
           console.log(res)
           if (res.code !== 200) throw res
           this.$message.success('新增成功')
           this.visibleNewFolder = false
           this.fetchFile()
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || '新增失败')
         })
     },
