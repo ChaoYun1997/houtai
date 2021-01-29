@@ -298,7 +298,7 @@
             <a-radio :value="0"> 否 </a-radio>
           </a-radio-group>
         </a-form-model-item>
-        <a-form-model-item labelAlign="left" class="label-col" :colon="false">
+        <a-form-model-item labelAlign="left" class="label-col diy1" :colon="false">
           <div slot="label" class="required">产品视频</div>
 
           <div>
@@ -2057,7 +2057,9 @@ export default {
 
 <style scoped lang="less">
 @import './ProductDetail.less';
-
+.zscdiy1{
+  height: auto !important;
+}
 .custom-desc {
   display: flex;
   align-items: center;
@@ -2127,7 +2129,7 @@ export default {
 }
 
 .label-col {
-  height: 40px !important;
+  height: 40px ;
   overflow: hidden;
 }
 .label-col2 {

@@ -27,7 +27,7 @@
           </a-descriptions-item>
           <a-descriptions-item label="来源终端">
             {{
-              `${detail.equipment} | ${detail.browser} | ${detail.language} | ${detail.systemName} | ${detail.browserUa}`
+              `${detail.equipment} | ${detail.browser} | ${detail.systemName} | ${detail.browserUa}`
             }}
           </a-descriptions-item>
         </a-descriptions>
