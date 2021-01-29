@@ -1,6 +1,7 @@
 <template>
   <pro-layout
     :title="title"
+    :menuHeaderRender="menuHeaderRender"
     :menus="menus"
     :collapsed="collapsed"
     :mediaQuery="query"
@@ -23,7 +24,7 @@
 </template>
 
 <script>
-  // eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line no-unused-vars
 import { SettingDrawer, updateTheme } from '@ant-design-vue/pro-layout'
 import { i18nRender } from '@/locales'
 import { mapState } from 'vuex'
@@ -39,7 +40,7 @@ export default {
     SettingDrawer,
     RightContent
   },
-  data () {
+  data() {
     return {
       // base
       menus: [],
@@ -72,11 +73,11 @@ export default {
   computed: {
     ...mapState({
       // 动态主路由
-      mainMenu: state => state.permission.addRouters
+      mainMenu: (state) => state.permission.addRouters
     })
   },
-  created () {
-    const routes = this.mainMenu.find(item => item.path === '/')
+  created() {
+    const routes = this.mainMenu.find((item) => item.path === '/')
     this.menus = (routes && routes.children) || []
     // 处理侧栏收起状态
     this.$watch('collapsed', () => {
@@ -86,7 +87,7 @@ export default {
       this.$store.commit(TOGGLE_MOBILE_TYPE, this.isMobile)
     })
   },
-  mounted () {
+  mounted() {
     const userAgent = navigator.userAgent
     if (userAgent.indexOf('Edge') > -1) {
       this.$nextTick(() => {
@@ -102,7 +103,7 @@ export default {
   },
   methods: {
     i18nRender,
-    handleMediaQuery (val) {
+    handleMediaQuery(val) {
       this.query = val
       if (this.isMobile && !val['screen-xs']) {
         this.isMobile = false
@@ -115,10 +116,10 @@ export default {
         // this.settings.fixSiderbar = false
       }
     },
-    handleCollapse (val) {
+    handleCollapse(val) {
       this.collapsed = val
     },
-    handleSettingChange ({ type, value }) {
+    handleSettingChange({ type, value }) {
       console.log('type', type, value)
       type && (this.settings[type] = value)
       switch (type) {
@@ -135,13 +136,67 @@ export default {
           break
       }
     },
-    logoRender () {
+    logoRender() {
       return <LogoSvg />
+    },
+    menuHeaderRender() {
+      if (this.collapsed) {
+        return (
+          <div id="customize_menu_header">
+            <img src="/logo.png" alt="fish-cloud" class="logo-svg collapsed" />
+          </div>
+        )
+      }
+      return (
+        <div id="customize_menu_header">
+          <img src="/logo.png" class="fish-cloud-logo" alt="fish-cloud" />
+          <div class="logo-font" v-if="!collapsed">
+            <b>大鱼</b>
+            <span>Fish-Cloud</span>
+          </div>
+        </div>
+      )
     }
   }
 }
 </script>
 
 <style lang="less">
-@import "./BasicLayout.less";
+@import './BasicLayout.less';
+#customize_menu_header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-top: 15px;
+  margin-bottom: 20px;
+}
+.fish-cloud-logo{
+  width: 40px;
+  height:auto;
+  margin-right: 10px;
+}
+.logo-svg {
+  width: 64px !important;
+  height: 64px;
+  &.collapsed {
+    width: 32px !important;
+    height: auto;
+  }
+}
+.logo-font {
+  width: 100px;
+  height: 50px;
+  line-height: 20px;
+  color: white;
+  font-size: 12px;
+  b {
+    margin-top: 7px;
+    display: block;
+    font-size: 16px;
+    color: white;
+  }
+  span {
+    opacity: 0.7;
+  }
+}
 </style>

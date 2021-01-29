@@ -19,7 +19,7 @@
           </a-select>
         </a-form-item>
         <a-form-item>
-          <a-select v-model="state" placeholder="请选择" style="width:160px">
+          <a-select v-model="state" placeholder="请选择" style="width: 160px">
             <a-select-option value="all">请选择询盘状态</a-select-option>
             <a-select-option value="0">待沟通</a-select-option>
             <a-select-option value="1">沟通中</a-select-option>
@@ -28,7 +28,7 @@
           </a-select>
         </a-form-item>
         <a-form-item>
-          <a-select placeholder="请选择" v-model="contactRegion" style="width:120px">
+          <a-select placeholder="请选择" v-model="contactRegion" style="width: 120px">
             <a-select-option value="all">全部国家</a-select-option>
             <template v-for="(item, index) in country">
               <a-select-option :value="item" :key="index">
@@ -48,14 +48,14 @@
     </a-card>
     <a-card class="list" :bordered="false" style="margin-top: 10px">
       <h3 slot="title">询盘展示</h3>
-<!--      <div class="table-operator">-->
-<!--        <a-button @click="handleRestore" type="primary">恢复询盘</a-button>-->
-<!--        <a-button @click="handleRemove" type="danger">彻底删除</a-button>-->
-<!--      </div>-->
+      <!--      <div class="table-operator">-->
+      <!--        <a-button @click="handleRestore" type="primary">恢复询盘</a-button>-->
+      <!--        <a-button @click="handleRemove" type="danger">彻底删除</a-button>-->
+      <!--      </div>-->
       <s-table
         ref="table"
         size="default"
-        :rowKey="record => record.id"
+        :rowKey="(record) => record.id"
         :columns="columns"
         :data="loadData"
         :alert="true"
@@ -185,7 +185,7 @@ export default {
       selectedRowKeys: [],
       selectedRows: [],
       listLoading: true,
-      loadData: parameter => {
+      loadData: (parameter) => {
         parameter = Object.assign(parameter, this.queryParam)
         return getEnquiryRecycleBin(parameter)
       }
@@ -222,13 +222,13 @@ export default {
         centered: true,
         onOk: () => {
           removeEnquirys(this.selectedRowKeys)
-            .then(res => {
+            .then((res) => {
               if (res.code === 200) {
                 this.$message.success('操作成功')
                 this.$refs.table.refresh()
               } else throw res
             })
-            .catch(err => {
+            .catch((err) => {
               this.$message.error(err.msg || '操作失败')
             })
         }
@@ -243,13 +243,13 @@ export default {
         centered: true,
         onOk: () => {
           restoreEnquirys(this.selectedRowKeys)
-            .then(res => {
+            .then((res) => {
               if (res.code === 200) {
                 this.$message.success('操作成功')
                 this.$refs.table.refresh()
               } else throw res
             })
-            .catch(err => {
+            .catch((err) => {
               this.$message.error(err.msg || '操作失败')
             })
         }
@@ -260,7 +260,7 @@ export default {
         id: id,
         isRemove: true
       }
-      delEnquiry(param).then(res => {
+      delEnquiry(param).then((res) => {
         console.log(res)
         this.operateSuccess()
         this.$refs.table.refresh()
@@ -271,12 +271,12 @@ export default {
         id
       }
       removeEnquiry(param)
-        .then(res => {
+        .then((res) => {
           console.log(res)
           this.operateSuccess()
           this.$refs.table.refresh()
         })
-        .catch(err => {
+        .catch((err) => {
           this.operateFail(err)
         })
     },
@@ -286,13 +286,13 @@ export default {
       }
       console.log(param)
       restoreEnquiry(param)
-        .then(res => {
+        .then((res) => {
           if (res.code === 200) {
             this.$message.success('操作成功')
             this.$refs.table.refresh()
           } else throw res
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || '操作失败')
         })
     },

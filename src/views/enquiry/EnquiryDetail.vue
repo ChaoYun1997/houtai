@@ -12,10 +12,12 @@
             {{ detail.createDate }}
           </a-descriptions-item>
           <a-descriptions-item label="询盘IP">
-            {{ detail.contactIP }}
+            <!--            {{ detail.contactIP }}-->
+            -
           </a-descriptions-item>
           <a-descriptions-item label="来源国家">
-            {{ detail.contactRegion }}
+            <!--            {{ detail.contactRegion }}-->
+            -
           </a-descriptions-item>
           <a-descriptions-item label="询盘来源">
             {{ detail.enquirySource }}
@@ -45,7 +47,8 @@
             {{ detail.contactEMail }}
           </a-descriptions-item>
           <a-descriptions-item label="国家">
-            {{ detail.contactRegion }}
+            <!--            {{ detail.contactRegion }}-->
+            -
           </a-descriptions-item>
           <a-descriptions-item label="电话">
             {{ detail.contactTel }}

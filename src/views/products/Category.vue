@@ -18,17 +18,17 @@
       <s-table
         ref="table"
         size="default"
-        :rowKey="record => record.id"
+        :rowKey="(record) => record.id"
         :columns="cateColumns"
         :data="loadCateData"
         :pageSize="40"
         :pagination="{
-          pageSizeOptions:['20', '30', '40', '100']
+          pageSizeOptions: ['20', '30', '40', '100']
         }"
         :rowSelection="rowSelection"
       >
-        <div style="display:inline-block;" slot="sort" slot-scope="text, record">
-          <a-input type="number" v-model="record.sort" style="width: 60px;text-align: center"></a-input>
+        <div style="display: inline-block" slot="sort" slot-scope="text, record">
+          <a-input type="number" v-model="record.sort" style="width: 60px; text-align: center"></a-input>
         </div>
         <!--        <div slot="catname" slot-scope="text, record">-->
         <!--          <a @click="$router.push({ path: '/products/product-list', query: { catId: record.id } })">-->
@@ -39,21 +39,17 @@
           {{ text ? '子类目' : '一级类目' }}
         </span>
         <div class="action" slot="action" slot-scope="text, record">
-          <span class="link-btn " @click="addSub(record.id)">添加子分类</span>
-          <span class="link-btn  left-split" @click="edit(record.id)">编辑</span>
+          <span class="link-btn" @click="addSub(record.id)">添加子分类</span>
+          <span class="link-btn left-split" @click="edit(record.id)">编辑</span>
           <!--          <span class="link-btn left-split" @click="preview(record.id)">预览</span>-->
           <span class="link-btn del left-split" @click="del(record)">删除</span>
         </div>
       </s-table>
       <div class="table-operator list-footer">
         <a-checkbox :indeterminate="indeterminate" :checked="checkAll" @change="handleSelectedAll">全选</a-checkbox>
-        <a-button type="primary" icon="plus" @click="$router.push('/products/add-category')">
-          新增
-        </a-button>
+        <a-button type="primary" icon="plus" @click="$router.push('/products/add-category')"> 新增 </a-button>
         <a-button type="primary" @click="handleSort">排序</a-button>
-        <a-button type="danger" @click="handleDel">
-          删除
-        </a-button>
+        <a-button type="danger" @click="handleDel"> 删除 </a-button>
       </div>
     </a-card>
     <a-modal v-model="visibleUploadXls" title="导入产品">
@@ -178,7 +174,7 @@ export default {
   },
   computed: {
     ...mapState({
-      website: state => {
+      website: (state) => {
         return /^http/.test(state.user.website)
           ? state.user.website
           : process.env.VUE_APP_PROTOCAL_HEAD + state.user.website
@@ -206,11 +202,11 @@ export default {
         content: '你确定要删除这些数据吗？',
         onOk: () => {
           delCates(this.selectedRowKeys)
-            .then(res => {
+            .then((res) => {
               if (res.code === 200) this.$message.success('操作成功')
               this.$refs.table.refresh(true)
             })
-            .catch(err => {
+            .catch((err) => {
               this.$message.error(err.msg)
             })
         }
@@ -218,7 +214,7 @@ export default {
     },
     handleSort() {
       const items = this.$refs.table.localDataSource
-      const params = this.flatTree(items).map(item => {
+      const params = this.flatTree(items).map((item) => {
         return {
           id: item.id,
           sort: Number(item.sort)
@@ -226,12 +222,12 @@ export default {
       })
       console.log(params)
       updateCateSort(params)
-        .then(res => {
+        .then((res) => {
           if (res.code === 200) {
             this.$message.success('操作成功')
           } else throw res
         })
-        .catch(err => {
+        .catch((err) => {
           this.$message.error(err.msg || '操作失败')
         })
     },
@@ -239,14 +235,14 @@ export default {
       const items = this.originCates
       this.selectedRows = e.target.checked ? items : []
       this.$refs.table.selectedRows = e.target.checked ? items : []
-      this.selectedRowKeys = e.target.checked ? items.map(item => item.id) : []
-      this.$refs.table.selectedRowKeys = e.target.checked ? items.map(item => item.id) : []
+      this.selectedRowKeys = e.target.checked ? items.map((item) => item.id) : []
+      this.$refs.table.selectedRowKeys = e.target.checked ? items.map((item) => item.id) : []
       this.indeterminate = false
       this.checkAll = e.target.checked
     },
     flatTree(data) {
       function flat(source, arr) {
-        source.forEach(item => {
+        source.forEach((item) => {
           if (item.children === undefined) {
             arr.push(item)
           }
@@ -269,7 +265,7 @@ export default {
         try {
           const cates = await getProductCate(Object.assign(parameter, this.queryParam))
 
-          const data = cates.data.datas.map(item => {
+          const data = cates.data.datas.map((item) => {
             item.catPid = !item.catPid ? 0 : item.catPid
             return item
           })
@@ -291,10 +287,10 @@ export default {
       function tree(pid) {
         const arr = []
         data
-          .filter(item => {
+          .filter((item) => {
             return item.catPid === pid
           })
-          .forEach(item => {
+          .forEach((item) => {
             const child = tree(item.id)
             if (child.length) {
               item.children = child
@@ -311,7 +307,7 @@ export default {
         this.$message.error('没有分类信息')
         return false
       }
-      var data = this.category.map(item => {
+      var data = this.category.map((item) => {
         console.log(item)
         return {
           ID: item.id,
@@ -350,7 +346,7 @@ export default {
       const files = this.fileList
       // 通过FileReader对象读取文件
       const fileReader = new FileReader()
-      fileReader.onload = event => {
+      fileReader.onload = (event) => {
         try {
           const { result } = event.target
           // 以二进制流方式读取得到整份excel表格对象
@@ -413,7 +409,7 @@ export default {
             id: record.id
           }
           delCate(params)
-            .then(res => {
+            .then((res) => {
               if (res.code === 200) {
                 this.$message.success('操作成功')
                 this.$refs.table.refresh(true)
@@ -421,7 +417,7 @@ export default {
                 throw res
               }
             })
-            .catch(err => {
+            .catch((err) => {
               this.$message.error(err.msg || '操作失败')
             })
         }
