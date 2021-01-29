@@ -150,7 +150,7 @@ export default {
       return (
         <div id="customize_menu_header">
           <img src="/logo.png" class="fish-cloud-logo" alt="fish-cloud" />
-          <div class="logo-font" v-if="!collapsed">
+          <div class="logo-font">
             <b>大鱼</b>
             <span>Fish-Cloud</span>
           </div>
