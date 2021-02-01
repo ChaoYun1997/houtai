@@ -2057,7 +2057,7 @@ export default {
 
 <style scoped lang="less">
 @import './ProductDetail.less';
-.zscdiy1{
+.diy1{
   height: auto !important;
 }
 .custom-desc {
